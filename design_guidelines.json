@@ -1,0 +1,114 @@
+{
+  "identity": {
+    "persona": "E1",
+    "role": "Creative Designer (Top 1%)",
+    "mission": "Create a futuristic, high-tech crypto investment platform with a 'BitNest' aesthetic.",
+    "principles": [
+      "Fusion over Imitation: Mix Cyberpunk neon with Swiss precision.",
+      "Emotion First: Evoke trust, wealth, and technological superiority.",
+      "Content is King: Data visualization is the hero.",
+      "Zoom In: Focus on the numbers and the gains.",
+      "Negative Space: Use deep black space to make neon pop.",
+      "Contrast: High contrast is mandatory for readability in dark mode."
+    ]
+  },
+  "theme": {
+    "mode": "dark",
+    "style": "BitNest Cyberpunk",
+    "primary_color": "#00FF88",
+    "secondary_color": "#00FFFF",
+    "accent_color": "#FFD700",
+    "background_color": "#050505",
+    "card_background": "#111111",
+    "text_primary": "#FFFFFF",
+    "text_secondary": "#A1A1AA"
+  },
+  "typography": {
+    "headings": {
+      "font_family": "Outfit, sans-serif",
+      "weights": ["600", "700", "800"],
+      "letter_spacing": "-0.02em"
+    },
+    "body": {
+      "font_family": "Inter, sans-serif",
+      "weights": ["400", "500"],
+      "letter_spacing": "0.01em"
+    },
+    "mono": {
+      "font_family": "JetBrains Mono, monospace",
+      "weights": ["400", "500"]
+    }
+  },
+  "colors": {
+    "palette": {
+      "neon_green": "#00FF88",
+      "neon_teal": "#00FFFF",
+      "gold": "#FFD700",
+      "deep_black": "#050505",
+      "card_bg": "#111111",
+      "card_border": "#333333",
+      "success": "#00FF88",
+      "error": "#FF3B30",
+      "warning": "#FFD700",
+      "info": "#00FFFF"
+    },
+    "gradients": {
+      "primary_button": "linear-gradient(90deg, #00FFFF 0%, #00FF88 100%)",
+      "card_glow": "linear-gradient(180deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 0, 0, 0) 100%)",
+      "text_gradient": "linear-gradient(90deg, #00FFFF 0%, #00FF88 100%)"
+    }
+  },
+  "layout": {
+    "grid_system": "Bento Grid (CSS Grid)",
+    "spacing": "Tailwind Scale (p-4, p-6, p-8)",
+    "container_width": "max-w-7xl mx-auto",
+    "card_style": "Rounded-xl, Border-1px, Glowing Shadow",
+    "glassmorphism": "backdrop-blur-xl bg-black/60 border-white/10"
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-gradient-to-r from-teal-400 to-green-400 text-black font-bold hover:opacity-90 transition-all shadow-[0_0_20px_rgba(0,255,136,0.4)]",
+      "secondary": "border border-green-400/50 text-green-400 hover:bg-green-400/10 transition-all",
+      "ghost": "text-gray-400 hover:text-white hover:bg-white/5"
+    },
+    "cards": {
+      "default": "bg-[#111111] border border-white/10 rounded-xl p-6 relative overflow-hidden group hover:border-green-400/50 transition-all duration-300",
+      "highlight": "bg-[#111111] border border-green-400/50 rounded-xl p-6 shadow-[0_0_30px_rgba(0,255,136,0.15)]"
+    },
+    "inputs": {
+      "default": "bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white focus:border-green-400 focus:ring-1 focus:ring-green-400 transition-all placeholder:text-gray-600"
+    }
+  },
+  "visual_enhancers": {
+    "background_pattern": "Wavy flowing lines (SVG) in background with low opacity (5%)",
+    "card_pattern": "Triangle geometric pattern overlay on cards (CSS background-image)",
+    "glow_effects": "Use drop-shadow and box-shadow with neon colors for key elements",
+    "icons": "Lucide React icons with custom colors (Green/Teal)",
+    "charts": "Recharts with custom tooltips and neon strokes"
+  },
+  "image_urls": {
+    "hero_background": "https://images.unsplash.com/photo-1639152446002-ffd04bd3d529?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "wallet_coins": "https://images.unsplash.com/photo-1626163015484-81fc7e3b90d8?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "abstract_bg": "https://images.pexels.com/photos/28428584/pexels-photo-28428584.jpeg",
+    "bitcoin_gold": "https://images.pexels.com/photos/8048194/pexels-photo-8048194.jpeg",
+    "ethereum_silver": "https://images.pexels.com/photos/8358039/pexels-photo-8358039.jpeg"
+  },
+  "instructions_to_main_agent": [
+    "1. UPDATE TAILWIND CONFIG: Add the custom colors (neon-green, neon-teal, gold, deep-black) to `tailwind.config.js`.",
+    "2. GLOBAL CSS: Update `index.css` to set the default background to `#050505` and text to `#FFFFFF`. Add a global class for the 'wavy background' pattern.",
+    "3. FONTS: Import 'Outfit' and 'Inter' from Google Fonts in `index.css`.",
+    "4. COMPONENTS: Customize Shadcn components (Button, Card, Input) to match the 'BitNest' style (remove default radius if needed, add glowing borders).",
+    "5. LAYOUT: Use the 'Bento Grid' for the Dashboard. Create a layout wrapper that includes the Sidebar and Topbar.",
+    "6. PAGES: Implement the pages in this order: Home (Landing), Auth (Login/Register), Dashboard, Wallet, Invest.",
+    "7. CHARTS: Use Recharts for the 'Live Crypto Trading Charts'. Style them with neon strokes and dark backgrounds.",
+    "8. ANIMATIONS: Add subtle entrance animations (fade-in-up) for all cards using Framer Motion or CSS keyframes.",
+    "9. TESTING: Add `data-testid` to all interactive elements."
+  ],
+  "universal_guidelines": [
+    "Do not use gradients for text unless it's a large heading.",
+    "Ensure high contrast for accessibility.",
+    "Use 'sonner' for toasts.",
+    "Use 'lucide-react' for icons.",
+    "Keep the UI 'clean' but 'rich' with subtle details like borders and shadows."
+  ]
+}

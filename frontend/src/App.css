@@ -1,0 +1,62 @@
+.App {
+  min-height: 100vh;
+  background: #000000;
+}
+
+/* Hover effects for buttons */
+.btn-primary:hover,
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 215, 0, 0.5);
+}
+
+.btn-primary:active,
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+/* Smooth transitions for interactive elements */
+a,
+button,
+input,
+textarea {
+  transition: all 0.3s ease;
+}
+
+/* Input focus states */
+input:focus,
+textarea:focus {
+  border-color: #FFD700;
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+}
+
+/* Link hover states */
+a:hover {
+  color: #FFD700;
+}
+
+/* Mobile navigation styles */
+@media (max-width: 768px) {
+  header nav {
+    display: none;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 0, 0.4);
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 215, 0, 0.6);
+}

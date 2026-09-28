@@ -1,0 +1,147 @@
+/* Home Page Mobile Responsive Styles */
+
+@media (max-width: 768px) {
+  /* Hero Dramatic Mobile */
+  .home-hero-dramatic {
+    height: 450px !important;
+    margin-bottom: 40px !important;
+  }
+
+  .home-hero-overlay-main {
+    padding: 40px 20px !important;
+  }
+
+  .home-hero-title-dramatic {
+    font-size: 48px !important;
+    letter-spacing: 4px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .home-hero-subtitle-dramatic {
+    font-size: 18px !important;
+    margin-bottom: 32px !important;
+  }
+
+  /* Hero CTA Mobile */
+  .home-hero-cta {
+    flex-direction: column !important;
+    gap: 16px !important;
+    width: 100% !important;
+  }
+
+  .home-btn-primary,
+  .home-btn-secondary {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Stats Grid Mobile */
+  .home-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+
+  .home-stat-card {
+    padding: 24px 16px !important;
+  }
+
+  .home-stat-value {
+    font-size: 28px !important;
+  }
+
+  .home-stat-label {
+    font-size: 12px !important;
+  }
+
+  /* Plans Grid Mobile */
+  .home-plans-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  .home-plan-card {
+    padding: 28px !important;
+  }
+
+  /* Features Grid Mobile */
+  .home-features-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  .home-feature-card {
+    padding: 32px !important;
+  }
+
+  /* Section Titles Mobile */
+  .home-section-title {
+    font-size: 32px !important;
+  }
+
+  .home-section-subtitle {
+    font-size: 16px !important;
+  }
+
+  /* CTA Section Mobile */
+  .home-cta-title {
+    font-size: 32px !important;
+  }
+
+  .home-cta-subtitle {
+    font-size: 16px !important;
+  }
+
+  /* Hero Section Padding */
+  .home-hero {
+    padding: 100px 20px 60px !important;
+  }
+
+  /* Section Padding */
+  .home-section {
+    padding: 60px 20px !important;
+  }
+}
+
+/* Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .home-hero-dramatic {
+    height: 550px !important;
+  }
+
+  .home-hero-title-dramatic {
+    font-size: 72px !important;
+    letter-spacing: 8px !important;
+  }
+
+  .home-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .home-plans-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .home-features-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .home-hero-title-dramatic {
+    font-size: 36px !important;
+    letter-spacing: 2px !important;
+  }
+
+  .home-hero-subtitle-dramatic {
+    font-size: 16px !important;
+  }
+
+  .home-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .home-stat-value {
+    font-size: 24px !important;
+  }
+}

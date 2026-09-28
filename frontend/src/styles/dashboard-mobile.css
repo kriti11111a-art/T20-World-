@@ -1,0 +1,143 @@
+/* Dashboard Mobile Responsive Styles */
+
+@media (max-width: 768px) {
+  /* Dramatic Hero Mobile */
+  .dashboard-dramatic-hero {
+    height: 400px !important;
+    margin-bottom: 32px !important;
+  }
+
+  .dashboard-hero-overlay {
+    flex-direction: column !important;
+    padding: 30px 20px !important;
+    justify-content: center !important;
+    gap: 24px !important;
+  }
+
+  .dashboard-hero-content-left,
+  .dashboard-hero-content-right {
+    text-align: center !important;
+  }
+
+  .dashboard-hero-label {
+    font-size: 11px !important;
+    letter-spacing: 2px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .dashboard-hero-value {
+    font-size: 36px !important;
+  }
+
+  .dashboard-hero-main-title {
+    font-size: 42px !important;
+    letter-spacing: 4px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .dashboard-hero-subtext {
+    font-size: 14px !important;
+    letter-spacing: 1px !important;
+  }
+
+  /* Welcome Stats Mobile */
+  .dashboard-welcome-stats {
+    flex-direction: column !important;
+    gap: 20px !important;
+    padding: 20px !important;
+  }
+
+  .dashboard-welcome-title {
+    font-size: 22px !important;
+  }
+
+  .dashboard-welcome-subtitle {
+    font-size: 14px !important;
+  }
+
+  /* Stats Grid Mobile */
+  .dashboard-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .dashboard-stat-card {
+    padding: 24px !important;
+  }
+
+  .dashboard-stat-value {
+    font-size: 28px !important;
+  }
+
+  /* Investments Grid Mobile */
+  .dashboard-investments-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .dashboard-investment-card {
+    padding: 20px !important;
+  }
+
+  .dashboard-investment-plan {
+    font-size: 16px !important;
+  }
+
+  /* Blockchain Banner Mobile */
+  .dashboard-blockchain-banner {
+    height: 150px !important;
+    margin-bottom: 30px !important;
+  }
+
+  .dashboard-blockchain-title {
+    font-size: 20px !important;
+  }
+
+  .dashboard-blockchain-text {
+    font-size: 13px !important;
+  }
+
+  /* Section Headers Mobile */
+  .dashboard-section-title {
+    font-size: 20px !important;
+  }
+
+  /* Container Padding Mobile */
+  .dashboard-container {
+    padding: 100px 20px 40px !important;
+  }
+
+  /* Quick Actions Mobile */
+  .dashboard-quick-actions {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+}
+
+/* Tablet Styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .dashboard-dramatic-hero {
+    height: 450px !important;
+  }
+
+  .dashboard-hero-overlay {
+    padding: 40px !important;
+  }
+
+  .dashboard-hero-value {
+    font-size: 48px !important;
+  }
+
+  .dashboard-hero-main-title {
+    font-size: 56px !important;
+    letter-spacing: 6px !important;
+  }
+
+  .dashboard-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .dashboard-investments-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

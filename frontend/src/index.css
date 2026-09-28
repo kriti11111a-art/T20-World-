@@ -1,0 +1,392 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== BITNEST STYLE - TRADE GENIUS ===== */
+
+/* Hide Emergent badges */
+#emergent-badge,
+[id*="emergent"],
+[class*="emergent"],
+a[href*="emergent"],
+a[href*="app.emergent.sh"],
+div[style*="Made with"],
+a[style*="position: fixed"],
+body > a[target="_blank"],
+body > a,
+body > div[style*="fixed"]:not([data-testid="tx-modal-overlay"]),
+img[src*="emergent"],
+a[style*="bottom: 20px"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    position: absolute !important;
+    left: -99999px !important;
+}
+
+/* Transaction Modal - Must be visible and override any hiding rules */
+.tx-modal-overlay,
+[data-testid="tx-modal-overlay"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 999999 !important;
+    pointer-events: auto !important;
+}
+
+[data-testid="tx-modal-content"] {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* ===== ROOT VARIABLES - BITNEST THEME ===== */
+:root {
+    --neon-green: #00FF88;
+    --neon-teal: #00FFFF;
+    --gold: #FFD700;
+    --deep-black: #050505;
+    --card-bg: #111111;
+    --card-border: #222222;
+    --text-primary: #FFFFFF;
+    --text-secondary: #A1A1AA;
+    --success: #00FF88;
+    --error: #FF3B30;
+    --warning: #FFD700;
+    
+    --gradient-primary: linear-gradient(90deg, #00FFFF 0%, #00FF88 100%);
+    --gradient-glow: linear-gradient(180deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+    --glow-green: 0 0 20px rgba(0, 255, 136, 0.4);
+    --glow-teal: 0 0 20px rgba(0, 255, 255, 0.4);
+}
+
+/* ===== GLOBAL STYLES ===== */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--deep-black);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+code {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* ===== WAVY BACKGROUND PATTERN ===== */
+.bg-bitnest {
+    background-color: var(--deep-black);
+    background-image: 
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%2300FF88' fill-opacity='0.03' d='M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,197.3C960,213,1056,203,1152,186.7C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: repeat-y;
+    background-size: 100% auto;
+    background-position: bottom;
+}
+
+/* ===== TRIANGLE PATTERN FOR CARDS ===== */
+.pattern-triangles::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-primary);
+    opacity: 0.8;
+}
+
+/* ===== GLOW EFFECTS ===== */
+.glow-green {
+    box-shadow: var(--glow-green);
+}
+
+.glow-teal {
+    box-shadow: var(--glow-teal);
+}
+
+.glow-gold {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+.text-glow-green {
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
+
+.text-glow-teal {
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+/* ===== GRADIENT TEXT ===== */
+.gradient-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ===== BITNEST CARD STYLES ===== */
+.card-bitnest {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card-bitnest:hover {
+    border-color: rgba(0, 255, 136, 0.5);
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.15);
+}
+
+.card-bitnest-highlight {
+    background: var(--card-bg);
+    border: 1px solid rgba(0, 255, 136, 0.5);
+    border-radius: 16px;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.15);
+}
+
+/* ===== BITNEST BUTTON STYLES ===== */
+.btn-bitnest {
+    background: var(--gradient-primary);
+    color: #000;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--glow-green);
+}
+
+.btn-bitnest:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
+}
+
+.btn-bitnest-outline {
+    background: transparent;
+    color: var(--neon-green);
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 255, 136, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-bitnest-outline:hover {
+    background: rgba(0, 255, 136, 0.1);
+    border-color: var(--neon-green);
+}
+
+/* ===== BITNEST INPUT STYLES ===== */
+.input-bitnest {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.input-bitnest:focus {
+    outline: none;
+    border-color: var(--neon-green);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+}
+
+.input-bitnest::placeholder {
+    color: #666;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.4); }
+    50% { box-shadow: 0 0 40px rgba(0, 255, 136, 0.8); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Trading Candle Animations */
+@keyframes candlePulse1 {
+    0%, 100% { transform: scaleY(1); opacity: 1; }
+    50% { transform: scaleY(1.3); opacity: 0.9; }
+}
+
+@keyframes candlePulse2 {
+    0%, 100% { transform: scaleY(1.2); opacity: 1; }
+    50% { transform: scaleY(0.8); opacity: 0.9; }
+}
+
+@keyframes candlePulse3 {
+    0%, 100% { transform: scaleY(0.9); opacity: 1; }
+    50% { transform: scaleY(1.2); opacity: 0.9; }
+}
+
+@keyframes progressMove {
+    0% { width: 0%; }
+    100% { width: 100%; }
+}
+
+/* Animation Classes */
+.animate-fade-in-up {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-glow {
+    animation: glow 2s ease-in-out infinite;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Staggered Animation Delays */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+
+/* ===== SCROLLBAR STYLING ===== */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--deep-black);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--card-border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--neon-green);
+}
+
+/* ===== UTILITY CLASSES ===== */
+.bg-deep-black { background-color: var(--deep-black); }
+.bg-card { background-color: var(--card-bg); }
+.text-neon-green { color: var(--neon-green); }
+.text-neon-teal { color: var(--neon-teal); }
+.text-gold { color: var(--gold); }
+.text-secondary { color: var(--text-secondary); }
+.border-neon-green { border-color: var(--neon-green); }
+.border-card { border-color: var(--card-border); }
+
+/* ===== TAILWIND LAYER OVERRIDES ===== */
+@layer base {
+    :root {
+        --background: 0 0% 2%;
+        --foreground: 0 0% 100%;
+        --card: 0 0% 7%;
+        --card-foreground: 0 0% 100%;
+        --popover: 0 0% 7%;
+        --popover-foreground: 0 0% 100%;
+        --primary: 152 100% 50%;
+        --primary-foreground: 0 0% 0%;
+        --secondary: 180 100% 50%;
+        --secondary-foreground: 0 0% 0%;
+        --muted: 0 0% 15%;
+        --muted-foreground: 0 0% 65%;
+        --accent: 45 100% 50%;
+        --accent-foreground: 0 0% 0%;
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 0 0% 15%;
+        --input: 0 0% 15%;
+        --ring: 152 100% 50%;
+        --radius: 0.75rem;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/* Debug wrapper */
+@layer base {
+    [data-debug-wrapper="true"] {
+        display: contents !important;
+    }
+}

@@ -26,7 +26,7 @@ const Rank = () => {
     }
 
     try {
-      const res = await fetch(`${API_URL}/api/income/salary-rank`, {
+      const res = await fetch(`${API_URL}/api/salary/rank-info`, {
         headers: { 'Authorization': `Bearer ${authToken}` }
       });
       if (res.ok) {

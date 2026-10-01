@@ -27,6 +27,7 @@ import Notifications from "./pages/Notifications";
 import Maintenance from "./pages/Maintenance";
 import Invest from "./pages/Invest";
 import Market from "./pages/Market";
+import Rank from "./pages/Rank";
 
 // ============ MAINTENANCE MODE CONFIG ============
 // Set to true to enable maintenance mode
@@ -236,6 +237,7 @@ const ProtectedRoute = ({ element }) => {
                 <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
                 <Route path="/invest" element={<ProtectedRoute element={<Invest />} />} />
                 <Route path="/market" element={<ProtectedRoute element={<Market />} />} />
+                <Route path="/rank" element={<ProtectedRoute element={<Rank />} />} />
               </Routes>
               
               {/* Bottom Navigation - Show on logged-in pages */}

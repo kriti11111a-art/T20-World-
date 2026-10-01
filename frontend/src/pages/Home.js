@@ -214,13 +214,13 @@ const Home = () => {
               <div 
                 key={plan.id} 
                 style={{
-                  background: isDark ? 'linear-gradient(180deg, #0a0a0a 0%, #121212 100%)' : colors.cardBg,
+                  background: isDark ? 'linear-gradient(180deg, #0a0a0a 0%, #121212 100%)' : '#FFFFFF',
                   border: `2px solid ${colors.accent}`,
                   borderRadius: '24px',
                   padding: '28px 24px',
                   position: 'relative',
                   overflow: 'hidden',
-                  boxShadow: `0 0 20px ${colors.accent}20`,
+                  boxShadow: isDark ? `0 0 20px ${colors.accent}20` : '0 4px 20px rgba(0,0,0,0.1)',
                   transition: 'all 0.3s ease',
                 }}
               >
@@ -270,7 +270,7 @@ const Home = () => {
                     <span style={{
                       display: 'block',
                       fontSize: '12px',
-                      color: 'rgba(255, 255, 255, 0.4)',
+                      color: isDark ? 'rgba(255, 255, 255, 0.4)' : '#888888',
                       letterSpacing: '3px',
                       marginBottom: '6px',
                       fontWeight: 500,
@@ -299,7 +299,7 @@ const Home = () => {
                     alignItems: 'center',
                     padding: '14px 0',
                   }}>
-                    <span style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.6)' }}>Daily ROI</span>
+                    <span style={{ fontSize: '16px', color: isDark ? 'rgba(255, 255, 255, 0.6)' : '#666666' }}>Daily ROI</span>
                     <span style={{
                       fontSize: '20px',
                       fontWeight: 700,
@@ -307,24 +307,24 @@ const Home = () => {
                       textShadow: isDark ? '0 0 10px rgba(255, 215, 0, 0.4)' : 'none',
                     }}>{plan.dailyROI}%</span>
                   </div>
-                  <div style={{ height: '1px', background: isDark ? 'rgba(255, 215, 0, 0.15)' : `${colors.accent}30` }}></div>
+                  <div style={{ height: '1px', background: isDark ? 'rgba(255, 215, 0, 0.15)' : 'rgba(0,0,0,0.1)' }}></div>
                   <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     padding: '14px 0',
                   }}>
-                    <span style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.6)' }}>Duration</span>
-                    <span style={{ fontSize: '17px', fontWeight: 600, color: '#FFFFFF' }}>{plan.duration} days</span>
+                    <span style={{ fontSize: '16px', color: isDark ? 'rgba(255, 255, 255, 0.6)' : '#666666' }}>Duration</span>
+                    <span style={{ fontSize: '17px', fontWeight: 600, color: isDark ? '#FFFFFF' : '#333333' }}>{plan.duration} days</span>
                   </div>
-                  <div style={{ height: '1px', background: isDark ? 'rgba(255, 215, 0, 0.15)' : `${colors.accent}30` }}></div>
+                  <div style={{ height: '1px', background: isDark ? 'rgba(255, 215, 0, 0.15)' : 'rgba(0,0,0,0.1)' }}></div>
                   <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     padding: '14px 0',
                   }}>
-                    <span style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.6)' }}>Total ROI</span>
+                    <span style={{ fontSize: '16px', color: isDark ? 'rgba(255, 255, 255, 0.6)' : '#666666' }}>Total ROI</span>
                     <span style={{
                       fontSize: '20px',
                       fontWeight: 700,

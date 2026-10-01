@@ -51,24 +51,61 @@ a[style*="bottom: 20px"] {
     pointer-events: auto !important;
 }
 
-/* ===== ROOT VARIABLES - BITNEST THEME ===== */
+/* ===== TRADE GENIUS GLOBAL THEME ===== */
+/* 
+   MASTER GLOBAL THEME - Premium Fintech Dark Navy Style
+   Change colors here to update the ENTIRE application
+   Dark Navy + Electric Blue + Cyan Design System
+*/
 :root {
-    --neon-green: #00FF88;
-    --neon-teal: #00FFFF;
-    --gold: #FFD700;
-    --deep-black: #050505;
-    --card-bg: #111111;
-    --card-border: #222222;
-    --text-primary: #FFFFFF;
-    --text-secondary: #A1A1AA;
-    --success: #00FF88;
-    --error: #FF3B30;
-    --warning: #FFD700;
+    /* ===== PRIMARY BACKGROUNDS ===== */
+    --bg-main: #031A33;           /* Main Background - Deep Navy */
+    --bg-secondary: #062544;      /* Secondary Background */
+    --bg-card: #082B4D;           /* Card Background */
     
-    --gradient-primary: linear-gradient(90deg, #00FFFF 0%, #00FF88 100%);
-    --gradient-glow: linear-gradient(180deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
-    --glow-green: 0 0 20px rgba(0, 255, 136, 0.4);
-    --glow-teal: 0 0 20px rgba(0, 255, 255, 0.4);
+    /* ===== ACCENT COLORS ===== */
+    --primary-blue: #087BFF;      /* Primary Blue - Buttons, Links */
+    --electric-blue: #00BFFF;     /* Electric Blue - Highlights */
+    --cyan-highlight: #16E0FF;    /* Cyan Highlight - Active States, ROI */
+    
+    /* ===== TEXT COLORS ===== */
+    --text-primary: #FFFFFF;      /* Primary Text - White */
+    --text-secondary: #B8C7DC;    /* Secondary Text - Light Blue Grey */
+    --text-muted: #6B8299;        /* Muted Text */
+    
+    /* ===== BORDERS & DIVIDERS ===== */
+    --border-color: #174D75;      /* Border / Divider */
+    --border-glow: rgba(22, 224, 255, 0.3);  /* Subtle cyan border glow */
+    
+    /* ===== STATUS COLORS ===== */
+    --success: #00D68F;           /* Success Green */
+    --error: #FF4757;             /* Error Red */
+    --warning: #FFBE0B;           /* Warning Yellow */
+    --gold: #FFD700;              /* Gold - VIP, Special */
+    
+    /* ===== GRADIENTS ===== */
+    --gradient-primary: linear-gradient(135deg, #087BFF 0%, #16E0FF 100%);
+    --gradient-button: linear-gradient(90deg, #087BFF 0%, #00BFFF 50%, #16E0FF 100%);
+    --gradient-card-border: linear-gradient(135deg, #174D75 0%, #16E0FF 50%, #174D75 100%);
+    --gradient-glow: linear-gradient(180deg, rgba(22, 224, 255, 0.15) 0%, rgba(0, 0, 0, 0) 100%);
+    
+    /* ===== SHADOWS & GLOWS ===== */
+    --glow-blue: 0 0 20px rgba(8, 123, 255, 0.4);
+    --glow-cyan: 0 0 20px rgba(22, 224, 255, 0.4);
+    --glow-subtle: 0 4px 24px rgba(22, 224, 255, 0.1);
+    --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    
+    /* ===== INPUT STYLES ===== */
+    --input-bg: rgba(6, 37, 68, 0.8);
+    --input-border: #174D75;
+    --input-focus: #16E0FF;
+    
+    /* ===== LEGACY SUPPORT (will be phased out) ===== */
+    --neon-green: #16E0FF;
+    --neon-teal: #00BFFF;
+    --deep-black: #031A33;
+    --card-bg: #082B4D;
+    --card-border: #174D75;
 }
 
 /* ===== GLOBAL STYLES ===== */
@@ -85,7 +122,7 @@ body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: var(--deep-black);
+    background-color: var(--bg-main);
     color: var(--text-primary);
     min-height: 100vh;
 }
@@ -101,10 +138,11 @@ code {
 }
 
 /* ===== WAVY BACKGROUND PATTERN ===== */
-.bg-bitnest {
-    background-color: var(--deep-black);
+.bg-bitnest,
+.bg-trade-genius {
+    background-color: var(--bg-main);
     background-image: 
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%2300FF88' fill-opacity='0.03' d='M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,197.3C960,213,1056,203,1152,186.7C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%2316E0FF' fill-opacity='0.02' d='M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,144C672,139,768,181,864,197.3C960,213,1056,203,1152,186.7C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
     background-repeat: repeat-y;
     background-size: 100% auto;
     background-position: bottom;
@@ -122,25 +160,33 @@ code {
     opacity: 0.8;
 }
 
-/* ===== GLOW EFFECTS ===== */
-.glow-green {
-    box-shadow: var(--glow-green);
+/* ===== GLOW EFFECTS - TRADE GENIUS ===== */
+.glow-green,
+.glow-blue {
+    box-shadow: var(--glow-blue);
 }
 
-.glow-teal {
-    box-shadow: var(--glow-teal);
+.glow-teal,
+.glow-cyan {
+    box-shadow: var(--glow-cyan);
 }
 
 .glow-gold {
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
 }
 
-.text-glow-green {
-    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+.glow-subtle {
+    box-shadow: var(--glow-subtle);
 }
 
-.text-glow-teal {
-    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+.text-glow-green,
+.text-glow-cyan {
+    text-shadow: 0 0 10px rgba(22, 224, 255, 0.5);
+}
+
+.text-glow-teal,
+.text-glow-blue {
+    text-shadow: 0 0 10px rgba(8, 123, 255, 0.5);
 }
 
 /* ===== GRADIENT TEXT ===== */
@@ -151,67 +197,76 @@ code {
     background-clip: text;
 }
 
-/* ===== BITNEST CARD STYLES ===== */
-.card-bitnest {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
+/* ===== TRADE GENIUS CARD STYLES ===== */
+.card-bitnest,
+.card-trade-genius {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 16px;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
+    box-shadow: var(--glow-subtle);
 }
 
-.card-bitnest:hover {
-    border-color: rgba(0, 255, 136, 0.5);
-    box-shadow: 0 0 30px rgba(0, 255, 136, 0.15);
+.card-bitnest:hover,
+.card-trade-genius:hover {
+    border-color: rgba(22, 224, 255, 0.5);
+    box-shadow: 0 0 30px rgba(22, 224, 255, 0.15);
 }
 
-.card-bitnest-highlight {
-    background: var(--card-bg);
-    border: 1px solid rgba(0, 255, 136, 0.5);
+.card-bitnest-highlight,
+.card-trade-genius-highlight {
+    background: var(--bg-card);
+    border: 1px solid rgba(22, 224, 255, 0.5);
     border-radius: 16px;
-    box-shadow: 0 0 30px rgba(0, 255, 136, 0.15);
+    box-shadow: 0 0 30px rgba(22, 224, 255, 0.15);
 }
 
-/* ===== BITNEST BUTTON STYLES ===== */
-.btn-bitnest {
-    background: var(--gradient-primary);
-    color: #000;
+/* ===== TRADE GENIUS BUTTON STYLES ===== */
+.btn-bitnest,
+.btn-trade-genius {
+    background: var(--gradient-button);
+    color: #FFFFFF;
     font-weight: 700;
     padding: 12px 24px;
     border-radius: 12px;
     border: none;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: var(--glow-green);
+    box-shadow: var(--glow-blue);
 }
 
-.btn-bitnest:hover {
+.btn-bitnest:hover,
+.btn-trade-genius:hover {
     opacity: 0.9;
     transform: translateY(-2px);
-    box-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
+    box-shadow: 0 0 30px rgba(22, 224, 255, 0.6);
 }
 
-.btn-bitnest-outline {
+.btn-bitnest-outline,
+.btn-trade-genius-outline {
     background: transparent;
-    color: var(--neon-green);
+    color: var(--cyan-highlight);
     font-weight: 600;
     padding: 12px 24px;
     border-radius: 12px;
-    border: 1px solid rgba(0, 255, 136, 0.5);
+    border: 1px solid rgba(22, 224, 255, 0.5);
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-.btn-bitnest-outline:hover {
-    background: rgba(0, 255, 136, 0.1);
-    border-color: var(--neon-green);
+.btn-bitnest-outline:hover,
+.btn-trade-genius-outline:hover {
+    background: rgba(22, 224, 255, 0.1);
+    border-color: var(--cyan-highlight);
 }
 
-/* ===== BITNEST INPUT STYLES ===== */
-.input-bitnest {
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid var(--card-border);
+/* ===== TRADE GENIUS INPUT STYLES ===== */
+.input-bitnest,
+.input-trade-genius {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
     border-radius: 12px;
     padding: 14px 16px;
     color: var(--text-primary);
@@ -220,14 +275,16 @@ code {
     width: 100%;
 }
 
-.input-bitnest:focus {
+.input-bitnest:focus,
+.input-trade-genius:focus {
     outline: none;
-    border-color: var(--neon-green);
-    box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+    border-color: var(--input-focus);
+    box-shadow: 0 0 10px rgba(22, 224, 255, 0.2);
 }
 
-.input-bitnest::placeholder {
-    color: #666;
+.input-bitnest::placeholder,
+.input-trade-genius::placeholder {
+    color: var(--text-muted);
 }
 
 /* ===== ANIMATIONS ===== */

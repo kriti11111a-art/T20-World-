@@ -93,9 +93,9 @@ const Home = () => {
 
           {/* Main Headline */}
           <h1 style={{...styles.heroTitle, color: colors.text}}>
-            Join <span style={{...styles.heroAccent, color: colors.accent}}>TRADE GENIUS</span>
+            Join <span style={{...styles.heroAccent, color: colors.cyanHighlight || colors.accent}}>TRADE GENIUS</span>
           </h1>
-          <p style={{...styles.heroSubtitle, color: colors.accentSecondary}}>
+          <p style={{...styles.heroSubtitle, color: colors.electricBlue || colors.accentSecondary}}>
             For the Web 3.0 Economy
           </p>
 
@@ -107,12 +107,12 @@ const Home = () => {
 
           {/* CTA Buttons */}
           <div style={styles.heroButtons}>
-            <Link to="/register" style={{...styles.primaryBtn, background: colors.gradient, boxShadow: colors.glowGreen}} data-testid="get-started-btn">
+            <Link to="/register" style={{...styles.primaryBtn, background: colors.gradientButton || colors.gradient, boxShadow: colors.glowCyan || colors.glowGreen}} data-testid="get-started-btn">
               <Gift size={20} />
               GET STARTED
               <ArrowRight size={18} />
             </Link>
-            <Link to="/login" style={{...styles.secondaryBtn, color: colors.accent, borderColor: `${colors.accent}80`}} data-testid="connect-btn">
+            <Link to="/login" style={{...styles.secondaryBtn, color: colors.cyanHighlight || colors.accent, borderColor: `${colors.cyanHighlight || colors.accent}80`}} data-testid="connect-btn">
               <Wallet size={18} />
               Connect
             </Link>

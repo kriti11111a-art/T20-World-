@@ -100,8 +100,8 @@ const Header = () => {
               width: '44px',
               height: '44px',
               borderRadius: '50%',
-              border: '2px solid #10B981',
-              boxShadow: '0 0 12px rgba(16, 185, 129, 0.7), 0 0 25px rgba(13, 148, 136, 0.5)',
+              border: `2px solid ${colors.cyanHighlight || colors.accent}`,
+              boxShadow: `0 0 12px rgba(22, 224, 255, 0.7), 0 0 25px rgba(8, 123, 255, 0.5)`,
               overflow: 'hidden',
               display: 'flex',
               alignItems: 'center',
@@ -115,7 +115,7 @@ const Header = () => {
               />
             </div>
             <h1 style={{...styles.logo, color: colors.text}}>
-              <span style={{color: colors.accent}}>TRADE</span> GENIUS
+              <span style={{color: colors.cyanHighlight || colors.accent}}>TRADE</span> GENIUS
             </h1>
           </div>
         </Link>
@@ -137,12 +137,12 @@ const Header = () => {
               </Link>
             ))}
             {isLoggedIn ? (
-              <button onClick={handleLogout} style={{...styles.connectBtn, background: colors.gradient, boxShadow: colors.glowGreen}}>
+              <button onClick={handleLogout} style={{...styles.connectBtn, background: colors.gradientButton || colors.gradient, boxShadow: colors.glowCyan || colors.glowGreen}}>
                 <LogOut size={16} />
                 Logout
               </button>
             ) : (
-              <Link to="/login" style={{...styles.connectBtn, background: colors.gradient, boxShadow: colors.glowGreen}}>
+              <Link to="/login" style={{...styles.connectBtn, background: colors.gradientButton || colors.gradient, boxShadow: colors.glowCyan || colors.glowGreen}}>
                 <Wallet size={16} />
                 Connect
               </Link>

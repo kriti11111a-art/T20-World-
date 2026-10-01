@@ -4,6 +4,7 @@ import { ArrowRight, TrendingUp, Users, Shield, Zap, ChevronRight, Globe, Wallet
 import { investmentPlans } from '../mock';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import OfferSlider from '../components/OfferSlider';
 import { useTheme } from '../context/ThemeContext';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
@@ -50,6 +51,9 @@ const Home = () => {
       <Header />
       
       <div style={styles.container}>
+        {/* Offer Slider Banner - Sunday/Wednesday Special */}
+        <OfferSlider />
+        
         {/* Hero Section - BitNest Style */}
         <section style={styles.heroSection}>
           {/* Liquidity Display - Click to view Smart Contract */}

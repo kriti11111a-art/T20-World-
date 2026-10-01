@@ -97,25 +97,26 @@ const Header = () => {
         <Link to="/" style={styles.logoLink}>
           <div style={styles.logoWrapper}>
             <div style={{
-              width: '44px',
-              height: '44px',
+              width: '48px',
+              height: '48px',
               borderRadius: '50%',
               border: `2px solid ${colors.cyanHighlight || colors.accent}`,
-              boxShadow: `0 0 12px rgba(22, 224, 255, 0.7), 0 0 25px rgba(8, 123, 255, 0.5)`,
+              boxShadow: `0 0 15px rgba(22, 224, 255, 0.8), 0 0 30px rgba(8, 123, 255, 0.5)`,
               overflow: 'hidden',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              flexShrink: 0
+              flexShrink: 0,
+              background: '#000'
             }}>
               <img 
-                src="/tg-logo.png" 
+                src="/app-logo.png" 
                 alt="TradeGo" 
                 style={{width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', display: 'block'}}
               />
             </div>
             <h1 style={{...styles.logo, color: colors.text}}>
-              <span style={{color: colors.cyanHighlight || colors.accent}}>TRADE</span>GO
+              <span style={{color: colors.cyanHighlight || colors.accent}}>Trade</span>Go
             </h1>
           </div>
         </Link>

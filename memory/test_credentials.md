@@ -11,3 +11,4 @@
 - Admin has access to Admin Panel for user management, withdrawals, ROI distribution
 - Created: October 1, 2026
 - Brand renamed from "Trade Genius" to "TradeGo"
+- New candlestick logo added to Header, Login page, Profile page

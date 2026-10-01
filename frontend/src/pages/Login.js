@@ -93,21 +93,22 @@ const Login = () => {
                 width: '120px',
                 height: '120px',
                 borderRadius: '50%',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
+                border: '1px solid rgba(22, 224, 255, 0.3)',
                 animation: 'pulseRing 2s ease-out infinite 0.5s'
               }}></div>
-              {/* TG Coin Logo */}
+              {/* App Logo */}
               <img 
-                src="/tg-coin-logo.png" 
-                alt="TradeGo Coin" 
+                src="/app-logo.png" 
+                alt="TradeGo" 
                 style={{
                   width: '90px',
                   height: '90px',
                   objectFit: 'contain',
-                  filter: 'drop-shadow(0 0 20px rgba(16, 185, 129, 0.6))',
+                  filter: 'drop-shadow(0 0 20px rgba(22, 224, 255, 0.6))',
                   animation: 'spinOnce 1s ease-out forwards, floatCoin 3s ease-in-out infinite 1s',
                   position: 'relative',
-                  zIndex: 1
+                  zIndex: 1,
+                  borderRadius: '50%'
                 }}
               />
             </div>

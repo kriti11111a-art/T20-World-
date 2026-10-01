@@ -122,11 +122,11 @@ const Profile = () => {
               background: 'transparent',
               padding: 0,
               overflow: 'visible',
-              border: '2px solid #10B981',
-              boxShadow: '0 0 15px rgba(16, 185, 129, 0.7), 0 0 30px rgba(13, 148, 136, 0.5)'
+              border: `2px solid ${colors.cyanHighlight || '#16E0FF'}`,
+              boxShadow: '0 0 15px rgba(22, 224, 255, 0.7), 0 0 30px rgba(8, 123, 255, 0.5)'
             }}>
               <img 
-                src="/tg-logo.png" 
+                src="/app-logo.png" 
                 alt="Profile" 
                 style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%', display: 'block'}}
               />

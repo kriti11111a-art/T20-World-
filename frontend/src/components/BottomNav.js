@@ -10,7 +10,7 @@ const BottomNav = () => {
   const navItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/' },
     { id: 'market', icon: BarChart3, label: 'Market', path: '/market' },
-    { id: 'bot', icon: Bot, label: 'Bot', path: '/invest', isCenter: true },
+    { id: 'bot', icon: Bot, label: 'Bot', path: '/dashboard', isCenter: true },
     { id: 'assets', icon: Wallet, label: 'Assets', path: '/wallet' },
     { id: 'mine', icon: User, label: 'Mine', path: '/profile' },
   ];

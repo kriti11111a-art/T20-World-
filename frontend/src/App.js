@@ -67,7 +67,7 @@ const BottomNavWrapper = () => {
   }, [location.pathname]);
   
   // Pages where bottom nav should NOT show
-  const hideOnPages = ['/', '/login', '/register', '/maintenance', '/admin'];
+  const hideOnPages = ['/login', '/register', '/maintenance', '/admin'];
   const shouldHide = hideOnPages.includes(location.pathname);
   
   if (!isLoggedIn || shouldHide) {

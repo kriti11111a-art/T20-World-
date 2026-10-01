@@ -13,7 +13,7 @@ import uuid
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
 # Admin credentials
-ADMIN_EMAIL = "admin@tradegenius.com"
+ADMIN_EMAIL = "admin@tradego.com"
 ADMIN_PASSWORD = "Admin@123"
 
 

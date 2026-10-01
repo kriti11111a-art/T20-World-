@@ -157,7 +157,7 @@ const ProtectedRoute = ({ element }) => {
     if (userData && token) {
       try {
         const user = JSON.parse(userData);
-        const adminCheck = user.is_admin === true || user.email === 'admin@tradegenius.com';
+        const adminCheck = user.is_admin === true || user.email === 'admin@tradego.com';
         setIsAdmin(adminCheck);
       } catch (e) {
         setIsAdmin(false);

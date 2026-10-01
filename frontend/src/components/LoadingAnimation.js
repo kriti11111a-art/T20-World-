@@ -154,7 +154,7 @@ const LoadingAnimation = ({ duration = 1200, onComplete }) => {
           </div>
         </div>
         
-        <h1 className="logo-text">Trade Genius</h1>
+        <h1 className="logo-text">TradeGo</h1>
         <p className="tagline">Smart Trading, Smart Earning</p>
         
         <div className="progress-container">

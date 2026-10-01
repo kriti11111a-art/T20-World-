@@ -65,7 +65,7 @@ const Header = () => {
     { path: '/guide', label: 'Guide', icon: FileText },
     { path: '/tutorial', label: 'Tutorial', icon: PlayCircle },
     { path: '/profile', label: 'Profile', icon: UserIcon },
-    ...((user?.is_admin || user?.email === 'admin@tradegenius.com') ? [{ path: '/admin', label: 'Admin Panel', icon: Shield, isAdmin: true }] : []),
+    ...((user?.is_admin || user?.email === 'admin@tradego.com') ? [{ path: '/admin', label: 'Admin Panel', icon: Shield, isAdmin: true }] : []),
     { path: '#logout', label: 'Logout', icon: LogOut, isLogout: true },
   ];
 
@@ -110,12 +110,12 @@ const Header = () => {
             }}>
               <img 
                 src="/tg-logo.png" 
-                alt="Trade Genius" 
+                alt="TradeGo" 
                 style={{width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover', display: 'block'}}
               />
             </div>
             <h1 style={{...styles.logo, color: colors.text}}>
-              <span style={{color: colors.cyanHighlight || colors.accent}}>TRADE</span> GENIUS
+              <span style={{color: colors.cyanHighlight || colors.accent}}>TRADE</span>GO
             </h1>
           </div>
         </Link>
@@ -341,7 +341,7 @@ const Header = () => {
             </div>
 
             {/* Admin Panel Button - Only for admins */}
-            {isLoggedIn && (user?.is_admin || user?.email === 'admin@tradegenius.com') && (
+            {isLoggedIn && (user?.is_admin || user?.email === 'admin@tradego.com') && (
               <div style={{padding: '12px', borderTop: `1px solid ${colors.cardBorder}`, marginTop: '10px'}}>
                 <button 
                   onClick={() => handleNavClick('/admin')} 

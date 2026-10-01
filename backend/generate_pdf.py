@@ -1,5 +1,5 @@
 """
-Trade Genius Professional PDF Generator
+TradeGo Professional PDF Generator
 Similar style to BNB ROCKET presentation
 """
 
@@ -46,7 +46,7 @@ def create_title_page(c, width, height):
     # Main Title
     c.setFillColor(WHITE)
     c.setFont("Helvetica-Bold", 48)
-    c.drawCentredString(width/2, height - 250, "TRADE GENIUS")
+    c.drawCentredString(width/2, height - 250, "TRADEGO")
     
     # Subtitle
     c.setFillColor(GREEN_ACCENT)
@@ -69,7 +69,7 @@ def create_title_page(c, width, height):
     # Website
     c.setFillColor(GOLD_ACCENT)
     c.setFont("Helvetica-Bold", 18)
-    c.drawCentredString(width/2, 150, "www.tradegeniushub.in")
+    c.drawCentredString(width/2, 150, "www.tradego.io")
     
     # Footer
     c.setFillColor(GREY_TEXT)
@@ -95,10 +95,10 @@ def create_intro_page(c, width, height):
     c.setFont("Helvetica", 14)
     
     intro_text = [
-        "Trade Genius is a modern investment platform designed to help",
+        "TradeGo is a modern investment platform designed to help",
         "users grow their wealth through smart investment strategies.",
         "",
-        "Built with cutting-edge technology, Trade Genius offers:",
+        "Built with cutting-edge technology, TradeGo offers:",
         "",
         "• Daily ROI on your investments (5.5% daily for 20 days)",
         "• 10-Level referral income system",
@@ -404,7 +404,7 @@ def create_thank_you_page(c, width, height):
     # Website
     c.setFillColor(GOLD_ACCENT)
     c.setFont("Helvetica-Bold", 20)
-    c.drawCentredString(width/2, height/2 - 80, "www.tradegeniushub.in")
+    c.drawCentredString(width/2, height/2 - 80, "www.tradego.io")
     
     # Contact info
     c.setFillColor(GREY_TEXT)
@@ -413,10 +413,10 @@ def create_thank_you_page(c, width, height):
     
     c.setFillColor(GREEN_ACCENT)
     c.setFont("Helvetica-Bold", 16)
-    c.drawCentredString(width/2, 100, "JOIN TRADE GENIUS NOW")
+    c.drawCentredString(width/2, 100, "JOIN TRADEGO NOW")
 
 def generate_trade_genius_pdf(output_path):
-    """Generate the complete Trade Genius PDF"""
+    """Generate the complete TradeGo PDF"""
     width, height = A4
     c = canvas.Canvas(output_path, pagesize=A4)
     

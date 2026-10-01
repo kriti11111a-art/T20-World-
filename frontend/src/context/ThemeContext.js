@@ -10,7 +10,7 @@ export const useTheme = () => {
   return context;
 };
 
-// ===== TRADE GENIUS GLOBAL THEME CONFIGURATION =====
+// ===== TRADEGO GLOBAL THEME CONFIGURATION =====
 // Change colors here to update the ENTIRE application
 // Dark Navy + Electric Blue + Cyan - Premium Fintech Style
 
@@ -119,7 +119,7 @@ const LIGHT_THEME = {
 export const ThemeProvider = ({ children }) => {
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('theme');
-    return saved ? saved === 'dark' : true; // Default to dark (Trade Genius primary theme)
+    return saved ? saved === 'dark' : true; // Default to dark (TradeGo primary theme)
   });
 
   useEffect(() => {

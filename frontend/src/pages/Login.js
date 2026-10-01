@@ -99,7 +99,7 @@ const Login = () => {
               {/* TG Coin Logo */}
               <img 
                 src="/tg-coin-logo.png" 
-                alt="Trade Genius Coin" 
+                alt="TradeGo Coin" 
                 style={{
                   width: '90px',
                   height: '90px',
@@ -150,7 +150,7 @@ const Login = () => {
 
           {/* Welcome Text */}
           <h1 style={{...styles.title, color: colors.text}}>
-            Welcome to <span style={{color: colors.accent}}>Trade Genius</span>
+            Welcome to <span style={{color: colors.accent}}>TradeGo</span>
           </h1>
           <p style={{...styles.subtitle, color: colors.textSecondary}}>Connect to your account</p>
 
@@ -230,7 +230,7 @@ const Login = () => {
 
           {/* Info Tag */}
           <div style={{...styles.infoTag, background: `${colors.accent}08`, border: `1px solid ${colors.accent}15`}}>
-            <span style={{...styles.infoText, color: colors.textMuted}}>Powered by Trade Genius</span>
+            <span style={{...styles.infoText, color: colors.textMuted}}>Powered by TradeGo</span>
           </div>
         </div>
       </div>

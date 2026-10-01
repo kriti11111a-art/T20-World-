@@ -56,7 +56,7 @@ const Guide = () => {
             <FileText size={32} color={colors.accent} />
           </div>
           <h1 style={{...styles.title, color: colors.text}}>Platform Guide</h1>
-          <p style={{...styles.subtitle, color: colors.textSecondary}}>Download Trade Genius guide in your language</p>
+          <p style={{...styles.subtitle, color: colors.textSecondary}}>Download TradeGo guide in your language</p>
         </div>
 
         {/* Quick Features */}
@@ -199,7 +199,7 @@ const Guide = () => {
             border: `1px solid ${colors.accent}50`,
           }}>
             <span style={{...styles.infoLabel, color: colors.textSecondary}}>Support</span>
-            <span style={{...styles.infoValue, color: colors.accent, fontSize: '10px'}}>support@tradegeniushub.in</span>
+            <span style={{...styles.infoValue, color: colors.accent, fontSize: '10px'}}>support@tradego.io</span>
           </div>
           <div style={{
             ...styles.infoItem,
@@ -207,7 +207,7 @@ const Guide = () => {
             border: `1px solid ${colors.accent}50`,
           }}>
             <span style={{...styles.infoLabel, color: colors.textSecondary}}>Website</span>
-            <span style={{...styles.infoValue, color: colors.accent, fontSize: '10px'}}>tradegeniushub.in</span>
+            <span style={{...styles.infoValue, color: colors.accent, fontSize: '10px'}}>tradego.io</span>
           </div>
         </div>
       </div>

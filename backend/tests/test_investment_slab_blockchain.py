@@ -16,7 +16,7 @@ BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 # Test credentials
 TEST_USER_EMAIL = "testinvestor1@test.com"
 TEST_USER_PASSWORD = "Test@123"
-ADMIN_EMAIL = "admin@tradegenius.com"
+ADMIN_EMAIL = "admin@tradego.com"
 ADMIN_PASSWORD = "Admin@123"
 
 # Investment SLAB definitions

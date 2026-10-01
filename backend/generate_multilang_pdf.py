@@ -1,5 +1,5 @@
 """
-Trade Genius Complete Multi-Language PDF Generator
+TradeGo Complete Multi-Language PDF Generator
 Full 10-page PDFs in 6 languages: English, Hindi, Urdu, Spanish, French, Arabic
 """
 
@@ -25,12 +25,12 @@ RED_ALERT = colors.HexColor('#FF6B6B')
 # Complete Language Content
 LANG_CONTENT = {
     'en': {
-        'title': 'Trade Genius',
+        'title': 'TradeGo',
         'subtitle': 'Investment Bot Trading Platform',
         'tagline': 'Earn 5.5% to 7% Daily ROI for 20 Days',
         'network': 'BSC Network | BEP-20 USDT',
-        'website': 'tradegeniushub.in',
-        'footer': 'Trade Genius | tradegeniushub.in',
+        'website': 'tradego.io',
+        'footer': 'TradeGo | tradego.io',
         'features': [
             '> Daily Automated ROI at 12:00 AM IST',
             '> Transparent & Secure',
@@ -38,7 +38,7 @@ LANG_CONTENT = {
             '> Salary Rank System',
             '> Instant Withdrawals'
         ],
-        'page2_title': 'Trade Genius in One Look',
+        'page2_title': 'TradeGo in One Look',
         'page2_items': [
             ('1. Smart Investment System', '20-day earning cycles with daily ROI'),
             ('2. Daily Income at 12 AM IST', 'Automatic ROI credited to your account'),
@@ -48,7 +48,7 @@ LANG_CONTENT = {
             ('6. Withdraw or Recompound', 'Flexible options for your earnings'),
             ('7. Minimum $1 Withdrawal', 'Low minimum, 5% withdrawal fee'),
         ],
-        'page3_title': 'How Trade Genius Works',
+        'page3_title': 'How TradeGo Works',
         'page3_steps': [
             ('Step 1: Register', ['Create account with email', 'Use referral code (optional)', 'Connect BEP-20 wallet']),
             ('Step 2: Deposit USDT', ['Minimum $1 USDT deposit', 'Deposit via BSC network', '100% goes to investment']),
@@ -116,17 +116,17 @@ LANG_CONTENT = {
         ],
         'page9_cta': 'Start Investing Today!',
         'page10_thankyou': 'Thank You!',
-        'page10_line1': 'Join Trade Genius and start your',
+        'page10_line1': 'Join TradeGo and start your',
         'page10_line2': 'investment journey today!',
-        'support': 'Support: support@tradegeniushub.in',
+        'support': 'Support: support@tradego.io',
     },
     'hi': {
-        'title': 'Trade Genius',
+        'title': 'TradeGo',
         'subtitle': 'Investment Bot Trading Platform',
         'tagline': '20 दिनों के लिए 5.5% से 7% Daily ROI कमाएं',
         'network': 'BSC Network | BEP-20 USDT',
-        'website': 'tradegeniushub.in',
-        'footer': 'Trade Genius | tradegeniushub.in',
+        'website': 'tradego.io',
+        'footer': 'TradeGo | tradego.io',
         'features': [
             '> 12:00 AM IST पर Daily Automated ROI',
             '> पारदर्शी और सुरक्षित',
@@ -134,7 +134,7 @@ LANG_CONTENT = {
             '> Salary Rank System',
             '> तत्काल Withdrawals'
         ],
-        'page2_title': 'Trade Genius एक नज़र में',
+        'page2_title': 'TradeGo एक नज़र में',
         'page2_items': [
             ('1. Smart Investment System', '20-day earning cycles with daily ROI'),
             ('2. Daily Income 12 AM IST पर', 'Automatic ROI आपके account में'),
@@ -144,7 +144,7 @@ LANG_CONTENT = {
             ('6. Withdraw या Recompound', 'अपनी कमाई के लिए flexible options'),
             ('7. Minimum $1 Withdrawal', 'Low minimum, 5% fee'),
         ],
-        'page3_title': 'Trade Genius कैसे काम करता है',
+        'page3_title': 'TradeGo कैसे काम करता है',
         'page3_steps': [
             ('Step 1: Register करें', ['Email से account बनाएं', 'Referral code use करें (optional)', 'BEP-20 wallet connect करें']),
             ('Step 2: USDT Deposit करें', ['Minimum $1 USDT deposit', 'BSC network से deposit', '100% investment में जाता है']),
@@ -212,9 +212,9 @@ LANG_CONTENT = {
         ],
         'page9_cta': 'आज ही Invest करें!',
         'page10_thankyou': 'धन्यवाद!',
-        'page10_line1': 'Trade Genius join करें और अपना',
+        'page10_line1': 'TradeGo join करें और अपना',
         'page10_line2': 'investment journey शुरू करें!',
-        'support': 'Support: support@tradegeniushub.in',
+        'support': 'Support: support@tradego.io',
     },
 }
 

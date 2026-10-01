@@ -1,7 +1,7 @@
-# Trade Genius - Investment Platform PRD
+# TradeGo - Investment Platform PRD
 
 ## Original Problem Statement
-Build a full-stack investment platform "Trade Genius" using React, FastAPI, and MongoDB with:
+Build a full-stack investment platform "TradeGo" using React, FastAPI, and MongoDB with:
 - Investment system with tiered "slabs" for daily ROI
 - Welcome bonus for new users ($2 non-withdrawable)
 - Multi-level referral commission structure
@@ -57,7 +57,7 @@ Hindi (mixed with English)
 
 ## Test Credentials
 - **Test User**: testinvestor1@test.com / Test@123
-- **Admin**: admin@tradegenius.com / Admin@123
+- **Admin**: admin@tradego.com / Admin@123
 
 ## API Endpoints
 | Endpoint | Method | Description |
@@ -326,7 +326,7 @@ Hindi (mixed with English)
 ## Pending Issues
 
 ### P0 - Production Deployment Network Error
-- **Status:** User's production site (tradegeniushub.in) showing "Network Error" for 1+ month
+- **Status:** User's production site (tradego.io) showing "Network Error" for 1+ month
 - **Cause:** Deployment infrastructure issue on Emergent platform
 - **Action Required:** User needs to contact support@emergent.sh or Discord
 - **Preview Working:** https://crypto-slab-preview.preview.emergentagent.com works fine

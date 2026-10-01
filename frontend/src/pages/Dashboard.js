@@ -1782,7 +1782,7 @@ const Dashboard = () => {
         </div>
 
         {/* Admin Panel Button - For Admin Users (by flag or email) */}
-        {(user?.is_admin || user?.email === 'admin@tradegenius.com') && (
+        {(user?.is_admin || user?.email === 'admin@tradego.com') && (
           <a 
             href="/admin" 
             style={{

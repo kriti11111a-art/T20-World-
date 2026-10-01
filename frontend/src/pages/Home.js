@@ -93,7 +93,7 @@ const Home = () => {
 
           {/* Main Headline */}
           <h1 style={{...styles.heroTitle, color: colors.text}}>
-            Join <span style={{...styles.heroAccent, color: colors.cyanHighlight || colors.accent}}>TRADE GENIUS</span>
+            Join <span style={{...styles.heroAccent, color: colors.cyanHighlight || colors.accent}}>TRADEGO</span>
           </h1>
           <p style={{...styles.heroSubtitle, color: colors.electricBlue || colors.accentSecondary}}>
             For the Web 3.0 Economy
@@ -154,7 +154,7 @@ const Home = () => {
         {/* BitNest Zone Section */}
         <section style={styles.zoneSection}>
           <h2 style={{...styles.sectionTitle, color: colors.text}}>
-            <span style={{color: colors.accent}}>Trade Genius</span> Zone
+            <span style={{color: colors.accent}}>TradeGo</span> Zone
           </h2>
           
           <div style={styles.zoneGrid}>
@@ -325,7 +325,7 @@ const Home = () => {
             JOIN NOW
             <ArrowRight size={20} />
           </Link>
-          <p style={{...styles.ctaWebsite, color: colors.gold}}>www.tradegenius.io</p>
+          <p style={{...styles.ctaWebsite, color: colors.gold}}>www.tradego.io</p>
         </section>
       </div>
 

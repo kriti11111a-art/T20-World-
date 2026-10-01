@@ -274,7 +274,7 @@ const Maintenance = () => {
           color: colors.accent,
           letterSpacing: '3px',
         }}>
-          TRADE GENIUS
+          TRADEGO
         </div>
       </div>
       

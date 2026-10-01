@@ -11,7 +11,7 @@ BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
 # Test credentials
 TEST_USER = {"email": "testinvest@bindas.com", "password": "Test1234!"}
-ADMIN_USER = {"email": "admin@tradegenius.com", "password": "Admin@123"}
+ADMIN_USER = {"email": "admin@tradego.com", "password": "Admin@123"}
 
 
 class TestAuthentication:
@@ -33,7 +33,7 @@ class TestAuthentication:
         assert response.status_code == 200, f"Admin login failed: {response.text}"
         data = response.json()
         assert "access_token" in data
-        assert data["user"]["is_admin"] == True or data["user"]["email"] == "admin@tradegenius.com"
+        assert data["user"]["is_admin"] == True or data["user"]["email"] == "admin@tradego.com"
         print(f"✅ Admin user login successful: {ADMIN_USER['email']}")
     
     def test_session_persistence_with_me_endpoint(self):

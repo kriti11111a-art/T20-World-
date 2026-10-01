@@ -43,7 +43,7 @@ const Footer = () => {
             <div style={styles.linkList}>
               <a href="#" style={{...styles.link, color: colors.textSecondary}}>
                 <Mail size={16} color={colors.accentSecondary} />
-                support@tradegeniushub.in
+                support@tradego.io
               </a>
               <a href="#" style={{...styles.link, color: colors.textSecondary}}>
                 <Send size={16} color={colors.accentSecondary} />
@@ -83,7 +83,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div style={{...styles.bottomBar, borderTop: `1px solid ${colors.cardBorder}`}}>
           <p style={{...styles.copyright, color: colors.textMuted}}>
-            © 2025 Trade Genius - All Rights Reserved
+            © 2025 TradeGo - All Rights Reserved
           </p>
           <div style={styles.bottomLinks}>
             <a href="#" style={{...styles.bottomLink, color: colors.textMuted}}>Privacy Policy</a>

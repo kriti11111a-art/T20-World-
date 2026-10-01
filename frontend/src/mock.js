@@ -1,4 +1,4 @@
-// Mock data for Trade Genius platform
+// Mock data for TradeGo platform
 
 export const mockUser = {
   id: 'user_001',

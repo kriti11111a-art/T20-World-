@@ -170,7 +170,7 @@ async def lifespan(app: FastAPI):
     logger.info("Scheduler and database connection closed")
 
 # Create the main app with lifespan
-app = FastAPI(title="Trade Genius API", lifespan=lifespan)
+app = FastAPI(title="TradeGo API", lifespan=lifespan)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
@@ -940,15 +940,15 @@ async def login(user_data: UserLogin):
     if user.get("is_active") == False:
         raise HTTPException(status_code=403, detail="Your account has been blocked. Please contact support.")
     
-    # Auto-fix: Ensure admin@tradegenius.com always has admin privileges
-    if user_data.email == "admin@tradegenius.com" and not user.get("is_admin"):
+    # Auto-fix: Ensure admin@tradego.com always has admin privileges
+    if user_data.email == "admin@tradego.com" and not user.get("is_admin"):
         await db.users.update_one(
-            {"email": "admin@tradegenius.com"},
+            {"email": "admin@tradego.com"},
             {"$set": {"is_admin": True, "role": "admin"}}
         )
         user["is_admin"] = True
         user["role"] = "admin"
-        logger.info("Auto-fixed admin privileges for admin@tradegenius.com")
+        logger.info("Auto-fixed admin privileges for admin@tradego.com")
     
     access_token = create_access_token({"sub": user["id"]})
     
@@ -962,15 +962,15 @@ async def login(user_data: UserLogin):
 
 @api_router.get("/auth/me", response_model=UserResponse)
 async def get_me(current_user: dict = Depends(get_current_user)):
-    # Auto-fix: Ensure admin@tradegenius.com always has admin privileges
-    if current_user.get("email") == "admin@tradegenius.com" and not current_user.get("is_admin"):
+    # Auto-fix: Ensure admin@tradego.com always has admin privileges
+    if current_user.get("email") == "admin@tradego.com" and not current_user.get("is_admin"):
         await db.users.update_one(
-            {"email": "admin@tradegenius.com"},
+            {"email": "admin@tradego.com"},
             {"$set": {"is_admin": True, "role": "admin"}}
         )
         current_user["is_admin"] = True
         current_user["role"] = "admin"
-        logger.info("Auto-fixed admin privileges for admin@tradegenius.com on /me endpoint")
+        logger.info("Auto-fixed admin privileges for admin@tradego.com on /me endpoint")
     return await user_to_response(current_user)
 
 # ==================== USER ROUTES ====================
@@ -3300,7 +3300,7 @@ async def mark_all_read(current_user: dict = Depends(get_current_user)):
 
 @api_router.get("/")
 async def root():
-    return {"message": "Trade Genius API", "status": "running"}
+    return {"message": "TradeGo API", "status": "running"}
 
 @api_router.get("/health")
 async def health_check():
@@ -3590,7 +3590,7 @@ if static_dir.exists():
 # PDF Download endpoint - default English
 @app.get("/api/download/guide")
 async def download_guide():
-    """Download Trade Genius Guide PDF (English)"""
+    """Download TradeGo Guide PDF (English)"""
     pdf_path = ROOT_DIR / "static" / "Trade_Genius_Guide.pdf"
     if not pdf_path.exists():
         raise HTTPException(status_code=404, detail="PDF not found")
@@ -3603,7 +3603,7 @@ async def download_guide():
 # PDF Download endpoint - by language
 @app.get("/api/download/guide/{lang}")
 async def download_guide_by_language(lang: str):
-    """Download Trade Genius Guide PDF in specified language"""
+    """Download TradeGo Guide PDF in specified language"""
     # Map language codes to PDF files
     lang_files = {
         "en": "Trade_Genius_Guide_EN.pdf",

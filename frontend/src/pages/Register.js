@@ -43,7 +43,7 @@ const Register = () => {
     );
     
     if (result.success) {
-      toast.success('🎉 Account created successfully! Welcome to Trade Genius!', {
+      toast.success('🎉 Account created successfully! Welcome to TradeGo!', {
         duration: 5000,
       });
       // Use navigate instead of window.location to preserve state
@@ -91,7 +91,7 @@ const Register = () => {
 
           {/* Header */}
           <h1 style={styles.title}>
-            Join <span style={styles.titleAccent}>Trade Genius</span>
+            Join <span style={styles.titleAccent}>TradeGo</span>
           </h1>
           <p style={styles.subtitle}>Create account and start earning</p>
 

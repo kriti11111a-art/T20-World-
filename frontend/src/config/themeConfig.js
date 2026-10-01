@@ -1,5 +1,5 @@
 /**
- * TRADE GENIUS GLOBAL THEME CONFIGURATION
+ * TRADEGO GLOBAL THEME CONFIGURATION
  * ========================================
  * 
  * Master theme file for the entire application.
@@ -9,7 +9,7 @@
  * Style: Premium, Classic, Modern Fintech / Trading
  */
 
-// ===== TRADE GENIUS THEME COLORS =====
+// ===== TRADEGO THEME COLORS =====
 export const THEME = {
   // Primary Backgrounds
   bgMain: '#031A33',           // Main Background - Deep Navy

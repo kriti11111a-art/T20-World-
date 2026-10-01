@@ -59,7 +59,7 @@ const Tutorial = () => {
       <div style={styles.container}>
         <div style={styles.header}>
           <h1 style={{...styles.title, color: colors.text}}>Tutorial</h1>
-          <p style={{...styles.subtitle, color: colors.textSecondary}}>Learn how to use Trade Genius platform</p>
+          <p style={{...styles.subtitle, color: colors.textSecondary}}>Learn how to use TradeGo platform</p>
         </div>
 
         {/* Progress */}

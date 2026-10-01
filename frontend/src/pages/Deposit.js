@@ -1130,7 +1130,7 @@ const Deposit = () => {
               margin: '0 0 8px 0',
               textShadow: '0 0 20px rgba(0, 255, 136, 0.5)'
             }}>
-              {successData.isFirstDeposit ? '🎉 Welcome to Trade Genius!' : 'Investment Successful!'}
+              {successData.isFirstDeposit ? '🎉 Welcome to TradeGo!' : 'Investment Successful!'}
             </h2>
 
             <p style={{

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Trade Genius - COLORFUL Luxury Roadmap PDF
+TradeGo - COLORFUL Luxury Roadmap PDF
 With proper image embedding
 """
 
@@ -56,7 +56,7 @@ class ColorfulPDF:
             y = self.h - 60
         self.c.setFillColor(GOLD)
         self.c.setFont("Helvetica-Bold", 22)
-        self.c.drawCentredString(self.w/2, y, "TRADE GENIUS")
+        self.c.drawCentredString(self.w/2, y, "TRADEGO")
         self.c.setFillColor(CYAN)
         self.c.setFont("Helvetica", 10)
         self.c.drawCentredString(self.w/2, y - 14, "Smart Trading, Smart Earning")
@@ -86,7 +86,7 @@ class ColorfulPDF:
         # Title
         self.c.setFillColor(GOLD)
         self.c.setFont("Helvetica-Bold", 44)
-        self.c.drawCentredString(self.w/2, self.h/2 + 70, "TRADE GENIUS")
+        self.c.drawCentredString(self.w/2, self.h/2 + 70, "TRADEGO")
         
         self.c.setFillColor(WHITE)
         self.c.setFont("Helvetica-Bold", 22)
@@ -277,7 +277,7 @@ class ColorfulPDF:
             ("Q1-Q2 2027", [
                 "DeFi savings and lending programs",
                 "Expansion into American & European markets",
-                "Trade Genius Academy launch (education)",
+                "TradeGo Academy launch (education)",
                 "Integration with major banking systems"
             ]),
             ("Q3-Q4 2027", [
@@ -294,7 +294,7 @@ class ColorfulPDF:
             ("Q1-Q2 2028", [
                 "Tier-1 Exchange listing applications",
                 "Binance, Gate.io, KuCoin, OKX integration",
-                "Trade Genius governance token launch",
+                "TradeGo governance token launch",
                 "Staking rewards program introduction"
             ]),
             ("Q3-Q4 2028", [
@@ -345,8 +345,8 @@ class ColorfulPDF:
             "Expansion to 200+ countries worldwide",
             "Target: 10 million active investors",
             "Full integration with global banking",
-            "Trade Genius Debit Card launch",
-            "Trade Genius Foundation establishment",
+            "TradeGo Debit Card launch",
+            "TradeGo Foundation establishment",
             "Platform stability commitment",
             "Continuous ecosystem upgrades"
         ]
@@ -371,7 +371,7 @@ class ColorfulPDF:
         
         self.c.setFillColor(GOLD)
         self.c.setFont("Helvetica-Bold", 46)
-        self.c.drawCentredString(self.w/2, self.h/2 + 90, "TRADE GENIUS")
+        self.c.drawCentredString(self.w/2, self.h/2 + 90, "TRADEGO")
         
         self.c.setFillColor(CYAN)
         self.c.setFont("Helvetica", 16)
@@ -391,7 +391,7 @@ class ColorfulPDF:
         
         self.c.setFillColor(WHITE)
         self.c.setFont("Helvetica", 9)
-        self.c.drawCentredString(self.w/2, 45, "© 2025 Trade Genius. All Rights Reserved.")
+        self.c.drawCentredString(self.w/2, 45, "© 2025 TradeGo. All Rights Reserved.")
         
         self.c.showPage()
         

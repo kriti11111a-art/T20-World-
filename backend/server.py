@@ -20,6 +20,8 @@ from contextlib import asynccontextmanager
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 import pytz
+from web3 import Web3
+from eth_account import Account
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -39,6 +41,103 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Security
 security = HTTPBearer()
+
+# ==================== BSC AUTO WITHDRAWAL CONFIG ====================
+BSC_RPC_URL = "https://bsc-dataseed1.binance.org/"
+USDT_CONTRACT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"  # BSC USDT (BEP20)
+PLATFORM_WITHDRAWAL_PRIVATE_KEY = os.environ.get('WITHDRAWAL_PRIVATE_KEY', '')  # Will be set in .env when live
+
+# USDT BEP20 ABI (simplified for transfer)
+USDT_ABI = [
+    {
+        "constant": False,
+        "inputs": [
+            {"name": "_to", "type": "address"},
+            {"name": "_value", "type": "uint256"}
+        ],
+        "name": "transfer",
+        "outputs": [{"name": "", "type": "bool"}],
+        "type": "function"
+    },
+    {
+        "constant": True,
+        "inputs": [{"name": "_owner", "type": "address"}],
+        "name": "balanceOf",
+        "outputs": [{"name": "balance", "type": "uint256"}],
+        "type": "function"
+    },
+    {
+        "constant": True,
+        "inputs": [],
+        "name": "decimals",
+        "outputs": [{"name": "", "type": "uint8"}],
+        "type": "function"
+    }
+]
+
+# Initialize Web3
+w3 = Web3(Web3.HTTPProvider(BSC_RPC_URL))
+
+async def send_usdt_bep20(to_address: str, amount: float) -> dict:
+    """
+    Send USDT on BSC network automatically
+    Returns: {"success": bool, "tx_hash": str, "error": str}
+    """
+    try:
+        if not PLATFORM_WITHDRAWAL_PRIVATE_KEY:
+            return {"success": False, "tx_hash": None, "error": "Withdrawal private key not configured"}
+        
+        # Get account from private key
+        account = Account.from_key(PLATFORM_WITHDRAWAL_PRIVATE_KEY)
+        platform_address = account.address
+        
+        # Initialize USDT contract
+        usdt_contract = w3.eth.contract(
+            address=Web3.to_checksum_address(USDT_CONTRACT_ADDRESS),
+            abi=USDT_ABI
+        )
+        
+        # Convert amount to wei (USDT has 18 decimals on BSC)
+        amount_wei = int(amount * 10**18)
+        
+        # Check platform USDT balance
+        platform_balance = usdt_contract.functions.balanceOf(platform_address).call()
+        if platform_balance < amount_wei:
+            return {"success": False, "tx_hash": None, "error": f"Insufficient platform USDT balance. Need: {amount}, Have: {platform_balance / 10**18}"}
+        
+        # Build transaction
+        nonce = w3.eth.get_transaction_count(platform_address)
+        gas_price = w3.eth.gas_price
+        
+        tx = usdt_contract.functions.transfer(
+            Web3.to_checksum_address(to_address),
+            amount_wei
+        ).build_transaction({
+            'from': platform_address,
+            'gas': 100000,
+            'gasPrice': gas_price,
+            'nonce': nonce,
+            'chainId': 56  # BSC Mainnet
+        })
+        
+        # Sign and send transaction
+        signed_tx = w3.eth.account.sign_transaction(tx, PLATFORM_WITHDRAWAL_PRIVATE_KEY)
+        tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
+        
+        # Wait for confirmation (with timeout)
+        try:
+            receipt = w3.eth.wait_for_transaction_receipt(tx_hash, timeout=60)
+            if receipt['status'] == 1:
+                return {"success": True, "tx_hash": tx_hash.hex(), "error": None}
+            else:
+                return {"success": False, "tx_hash": tx_hash.hex(), "error": "Transaction failed on blockchain"}
+        except Exception as e:
+            # Transaction sent but couldn't confirm - return hash anyway
+            return {"success": True, "tx_hash": tx_hash.hex(), "error": f"Sent but confirmation pending: {str(e)}"}
+            
+    except Exception as e:
+        logger.error(f"USDT transfer error: {str(e)}")
+        return {"success": False, "tx_hash": None, "error": str(e)}
 
 # Configure logging
 logging.basicConfig(
@@ -245,6 +344,9 @@ class WithdrawalResponse(BaseModel):
     net_amount: float
     wallet_address: str
     status: str
+    tx_hash: Optional[str] = None
+    auto_withdrawal: Optional[bool] = False
+    error: Optional[str] = None
     created_at: str
 
 class DepositCreate(BaseModel):
@@ -1597,16 +1699,37 @@ async def create_withdrawal(withdrawal: WithdrawalCreate, current_user: dict = D
             detail="Withdrawal only allowed to your locked wallet address"
         )
     
-    fee = withdrawal.amount * 0.05  # 5% fee
-    net_amount = withdrawal.amount - fee
+    # 0% fee - Full amount goes to user
+    fee = 0
+    net_amount = withdrawal.amount
     
-    # Deduct from balance
+    # Deduct from balance first
     await db.users.update_one(
         {"id": current_user["id"]},
         {"$inc": {"balance": -withdrawal.amount}}
     )
     
     withdrawal_id = str(uuid.uuid4())
+    
+    # ===== AUTO WITHDRAWAL - Send USDT on BSC =====
+    tx_result = await send_usdt_bep20(withdrawal.wallet_address, net_amount)
+    
+    if tx_result["success"]:
+        # Auto-approved and sent
+        withdrawal_status = "completed"
+        tx_hash = tx_result["tx_hash"]
+        logger.info(f"AUTO WITHDRAWAL SUCCESS: {net_amount} USDT sent to {withdrawal.wallet_address}, TX: {tx_hash}")
+    else:
+        # Failed - mark as pending for manual review, refund balance
+        withdrawal_status = "pending"
+        tx_hash = None
+        # Refund the balance since auto-send failed
+        await db.users.update_one(
+            {"id": current_user["id"]},
+            {"$inc": {"balance": withdrawal.amount}}
+        )
+        logger.error(f"AUTO WITHDRAWAL FAILED: {tx_result['error']} - Amount: {net_amount} USDT to {withdrawal.wallet_address}")
+    
     withdrawal_doc = {
         "id": withdrawal_id,
         "user_id": current_user["id"],
@@ -1614,12 +1737,21 @@ async def create_withdrawal(withdrawal: WithdrawalCreate, current_user: dict = D
         "fee": fee,
         "net_amount": net_amount,
         "wallet_address": withdrawal.wallet_address,
-        "status": "pending",
+        "status": withdrawal_status,
+        "tx_hash": tx_hash,
+        "auto_withdrawal": True,
+        "error": tx_result.get("error") if not tx_result["success"] else None,
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     
     await db.withdrawals.insert_one(withdrawal_doc)
     withdrawal_doc.pop("_id", None)
+    
+    if not tx_result["success"]:
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Auto withdrawal failed: {tx_result['error']}. Your balance has been refunded. Please try again or contact support."
+        )
     
     return WithdrawalResponse(**withdrawal_doc)
 

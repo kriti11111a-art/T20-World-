@@ -109,18 +109,17 @@ const Login = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: '#000'
+                background: '#0a1628'
               }}>
                 <img 
                   src="/app-logo.png" 
                   alt="TradeGo" 
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
+                    width: '80%',
+                    height: '80%',
+                    objectFit: 'contain',
                     objectPosition: 'center center',
-                    display: 'block',
-                    borderRadius: '50%'
+                    display: 'block'
                   }}
                 />
               </div>

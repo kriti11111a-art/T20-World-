@@ -1408,14 +1408,16 @@ async def create_deposit(deposit: DepositCreate, current_user: dict = Depends(ge
     logger.info(f"Creating deposit for user {current_user['id']}: ${deposit.amount}, first_investment: {first_investment_done}")
     
     # ===== CHECK FOR ACTIVE OFFER BONUS =====
+    # 10% bonus only for deposits of $50 or more during LIVE offer
     offer_bonus_amount = 0.0
     offer_info = await check_any_offer_active()
     
-    if offer_info["is_active"] and first_investment_done:
-        # Only apply 10% bonus for subsequent deposits during active offer
-        # (First deposit already has welcome bonus mechanism)
+    if offer_info["is_active"] and deposit.amount >= 50:
+        # Only apply 10% bonus for deposits $50+ during active offer
         offer_bonus_amount = deposit.amount * (offer_info["bonus_percent"] / 100)
         logger.info(f"OFFER BONUS: {offer_info['offer_type']} special active! Adding ${offer_bonus_amount} ({offer_info['bonus_percent']}% of ${deposit.amount}) to stake")
+    elif offer_info["is_active"] and deposit.amount < 50:
+        logger.info(f"OFFER BONUS: Offer is LIVE but deposit ${deposit.amount} < $50, no bonus applied")
     
     # Auto-approve deposit since Web3 transaction is already successful
     deposit_doc = {

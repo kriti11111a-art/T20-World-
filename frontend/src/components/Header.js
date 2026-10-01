@@ -56,15 +56,12 @@ const Header = () => {
   };
 
   const loggedInNavLinks = [
-    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/wallet', label: 'Wallet', icon: Wallet },
     { path: '/deposit', label: 'Trading Slab', icon: TrendingUp },
     { path: '/my-investments', label: 'My Investment', icon: DollarSign },
     { path: '/income-history', label: 'Income History', icon: ArrowLeftRight },
     { path: '/referral', label: 'Team & Refer', icon: UserPlus },
     { path: '/guide', label: 'Guide', icon: FileText },
     { path: '/tutorial', label: 'Tutorial', icon: PlayCircle },
-    { path: '/profile', label: 'Profile', icon: UserIcon },
     ...((user?.is_admin || user?.email === 'admin@tradego.com') ? [{ path: '/admin', label: 'Admin Panel', icon: Shield, isAdmin: true }] : []),
     { path: '#logout', label: 'Logout', icon: LogOut, isLogout: true },
   ];
@@ -79,9 +76,8 @@ const Header = () => {
 
   const desktopNavLinks = isLoggedIn
     ? [
-        { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { path: '/deposit', label: 'Investments', icon: TrendingUp },
-        { path: '/wallet', label: 'Wallet', icon: Wallet },
+        { path: '/my-investments', label: 'My Assets', icon: DollarSign },
         { path: '/referral', label: 'Referrals', icon: Users },
       ]
     : loggedOutNavLinks;
@@ -242,18 +238,28 @@ const Header = () => {
             {/* Sidebar Header */}
             <div style={{...styles.sidebarHeader, borderBottom: `1px solid ${colors.cardBorder}`}}>
               <div style={styles.sidebarLogoWrapper}>
-                <div style={{...styles.sidebarLogoIcon, background: `${colors.accent}15`}}>
-                  <Zap size={20} color={colors.accent} />
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  border: '2px solid rgba(22, 224, 255, 0.6)',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: '#0a1628',
+                }}>
+                  <img src="/app-logo.png" alt="TradeGo" style={{width: '80%', height: '80%', objectFit: 'contain'}} />
                 </div>
                 <h2 style={{...styles.sidebarTitle, color: colors.text}}>
-                  <span style={{color: colors.accent}}>TRADE</span> GENIUS
+                  <span style={{color: colors.cyanHighlight || colors.accent}}>Trade</span>Go
                 </h2>
               </div>
               <button
                 style={styles.closeBtn}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <X size={24} color={colors.accent} />
+                <X size={24} color={colors.cyanHighlight || colors.accent} />
               </button>
             </div>
 

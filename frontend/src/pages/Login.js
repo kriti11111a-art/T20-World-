@@ -96,21 +96,29 @@ const Login = () => {
                 border: '1px solid rgba(22, 224, 255, 0.3)',
                 animation: 'pulseRing 2s ease-out infinite 0.5s'
               }}></div>
-              {/* App Logo */}
-              <img 
-                src="/app-logo.png" 
-                alt="TradeGo" 
-                style={{
-                  width: '90px',
-                  height: '90px',
-                  objectFit: 'contain',
-                  filter: 'drop-shadow(0 0 20px rgba(22, 224, 255, 0.6))',
-                  animation: 'spinOnce 1s ease-out forwards, floatCoin 3s ease-in-out infinite 1s',
-                  position: 'relative',
-                  zIndex: 1,
-                  borderRadius: '50%'
-                }}
-              />
+              {/* App Logo - Properly Rounded Container */}
+              <div style={{
+                width: '90px',
+                height: '90px',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                position: 'relative',
+                zIndex: 1,
+                boxShadow: '0 0 25px rgba(22, 224, 255, 0.6), 0 0 50px rgba(8, 123, 255, 0.3)',
+                border: '2px solid rgba(22, 224, 255, 0.5)',
+                animation: 'floatCoin 3s ease-in-out infinite'
+              }}>
+                <img 
+                  src="/app-logo.png" 
+                  alt="TradeGo" 
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block'
+                  }}
+                />
+              </div>
             </div>
           </div>
           

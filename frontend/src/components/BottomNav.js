@@ -11,7 +11,7 @@ const BottomNav = () => {
     { id: 'home', icon: Home, label: 'Home', path: '/dashboard' },
     { id: 'market', icon: BarChart3, label: 'Market', path: '/market' },
     { id: 'bot', icon: Bot, label: 'Bot', path: '/invest', isCenter: true },
-    { id: 'assets', icon: Wallet, label: 'Assets', path: '/my-investments' },
+    { id: 'assets', icon: Wallet, label: 'Assets', path: '/wallet' },
     { id: 'mine', icon: User, label: 'Mine', path: '/profile' },
   ];
 

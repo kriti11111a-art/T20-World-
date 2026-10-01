@@ -1,22 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, TrendingUp, Users, Shield, Zap, ChevronRight, Globe, Wallet, Gift, PlayCircle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowRight, TrendingUp, Users, Shield, Zap, ChevronRight, Globe, Wallet, Gift, PlayCircle, Clock, DollarSign } from 'lucide-react';
 import { investmentPlans } from '../mock';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import OfferSlider from '../components/OfferSlider';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
 const Home = () => {
   const { isDark, colors } = useTheme();
+  const { user, token } = useAuth();
+  const navigate = useNavigate();
+  const [isOfferLive, setIsOfferLive] = useState(false);
   
   // Real contract liquidity from BSC
   const [liquidityData, setLiquidityData] = useState({
     balance_usd: 10500000,
     explorer_url: 'https://bsctrace.com/address/0x73feaa1eE314F8c655E354234017bE2193C9E24E'
   });
+  
+  // Check offer status
+  const checkOfferStatus = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/offers/status`);
+      if (res.ok) {
+        const data = await res.json();
+        const hasLiveOffer = data.offers?.some(offer => offer.status === 'live');
+        setIsOfferLive(hasLiveOffer);
+      }
+    } catch (error) {
+      console.error('Error checking offer status:', error);
+    }
+  };
+
+  useEffect(() => {
+    checkOfferStatus();
+    const interval = setInterval(checkOfferStatus, 30000);
+    return () => clearInterval(interval);
+  }, []);
   
   // Fetch real liquidity from contract
   const fetchLiquidity = async () => {
@@ -181,48 +205,205 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Investment Plans Section - BitNest Cards */}
+        {/* Investment Plans Section - Premium Trading Slab Cards */}
         <section style={styles.packagesSection}>
           <h2 style={{...styles.sectionTitle, color: colors.text}}>Investment <span style={{color: colors.accent}}>Plans</span></h2>
           
-          <div style={styles.plansGrid}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {investmentPlans.map((plan, index) => (
-              <div key={plan.id} style={{...styles.planCard, background: colors.cardBg, border: `1px solid ${colors.cardBorder}`}}>
-                {/* Triangle Pattern Top */}
-                <div style={{...styles.trianglePattern, background: colors.gradient}}></div>
+              <div 
+                key={plan.id} 
+                style={{
+                  background: isDark ? 'linear-gradient(180deg, #0a0a0a 0%, #121212 100%)' : colors.cardBg,
+                  border: `2px solid ${colors.accent}`,
+                  borderRadius: '24px',
+                  padding: '28px 24px',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  boxShadow: `0 0 20px ${colors.accent}20`,
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                {/* BNB Background Watermark - Cinematic */}
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  right: '20px',
+                  transform: 'translateY(-50%)',
+                  width: '150px',
+                  height: '150px',
+                  pointerEvents: 'none',
+                  zIndex: 0,
+                }}>
+                  <svg viewBox="0 0 126.61 126.61" style={{width: '100%', height: '100%'}}>
+                    <path fill="#F3BA2F" opacity="0.15" d="M38.73 53.2l24.59-24.58 24.6 24.6 14.3-14.31L63.32 0l-38.9 38.9zM0 63.31l14.3-14.31 14.31 14.31-14.31 14.3zM38.73 73.41l24.59 24.59 24.6-24.6 14.31 14.29-38.9 38.91-38.91-38.88zM97.99 63.31l14.3-14.31 14.32 14.31-14.31 14.3z"/>
+                    <path fill="#F3BA2F" opacity="0.15" d="M77.83 63.3l-14.51-14.52-10.73 10.73-1.24 1.23-2.54 2.54 14.51 14.5 14.51-14.47z"/>
+                  </svg>
+                </div>
 
-                {/* Plan Header */}
-                <div style={styles.planHeader}>
-                  <span style={{...styles.planTier, color: colors.textMuted}}>TRADING SLAB {index + 1}</span>
-                  <div style={styles.planRange}>
-                    <span style={{...styles.planMin, color: colors.accent}}>${plan.minInvestment}</span>
-                    <span style={{...styles.planMax, color: colors.accent}}> - ${plan.maxInvestment.toLocaleString()}</span>
+                {/* Card Header with USDT Icon */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '16px',
+                  marginBottom: '24px',
+                  position: 'relative',
+                  zIndex: 1,
+                }}>
+                  <div style={{
+                    width: '48px',
+                    height: '48px',
+                    background: 'rgba(38, 161, 123, 0.2)',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid rgba(38, 161, 123, 0.4)',
+                    boxShadow: '0 0 15px rgba(38, 161, 123, 0.3)',
+                  }}>
+                    <svg viewBox="0 0 32 32" style={{width: '28px', height: '28px'}}>
+                      <circle cx="16" cy="16" r="16" fill="#26A17B"/>
+                      <path fill="#fff" d="M17.922 17.383v-.002c-.11.008-.677.042-1.942.042-1.01 0-1.721-.03-1.971-.042v.003c-3.888-.171-6.79-.848-6.79-1.658 0-.809 2.902-1.486 6.79-1.66v2.644c.254.018.982.061 1.988.061 1.207 0 1.812-.05 1.925-.06v-2.643c3.88.173 6.775.85 6.775 1.658 0 .81-2.895 1.485-6.775 1.657m0-3.59v-2.366h5.414V7.819H8.595v3.608h5.414v2.365c-4.4.202-7.709 1.074-7.709 2.118 0 1.044 3.309 1.915 7.709 2.118v7.582h3.913v-7.584c4.393-.202 7.694-1.073 7.694-2.116 0-1.043-3.301-1.914-7.694-2.117"/>
+                    </svg>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <span style={{
+                      display: 'block',
+                      fontSize: '12px',
+                      color: 'rgba(255, 255, 255, 0.4)',
+                      letterSpacing: '3px',
+                      marginBottom: '6px',
+                      fontWeight: 500,
+                    }}>TRADING SLAB {['ONE', 'TWO', 'THREE', 'FOUR'][index]}</span>
+                    <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                      <span style={{
+                        fontSize: '36px',
+                        fontWeight: 700,
+                        color: '#0ECB81',
+                      }}>${plan.minInvestment}</span>
+                      <span style={{
+                        fontSize: '18px',
+                        color: '#0ECB81',
+                        marginLeft: '6px',
+                        opacity: 0.8,
+                      }}> - ${plan.maxInvestment.toLocaleString()}</span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Plan Details */}
-                <div style={styles.planDetails}>
-                  <div style={styles.planRow}>
-                    <span style={{...styles.planLabel, color: colors.textSecondary}}>Daily ROI</span>
-                    <span style={{...styles.planValueHighlight, color: colors.accentSecondary}}>{plan.dailyROI}%</span>
+                {/* Package Details */}
+                <div style={{ marginBottom: '24px', position: 'relative', zIndex: 1 }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '14px 0',
+                  }}>
+                    <span style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.6)' }}>Daily ROI</span>
+                    <span style={{
+                      fontSize: '20px',
+                      fontWeight: 700,
+                      color: isDark ? '#FFD700' : '#E65100',
+                      textShadow: isDark ? '0 0 10px rgba(255, 215, 0, 0.4)' : 'none',
+                    }}>{plan.dailyROI}%</span>
                   </div>
-                  <div style={{...styles.planDivider, background: colors.cardBorder}}></div>
-                  <div style={styles.planRow}>
-                    <span style={{...styles.planLabel, color: colors.textSecondary}}>Duration</span>
-                    <span style={{...styles.planValue, color: colors.text}}>{plan.duration} days</span>
+                  <div style={{ height: '1px', background: isDark ? 'rgba(255, 215, 0, 0.15)' : `${colors.accent}30` }}></div>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '14px 0',
+                  }}>
+                    <span style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.6)' }}>Duration</span>
+                    <span style={{ fontSize: '17px', fontWeight: 600, color: '#FFFFFF' }}>{plan.duration} days</span>
                   </div>
-                  <div style={{...styles.planDivider, background: colors.cardBorder}}></div>
-                  <div style={styles.planRow}>
-                    <span style={{...styles.planLabel, color: colors.textSecondary}}>Total ROI</span>
-                    <span style={{...styles.planValueHighlight, color: colors.accentSecondary}}>{plan.totalReturn}%</span>
+                  <div style={{ height: '1px', background: isDark ? 'rgba(255, 215, 0, 0.15)' : `${colors.accent}30` }}></div>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '14px 0',
+                  }}>
+                    <span style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.6)' }}>Total ROI</span>
+                    <span style={{
+                      fontSize: '20px',
+                      fontWeight: 700,
+                      color: isDark ? '#FFD700' : '#E65100',
+                      textShadow: isDark ? '0 0 10px rgba(255, 215, 0, 0.4)' : 'none',
+                    }}>{plan.totalReturn}.0%</span>
                   </div>
                 </div>
 
-                {/* Invest Button */}
-                <Link to="/register" style={{...styles.investBtn, color: colors.accent, borderColor: `${colors.accent}80`}} data-testid={`plan-${plan.id}-btn`}>
+                {/* Select Plan Button */}
+                <button
+                  onClick={() => navigate(token ? '/deposit' : '/register')}
+                  style={{
+                    width: '100%',
+                    padding: '16px 24px',
+                    background: 'linear-gradient(90deg, #FFD700 0%, #FFA500 100%)',
+                    border: 'none',
+                    borderRadius: '14px',
+                    color: '#000000',
+                    fontSize: '16px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    boxShadow: '0 4px 20px rgba(255, 215, 0, 0.4)',
+                    transition: 'all 0.3s ease',
+                    position: 'relative',
+                    zIndex: 1,
+                  }}
+                >
                   Select Plan
-                  <ChevronRight size={18} />
-                </Link>
+                  <ChevronRight size={20} />
+                </button>
+
+                {/* OFFER LIVE Badge */}
+                <div
+                  style={{
+                    marginTop: '12px',
+                    padding: '10px 16px',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    background: isOfferLive 
+                      ? 'linear-gradient(90deg, rgba(14, 203, 129, 0.15) 0%, rgba(22, 224, 255, 0.15) 100%)'
+                      : 'rgba(100, 100, 100, 0.1)',
+                    border: isOfferLive 
+                      ? '1px solid rgba(14, 203, 129, 0.5)'
+                      : '1px solid rgba(100, 100, 100, 0.3)',
+                    opacity: isOfferLive ? 1 : 0.5,
+                    animation: isOfferLive ? 'offerPulse 2s ease-in-out infinite' : 'none',
+                    transition: 'all 0.3s ease',
+                    position: 'relative',
+                    zIndex: 1,
+                  }}
+                >
+                  {isOfferLive && (
+                    <span style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      background: '#0ECB81',
+                      boxShadow: '0 0 8px #0ECB81',
+                      animation: 'blink 1s ease-in-out infinite',
+                    }} />
+                  )}
+                  <Gift size={16} color={isOfferLive ? '#0ECB81' : '#666'} />
+                  <span style={{
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: isOfferLive ? '#0ECB81' : '#666',
+                    letterSpacing: '1px',
+                  }}>
+                    {isOfferLive ? 'OFFER LIVE • +10% BONUS' : 'OFFER LIVE'}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
@@ -844,5 +1025,25 @@ const styles = {
     margin: 0,
   },
 };
+
+// Add CSS animations for OFFER LIVE badge
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+  @keyframes offerPulse {
+    0%, 100% { 
+      box-shadow: 0 0 5px rgba(14, 203, 129, 0.3);
+      transform: scale(1);
+    }
+    50% { 
+      box-shadow: 0 0 20px rgba(14, 203, 129, 0.6), 0 0 40px rgba(22, 224, 255, 0.3);
+      transform: scale(1.02);
+    }
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+`;
+document.head.appendChild(styleSheet);
 
 export default Home;

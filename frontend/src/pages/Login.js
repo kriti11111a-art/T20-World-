@@ -96,7 +96,7 @@ const Login = () => {
                 border: '1px solid rgba(22, 224, 255, 0.3)',
                 animation: 'pulseRing 2s ease-out infinite 0.5s'
               }}></div>
-              {/* App Logo - Properly Rounded with 360° Spin */}
+              {/* App Logo - Perfectly Round & Stable (No Animation) */}
               <div style={{
                 width: '100px',
                 height: '100px',
@@ -106,7 +106,10 @@ const Login = () => {
                 zIndex: 1,
                 boxShadow: '0 0 30px rgba(22, 224, 255, 0.7), 0 0 60px rgba(8, 123, 255, 0.4)',
                 border: '3px solid rgba(22, 224, 255, 0.6)',
-                animation: 'spinLogo 3s linear infinite'
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#000'
               }}>
                 <img 
                   src="/app-logo.png" 
@@ -115,7 +118,9 @@ const Login = () => {
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    display: 'block'
+                    objectPosition: 'center center',
+                    display: 'block',
+                    borderRadius: '50%'
                   }}
                 />
               </div>
@@ -124,14 +129,6 @@ const Login = () => {
           
           {/* CSS Animations */}
           <style>{`
-            @keyframes spinLogo {
-              from {
-                transform: rotate(0deg);
-              }
-              to {
-                transform: rotate(360deg);
-              }
-            }
             @keyframes pulseRing {
               0% {
                 transform: translate(-50%, -50%) scale(0.8);

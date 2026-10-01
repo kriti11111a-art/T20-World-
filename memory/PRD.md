@@ -29,24 +29,28 @@ Hindi (mixed with English)
 - [x] Welcome bonus system ($2 for new users)
 - [x] Balance deduction logic (bonus first, then balance)
 - [x] Daily ROI distribution (scheduled at 12:00 AM IST)
+- [x] Persistent Login - User stays logged in until explicit logout (Oct 2026)
 
-### Dashboard Offer Slider & 10% Deposit Bonus (NEW - Oct 2026)
-- [x] Sunday/Wednesday Special Offer Banners on Market page
+### Dashboard Offer Slider & 10% Deposit Bonus (Oct 2026)
+- [x] Sunday/Wednesday Special Offer Banners on Home page
 - [x] Countdown Timer: "Starts In: DD:HH:MM:SS" for upcoming offers
 - [x] Blinking "🟢 LIVE" indicator with "Ends In: HH:MM:SS" countdown for active offers
-- [x] Auto 10% bonus on deposits during active offer window (subsequent deposits only)
-- [x] Admin Panel > Offers tab to configure Start/End datetime for both offers
-- [x] Admin can activate/deactivate offers
-- [x] Banner images: /sunday-special-banner.webp, /wednesday-special-banner.webp
-- [x] Public API: GET /api/offers/status (shows all offer statuses)
-- [x] Admin APIs: GET/POST/DELETE /api/admin/offers/{sunday|wednesday}
+- [x] COMING SOON badge when offer is not live
+- [x] Auto-slide stops when offer is LIVE (card locked to first position)
+- [x] 10% bonus on deposits $50+ during LIVE offer window
+- [x] Trading Slab cards on Home page with OFFER LIVE badge
+- [x] Admin Panel > Offers tab to configure Start/End datetime
+- [x] Offer Schedule: Sunday & Wednesday 6PM-8PM IST (2 hours each)
+
+### Bug Fixes (Oct 2026)
+- [x] Fixed automatic logout issue - JWT_SECRET now in .env
+- [x] AuthContext only logs out on explicit token invalid/expired message
+- [x] Token persists across page refresh, navigation, and browser restart
 
 ### Dashboard
 - [x] Forex Trading section with simulated market data (Gold, Oil, EUR/USD, etc.)
 - [x] Crypto Trading section with live chart and order book
 - [x] Live Blockchain Transactions feed
-  - BNB: REAL transactions from BSC blockchain
-  - Other tokens (DOGE, USDT, etc.): Simulated live feed (due to BSC RPC limits)
 - [x] Total Liquidity display synced with BSC contract
 
 ### Admin Panel
@@ -58,8 +62,10 @@ Hindi (mixed with English)
 - [x] Offers tab - Configure Sunday/Wednesday Special offers
 
 ### UI/UX
-- [x] Dark theme with neon green accents (BitNest style)
+- [x] Dark theme with neon green accents
 - [x] Day/Night mode toggle
+- [x] Bottom Navigation Bar
+- [x] Global Dark Navy Theme
 - [x] Animated TG Coin logo on login page
 - [x] Responsive design
 

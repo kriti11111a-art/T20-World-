@@ -1,0 +1,29 @@
+{
+  "summary": "Verified auth persistence bug fix for TradeGo. Login with admin@tradego.com works, token persisted in localStorage + sessionStorage (bulletproof tokenManager), user stays logged in across 3 page refreshes, across navigation to /deposit, /market, /profile, and across new tab in same browser context. /api/auth/me returns 200 with admin email using the saved token. Explicit Logout button on /profile clears the token and redirects to home. JWT_SECRET is now fixed in backend/.env preventing invalidation on server restart. AuthContext only logs out on explicit 'expired'/'invalid'/'not authenticated' 401 messages, keeping session on other errors.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Global (dashboard/market)", "issues": ["CORS errors in console from direct api.binance.com/klines calls (chart widget). Doesn't affect auth, but noisy. Consider proxying through backend."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "AuthContext performLogout is defined AFTER being used inside fetchUser (line 90 calls performLogout defined at line 142). Works due to hoisting of outer function scope, but order is confusing - consider declaring performLogout earlier.",
+    "fetchUser callback has user in dependency array (line 113). When user state changes, fetchUser identity changes, which could trigger re-renders in consumers who memoize on it. Low risk but worth noting.",
+    "tokenManager stores token in 7 locations (localStorage x2, sessionStorage x3, memory, window.__AUTH_TOKEN__). Overkill but functional - comments say it is to survive Web3/MetaMask popups which is reasonable.",
+    "No automatic token refresh mechanism exists. 30-day expiry is long but after expiry user will be logged out abruptly without a refresh token flow.",
+    "server.py line 33 still has secrets.token_hex(32) as fallback for JWT_SECRET env - safe now that env is set but any deploy without the env var reintroduces the original bug. Consider failing-fast if JWT_SECRET missing.",
+    "server.py is 3965 lines (pre-existing) - should be modularized."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend only)", "frontend": "100%"},
+  "test_credentials": "admin@tradego.com / Admin@123",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Auth-persistence bug is RESOLVED. Verified: login -> token in local+sessionStorage, 3x refresh stays logged in, /deposit /market /profile navigation stays logged in, new tab (same context) still logged in via localStorage, /api/auth/me 200 OK, explicit Logout button on /profile clears token. JWT_SECRET fixed in /app/backend/.env. CORS errors from api.binance.com are from chart widget and unrelated to auth.",
+  "rca of the issue": "Root cause (fixed by main agent): (1) JWT_SECRET was generated via secrets.token_hex(32) on each server import if env var was missing, so every backend restart invalidated existing tokens. Fix: hardcoded JWT_SECRET added to /app/backend/.env (line 5). (2) AuthContext previously called logout() on any 401. Fix: only logout when response body contains 'expired' / 'invalid' / 'not authenticated' (AuthContext.js L81-99); on any network/5xx error or ambiguous 401, cached user is loaded and session is kept."
+}

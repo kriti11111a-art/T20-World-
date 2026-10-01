@@ -106,7 +106,7 @@ const Login = () => {
                 zIndex: 1,
                 boxShadow: '0 0 30px rgba(22, 224, 255, 0.7), 0 0 60px rgba(8, 123, 255, 0.4)',
                 border: '3px solid rgba(22, 224, 255, 0.6)',
-                animation: 'spinLogo 4s linear infinite'
+                animation: 'spinLogo 3s linear infinite'
               }}>
                 <img 
                   src="/app-logo.png" 
@@ -125,10 +125,10 @@ const Login = () => {
           {/* CSS Animations */}
           <style>{`
             @keyframes spinLogo {
-              0% {
+              from {
                 transform: rotate(0deg);
               }
-              100% {
+              to {
                 transform: rotate(360deg);
               }
             }

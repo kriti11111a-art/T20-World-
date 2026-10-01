@@ -59,7 +59,6 @@ const Header = () => {
     { path: '/deposit', label: 'Trading Slab', icon: TrendingUp },
     { path: '/my-investments', label: 'My Investment', icon: DollarSign },
     { path: '/income-history', label: 'Income History', icon: ArrowLeftRight },
-    { path: '/referral', label: 'Team & Refer', icon: UserPlus },
     { path: '/guide', label: 'Guide', icon: FileText },
     { path: '/tutorial', label: 'Tutorial', icon: PlayCircle },
     ...((user?.is_admin || user?.email === 'admin@tradego.com') ? [{ path: '/admin', label: 'Admin Panel', icon: Shield, isAdmin: true }] : []),
@@ -78,7 +77,7 @@ const Header = () => {
     ? [
         { path: '/deposit', label: 'Investments', icon: TrendingUp },
         { path: '/my-investments', label: 'My Assets', icon: DollarSign },
-        { path: '/referral', label: 'Referrals', icon: Users },
+        { path: '/income-history', label: 'History', icon: ArrowLeftRight },
       ]
     : loggedOutNavLinks;
 

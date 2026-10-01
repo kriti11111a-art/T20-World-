@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bot, TrendingUp, Zap, Shield, Clock, DollarSign, ArrowRight, CheckCircle } from 'lucide-react';
+import { Bot, TrendingUp, Zap, Shield, Clock, DollarSign, ArrowRight, CheckCircle, Gift } from 'lucide-react';
 import Header from '../components/Header';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -16,9 +16,14 @@ const Invest = () => {
   const [loading, setLoading] = useState(true);
   const [investing, setInvesting] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [isOfferLive, setIsOfferLive] = useState(false);
 
   useEffect(() => {
     fetchPlans();
+    checkOfferStatus();
+    // Check offer status every 30 seconds
+    const interval = setInterval(checkOfferStatus, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchPlans = async () => {
@@ -32,6 +37,20 @@ const Invest = () => {
       console.error('Error fetching plans:', error);
     }
     setLoading(false);
+  };
+
+  const checkOfferStatus = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/offers/status`);
+      if (res.ok) {
+        const data = await res.json();
+        // Check if any offer is currently LIVE
+        const hasLiveOffer = data.offers?.some(offer => offer.status === 'live');
+        setIsOfferLive(hasLiveOffer);
+      }
+    } catch (error) {
+      console.error('Error checking offer status:', error);
+    }
   };
 
   const handleInvest = async (plan) => {
@@ -281,6 +300,49 @@ const Invest = () => {
                     </>
                   )}
                 </button>
+
+                {/* OFFER LIVE Badge */}
+                <div
+                  style={{
+                    marginTop: '12px',
+                    padding: '10px 16px',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    background: isOfferLive 
+                      ? 'linear-gradient(90deg, rgba(14, 203, 129, 0.15) 0%, rgba(22, 224, 255, 0.15) 100%)'
+                      : 'rgba(100, 100, 100, 0.1)',
+                    border: isOfferLive 
+                      ? '1px solid rgba(14, 203, 129, 0.5)'
+                      : '1px solid rgba(100, 100, 100, 0.3)',
+                    cursor: isOfferLive ? 'pointer' : 'not-allowed',
+                    opacity: isOfferLive ? 1 : 0.5,
+                    animation: isOfferLive ? 'offerPulse 2s ease-in-out infinite' : 'none',
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  {isOfferLive && (
+                    <span style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      background: '#0ECB81',
+                      boxShadow: '0 0 8px #0ECB81',
+                      animation: 'blink 1s ease-in-out infinite',
+                    }} />
+                  )}
+                  <Gift size={16} color={isOfferLive ? '#0ECB81' : '#666'} />
+                  <span style={{
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: isOfferLive ? '#0ECB81' : '#666',
+                    letterSpacing: '1px',
+                  }}>
+                    {isOfferLive ? 'OFFER LIVE • +10% BONUS' : 'OFFER LIVE'}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
@@ -320,6 +382,24 @@ const Invest = () => {
           </ul>
         </div>
       </div>
+      
+      {/* CSS Animations */}
+      <style>{`
+        @keyframes offerPulse {
+          0%, 100% { 
+            box-shadow: 0 0 5px rgba(14, 203, 129, 0.3);
+            transform: scale(1);
+          }
+          50% { 
+            box-shadow: 0 0 20px rgba(14, 203, 129, 0.6), 0 0 40px rgba(22, 224, 255, 0.3);
+            transform: scale(1.02);
+          }
+        }
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
+      `}</style>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Copy, DollarSign, Upload, Wallet, Link2, CheckCircle, AlertCircle, Loader, ChevronRight, Clock, TrendingUp, ArrowRight } from 'lucide-react';
+import { Copy, DollarSign, Upload, Wallet, Link2, CheckCircle, AlertCircle, Loader, ChevronRight, Clock, TrendingUp, ArrowRight, Gift } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { investmentPlans } from '../mock';
 import Header from '../components/Header';
@@ -26,6 +26,7 @@ const Deposit = () => {
   const [showInvestForm, setShowInvestForm] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successData, setSuccessData] = useState(null);
+  const [isOfferLive, setIsOfferLive] = useState(false);
   
   // Active investments and deposits from backend
   const [activeInvestments, setActiveInvestments] = useState([]);
@@ -52,7 +53,24 @@ const Deposit = () => {
     if (token) {
       fetchUserData();
     }
+    // Check offer status on mount and every 30 seconds
+    checkOfferStatus();
+    const interval = setInterval(checkOfferStatus, 30000);
+    return () => clearInterval(interval);
   }, [token]);
+
+  const checkOfferStatus = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/offers/status`);
+      if (res.ok) {
+        const data = await res.json();
+        const hasLiveOffer = data.offers?.some(offer => offer.status === 'live');
+        setIsOfferLive(hasLiveOffer);
+      }
+    } catch (error) {
+      console.error('Error checking offer status:', error);
+    }
+  };
 
   const fetchUserData = async () => {
     const authToken = tokenManager.get();
@@ -1056,13 +1074,57 @@ const Deposit = () => {
                 </div>
               ) : (
                 /* Invest Now Button - Shows when this plan is NOT selected */
-                <button 
-                  style={styles.investNowBtn}
-                  onClick={() => handleInvestNow(plan)}
-                >
-                  Invest Now
-                  <ChevronRight size={20} />
-                </button>
+                <>
+                  <button 
+                    style={styles.investNowBtn}
+                    onClick={() => handleInvestNow(plan)}
+                  >
+                    Invest Now
+                    <ChevronRight size={20} />
+                  </button>
+                  
+                  {/* OFFER LIVE Badge */}
+                  <div
+                    style={{
+                      marginTop: '12px',
+                      padding: '10px 16px',
+                      borderRadius: '10px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      background: isOfferLive 
+                        ? 'linear-gradient(90deg, rgba(14, 203, 129, 0.15) 0%, rgba(22, 224, 255, 0.15) 100%)'
+                        : 'rgba(100, 100, 100, 0.1)',
+                      border: isOfferLive 
+                        ? '1px solid rgba(14, 203, 129, 0.5)'
+                        : '1px solid rgba(100, 100, 100, 0.3)',
+                      opacity: isOfferLive ? 1 : 0.5,
+                      animation: isOfferLive ? 'offerPulse 2s ease-in-out infinite' : 'none',
+                      transition: 'all 0.3s ease',
+                    }}
+                  >
+                    {isOfferLive && (
+                      <span style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        background: '#0ECB81',
+                        boxShadow: '0 0 8px #0ECB81',
+                        animation: 'blink 1s ease-in-out infinite',
+                      }} />
+                    )}
+                    <Gift size={16} color={isOfferLive ? '#0ECB81' : '#666'} />
+                    <span style={{
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      color: isOfferLive ? '#0ECB81' : '#666',
+                      letterSpacing: '1px',
+                    }}>
+                      {isOfferLive ? 'OFFER LIVE • +10% BONUS' : 'OFFER LIVE'}
+                    </span>
+                  </div>
+                </>
               )}
             </div>
           ))}
@@ -2339,5 +2401,25 @@ const styles = {
     cursor: 'pointer',
   },
 };
+
+// Add CSS animations for OFFER LIVE badge
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+  @keyframes offerPulse {
+    0%, 100% { 
+      box-shadow: 0 0 5px rgba(14, 203, 129, 0.3);
+      transform: scale(1);
+    }
+    50% { 
+      box-shadow: 0 0 20px rgba(14, 203, 129, 0.6), 0 0 40px rgba(22, 224, 255, 0.3);
+      transform: scale(1.02);
+    }
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+`;
+document.head.appendChild(styleSheet);
 
 export default Deposit;

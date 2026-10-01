@@ -141,33 +141,33 @@ const OfferSlider = ({ onOfferClick }) => {
           style={styles.bannerImage}
           data-testid={`offer-slide-${currentOffer.offer_type}`}
         />
-        
-        {/* Overlay with Live/Countdown */}
-        <div style={styles.overlayContainer}>
-          {/* Live Indicator */}
-          {isLive && (
-            <div style={styles.liveIndicator} data-testid="live-indicator">
-              <span style={styles.liveDot} />
-              <span style={styles.liveText}>LIVE</span>
-            </div>
-          )}
-          
-          {/* Countdown Timer */}
-          <div style={styles.countdownContainer}>
-            {countdown && (
-              <>
-                <span style={styles.countdownLabel}>
-                  {countdown.type === 'starts_in' ? 'Starts In:' : 'Ends In:'}
-                </span>
-                <span style={{
-                  ...styles.countdownValue,
-                  color: isLive ? THEME.success : THEME.cyanHighlight
-                }}>
-                  {formatCountdown(countdown.seconds, countdown.type === 'starts_in')}
-                </span>
-              </>
-            )}
+      </div>
+      
+      {/* Countdown Bar - Below Banner */}
+      <div style={styles.countdownBar}>
+        {/* Live Indicator */}
+        {isLive && (
+          <div style={styles.liveIndicator} data-testid="live-indicator">
+            <span style={styles.liveDot} />
+            <span style={styles.liveText}>LIVE</span>
           </div>
+        )}
+        
+        {/* Countdown Timer */}
+        <div style={styles.countdownContainer}>
+          {countdown && (
+            <>
+              <span style={styles.countdownLabel}>
+                {countdown.type === 'starts_in' ? 'Starts In:' : 'Ends In:'}
+              </span>
+              <span style={{
+                ...styles.countdownValue,
+                color: isLive ? THEME.success : THEME.cyanHighlight
+              }}>
+                {formatCountdown(countdown.seconds, countdown.type === 'starts_in')}
+              </span>
+            </>
+          )}
         </div>
       </div>
       
@@ -217,9 +217,8 @@ const styles = {
   bannerWrapper: {
     position: 'relative',
     width: '100%',
-    borderRadius: '12px',
+    borderRadius: '12px 12px 0 0',
     overflow: 'hidden',
-    boxShadow: SHADOWS.glowSubtle,
     cursor: 'pointer',
   },
   bannerImage: {
@@ -227,19 +226,14 @@ const styles = {
     height: 'auto',
     display: 'block',
   },
-  overlayContainer: {
-    position: 'absolute',
-    bottom: '8px',
-    left: '8px',
-    right: '8px',
+  countdownBar: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '8px 12px',
-    background: 'rgba(3, 26, 51, 0.85)',
-    backdropFilter: 'blur(8px)',
-    borderRadius: '10px',
-    border: `1px solid ${rgba.cyan(0.3)}`,
+    padding: '10px 14px',
+    background: THEME.bgCard,
+    borderRadius: '0 0 12px 12px',
+    borderTop: `1px solid ${rgba.cyan(0.2)}`,
   },
   liveIndicator: {
     display: 'flex',

@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { THEME, SHADOWS, rgba } from '../config/themeConfig';
+import { THEME, rgba } from '../config/themeConfig';
 
 /**
- * OfferSlider Component
- * Displays Sunday/Wednesday Special Offers with countdown timers
- * Full banner image visible with proper aspect ratio
+ * OfferSlider Component - Final Logic
+ * 
+ * Normal State: Both cards show "COMING SOON"
+ * When Admin-set Start Time arrives:
+ *   - COMING SOON → LIVE (blinking green dot)
+ *   - Live card locks to first position
+ *   - Auto-scroll stops
+ *   - "Ends In" countdown shows
+ * After 24 hours:
+ *   - LIVE → COMING SOON
+ *   - Auto-scroll resumes
  */
 
 const OfferSlider = ({ onOfferClick }) => {
@@ -12,6 +20,7 @@ const OfferSlider = ({ onOfferClick }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loading, setLoading] = useState(true);
   const [countdowns, setCountdowns] = useState({});
+  const [liveOfferLocked, setLiveOfferLocked] = useState(null); // Track which offer is LIVE and locked
 
   const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -22,15 +31,27 @@ const OfferSlider = ({ onOfferClick }) => {
       const data = await response.json();
       
       if (data.offers) {
-        // Filter out ended offers, show only upcoming or live
-        const activeOffers = data.offers.filter(
-          offer => offer.status === 'upcoming' || offer.status === 'live'
-        );
-        setOffers(activeOffers);
+        // Sort offers - LIVE ones come first
+        const sortedOffers = [...data.offers].sort((a, b) => {
+          if (a.status === 'live' && b.status !== 'live') return -1;
+          if (b.status === 'live' && a.status !== 'live') return 1;
+          return 0;
+        });
+        
+        setOffers(sortedOffers);
+        
+        // Check if any offer is LIVE
+        const liveOffer = sortedOffers.find(o => o.status === 'live');
+        if (liveOffer) {
+          setLiveOfferLocked(liveOffer.offer_type);
+          setCurrentSlide(0); // Lock to first position
+        } else {
+          setLiveOfferLocked(null);
+        }
         
         // Initialize countdowns
         const newCountdowns = {};
-        activeOffers.forEach(offer => {
+        sortedOffers.forEach(offer => {
           if (offer.status === 'upcoming' && offer.starts_in_seconds) {
             newCountdowns[offer.offer_type] = {
               type: 'starts_in',
@@ -54,11 +75,11 @@ const OfferSlider = ({ onOfferClick }) => {
 
   useEffect(() => {
     fetchOffers();
-    const refreshInterval = setInterval(fetchOffers, 60000);
+    const refreshInterval = setInterval(fetchOffers, 30000); // Refresh every 30 seconds
     return () => clearInterval(refreshInterval);
   }, [fetchOffers]);
 
-  // Countdown timer
+  // Countdown timer - runs every second
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdowns(prev => {
@@ -72,6 +93,7 @@ const OfferSlider = ({ onOfferClick }) => {
               seconds: updated[offerType].seconds - 1
             };
           } else {
+            // Countdown finished, need to refetch status
             shouldRefetch = true;
           }
         });
@@ -87,15 +109,15 @@ const OfferSlider = ({ onOfferClick }) => {
     return () => clearInterval(timer);
   }, [fetchOffers]);
 
-  // Auto-slide if multiple offers
+  // Auto-slide ONLY when NO offer is LIVE
   useEffect(() => {
-    if (offers.length > 1) {
+    if (offers.length > 1 && !liveOfferLocked) {
       const slideTimer = setInterval(() => {
         setCurrentSlide(prev => (prev + 1) % offers.length);
       }, 5000);
       return () => clearInterval(slideTimer);
     }
-  }, [offers.length]);
+  }, [offers.length, liveOfferLocked]);
 
   // Format seconds to countdown
   const formatCountdown = (seconds, includeDays = true) => {
@@ -112,6 +134,38 @@ const OfferSlider = ({ onOfferClick }) => {
     return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
+  // Get status text and style
+  const getStatusDisplay = (offer) => {
+    const countdown = countdowns[offer.offer_type];
+    
+    if (offer.status === 'live') {
+      return {
+        showLive: true,
+        showComingSoon: false,
+        countdownLabel: 'Ends In:',
+        countdownValue: countdown ? formatCountdown(countdown.seconds, false) : '00:00:00',
+        countdownColor: THEME.success
+      };
+    } else if (offer.status === 'upcoming') {
+      return {
+        showLive: false,
+        showComingSoon: true,
+        countdownLabel: 'Starts In:',
+        countdownValue: countdown ? formatCountdown(countdown.seconds, true) : '--:--:--',
+        countdownColor: THEME.cyanHighlight
+      };
+    } else {
+      // Not configured or ended
+      return {
+        showLive: false,
+        showComingSoon: true,
+        countdownLabel: null,
+        countdownValue: null,
+        countdownColor: null
+      };
+    }
+  };
+
   if (loading) {
     return (
       <div style={styles.loadingContainer}>
@@ -125,8 +179,7 @@ const OfferSlider = ({ onOfferClick }) => {
   }
 
   const currentOffer = offers[currentSlide];
-  const countdown = countdowns[currentOffer?.offer_type];
-  const isLive = currentOffer?.status === 'live';
+  const statusDisplay = getStatusDisplay(currentOffer);
 
   return (
     <div style={styles.container} data-testid="offer-slider">
@@ -143,50 +196,58 @@ const OfferSlider = ({ onOfferClick }) => {
         />
       </div>
       
-      {/* Countdown Bar - Below Banner */}
-      <div style={styles.countdownBar}>
-        {/* Live Indicator */}
-        {isLive && (
+      {/* Status Bar - Below Banner */}
+      <div style={styles.statusBar}>
+        {/* Left Side - LIVE or COMING SOON */}
+        {statusDisplay.showLive ? (
           <div style={styles.liveIndicator} data-testid="live-indicator">
             <span style={styles.liveDot} />
             <span style={styles.liveText}>LIVE</span>
           </div>
+        ) : (
+          <div style={styles.comingSoonBadge} data-testid="coming-soon-indicator">
+            <span style={styles.comingSoonText}>COMING SOON</span>
+          </div>
         )}
         
-        {/* Countdown Timer */}
-        <div style={styles.countdownContainer}>
-          {countdown && (
-            <>
-              <span style={styles.countdownLabel}>
-                {countdown.type === 'starts_in' ? 'Starts In:' : 'Ends In:'}
-              </span>
-              <span style={{
-                ...styles.countdownValue,
-                color: isLive ? THEME.success : THEME.cyanHighlight
-              }}>
-                {formatCountdown(countdown.seconds, countdown.type === 'starts_in')}
-              </span>
-            </>
-          )}
-        </div>
+        {/* Right Side - Countdown */}
+        {statusDisplay.countdownLabel && (
+          <div style={styles.countdownContainer}>
+            <span style={styles.countdownLabel}>{statusDisplay.countdownLabel}</span>
+            <span style={{...styles.countdownValue, color: statusDisplay.countdownColor}}>
+              {statusDisplay.countdownValue}
+            </span>
+          </div>
+        )}
       </div>
       
-      {/* Dots Navigation */}
+      {/* Dots Navigation - Only show if NOT locked */}
       {offers.length > 1 && (
         <div style={styles.dotsContainer}>
-          {offers.map((_, index) => (
+          {offers.map((offer, index) => (
             <button
-              key={index}
+              key={offer.offer_type}
               style={{
                 ...styles.dot,
                 background: index === currentSlide 
                   ? THEME.cyanHighlight 
-                  : rgba.cyan(0.3)
+                  : rgba.cyan(0.3),
+                cursor: liveOfferLocked ? 'not-allowed' : 'pointer',
+                opacity: liveOfferLocked && index !== 0 ? 0.4 : 1
               }}
-              onClick={() => setCurrentSlide(index)}
-              aria-label={`Slide ${index + 1}`}
+              onClick={() => {
+                // Only allow manual slide change if no offer is LIVE
+                if (!liveOfferLocked) {
+                  setCurrentSlide(index);
+                }
+              }}
+              disabled={!!liveOfferLocked}
+              aria-label={`${offer.offer_type} offer`}
             />
           ))}
+          {liveOfferLocked && (
+            <span style={styles.lockedText}>🔒</span>
+          )}
         </div>
       )}
     </div>
@@ -226,11 +287,11 @@ const styles = {
     height: 'auto',
     display: 'block',
   },
-  countdownBar: {
+  statusBar: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '8px 14px',
+    padding: '10px 14px',
     background: `linear-gradient(135deg, ${THEME.bgCard} 0%, rgba(8, 43, 77, 0.95) 100%)`,
     borderRadius: '0 0 12px 12px',
     border: `1px solid ${rgba.cyan(0.25)}`,
@@ -260,6 +321,20 @@ const styles = {
     color: THEME.success,
     letterSpacing: '1px',
   },
+  comingSoonBadge: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '5px 12px',
+    background: rgba.cyan(0.1),
+    borderRadius: '16px',
+    border: `1px solid ${rgba.cyan(0.3)}`,
+  },
+  comingSoonText: {
+    fontSize: '11px',
+    fontWeight: '700',
+    color: THEME.cyanHighlight,
+    letterSpacing: '0.5px',
+  },
   countdownContainer: {
     display: 'flex',
     alignItems: 'center',
@@ -279,6 +354,7 @@ const styles = {
   dotsContainer: {
     display: 'flex',
     justifyContent: 'center',
+    alignItems: 'center',
     gap: '8px',
     marginTop: '10px',
   },
@@ -287,9 +363,12 @@ const styles = {
     height: '8px',
     borderRadius: '50%',
     border: 'none',
-    cursor: 'pointer',
     transition: 'all 0.3s ease',
     padding: 0,
+  },
+  lockedText: {
+    fontSize: '12px',
+    marginLeft: '4px',
   },
 };
 

@@ -78,12 +78,27 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
         localStorage.setItem('cachedUser', JSON.stringify(userData));
         fetchAttempts.current = 0;
-      } else if (response.status === 401 || response.status === 403) {
-        // Only logout on EXPLICIT 401/403 - nothing else
-        console.log('Auth token expired or invalid');
-        performLogout();
+      } else if (response.status === 401) {
+        // 401 means token is truly invalid - but double check the message
+        try {
+          const errorData = await response.json();
+          const errorMsg = (errorData.detail || '').toLowerCase();
+          
+          // Only logout if explicitly told token is invalid/expired
+          if (errorMsg.includes('expired') || errorMsg.includes('invalid') || errorMsg.includes('not authenticated')) {
+            console.log('Token explicitly invalid, logging out');
+            performLogout();
+          } else {
+            // Some other 401 error - keep session
+            console.log('401 but not token issue, keeping session');
+            loadCachedData();
+          }
+        } catch {
+          // Can't parse error - keep session to be safe
+          loadCachedData();
+        }
       } else {
-        // For ALL other errors (500, timeout, etc.) - KEEP using cached data
+        // For ALL other errors (403, 500, timeout, etc.) - KEEP using cached data
         console.log('Server error, keeping session with cached data');
         loadCachedData();
       }

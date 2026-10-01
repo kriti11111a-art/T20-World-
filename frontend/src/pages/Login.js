@@ -62,14 +62,24 @@ const Login = () => {
           {/* Gradient Top Border */}
           <div style={{...styles.gradientBorder, background: colors.gradient}}></div>
 
-          {/* Logo Icon - TG Coin with Animation */}
-          <div style={styles.logoWrapper}>
+          {/* Logo Icon - Perfectly Round Circle */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: '20px'
+          }}>
             <div style={{
-              ...styles.logoIcon, 
-              background: 'transparent', 
-              boxShadow: 'none', 
-              padding: 0,
-              position: 'relative'
+              width: '110px',
+              height: '110px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative',
+              background: '#0a1628',
+              boxShadow: '0 0 30px rgba(22, 224, 255, 0.7), 0 0 60px rgba(8, 123, 255, 0.4)',
+              border: '3px solid rgba(22, 224, 255, 0.6)'
             }}>
               {/* Animated Glow Ring */}
               <div style={{
@@ -77,12 +87,12 @@ const Login = () => {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: '100px',
-                height: '100px',
+                width: '130px',
+                height: '130px',
                 borderRadius: '50%',
-                border: '2px solid rgba(16, 185, 129, 0.5)',
+                border: '2px solid rgba(22, 224, 255, 0.4)',
                 animation: 'pulseRing 2s ease-out infinite',
-                boxShadow: '0 0 20px rgba(16, 185, 129, 0.3), inset 0 0 20px rgba(16, 185, 129, 0.1)'
+                boxShadow: '0 0 20px rgba(22, 224, 255, 0.3)'
               }}></div>
               {/* Second Ring */}
               <div style={{
@@ -90,39 +100,26 @@ const Login = () => {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: '120px',
-                height: '120px',
+                width: '150px',
+                height: '150px',
                 borderRadius: '50%',
-                border: '1px solid rgba(22, 224, 255, 0.3)',
+                border: '1px solid rgba(22, 224, 255, 0.2)',
                 animation: 'pulseRing 2s ease-out infinite 0.5s'
               }}></div>
-              {/* App Logo - Perfectly Round & Stable (No Animation) */}
-              <div style={{
-                width: '100px',
-                height: '100px',
-                borderRadius: '50%',
-                overflow: 'hidden',
-                position: 'relative',
-                zIndex: 1,
-                boxShadow: '0 0 30px rgba(22, 224, 255, 0.7), 0 0 60px rgba(8, 123, 255, 0.4)',
-                border: '3px solid rgba(22, 224, 255, 0.6)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: '#0a1628'
-              }}>
-                <img 
-                  src="/app-logo.png" 
-                  alt="TradeGo" 
-                  style={{
-                    width: '80%',
-                    height: '80%',
-                    objectFit: 'contain',
-                    objectPosition: 'center center',
-                    display: 'block'
-                  }}
-                />
-              </div>
+              {/* App Logo Image */}
+              <img 
+                src="/app-logo.png" 
+                alt="TradeGo" 
+                style={{
+                  width: '75%',
+                  height: '75%',
+                  objectFit: 'contain',
+                  objectPosition: 'center center',
+                  display: 'block',
+                  position: 'relative',
+                  zIndex: 1
+                }}
+              />
             </div>
           </div>
           

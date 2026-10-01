@@ -2581,7 +2581,7 @@ const styles = {
     zIndex: 1, // Lower z-index to keep sidebar above
   },
   container: {
-    padding: '85px 12px 40px',
+    padding: '85px 12px 100px',
     maxWidth: '480px',
     margin: '0 auto',
     position: 'relative',

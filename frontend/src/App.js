@@ -6,6 +6,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { Toaster } from "react-hot-toast";
 import LoadingAnimation from "./components/LoadingAnimation";
+import BottomNav from "./components/BottomNav";
 
 // Import Pages
 import Home from "./pages/Home";
@@ -24,6 +25,8 @@ import Guide from "./pages/Guide";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
 import Maintenance from "./pages/Maintenance";
+import Invest from "./pages/Invest";
+import Market from "./pages/Market";
 
 // ============ MAINTENANCE MODE CONFIG ============
 // Set to true to enable maintenance mode
@@ -51,6 +54,27 @@ const RouteLoadingWrapper = ({ children }) => {
       </div>
     </>
   );
+};
+
+// Bottom Nav Wrapper - Only show on logged-in pages
+const BottomNavWrapper = () => {
+  const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+  }, [location.pathname]);
+  
+  // Pages where bottom nav should NOT show
+  const hideOnPages = ['/', '/login', '/register', '/maintenance', '/admin'];
+  const shouldHide = hideOnPages.includes(location.pathname);
+  
+  if (!isLoggedIn || shouldHide) {
+    return null;
+  }
+  
+  return <BottomNav />;
 };
 
 function App() {
@@ -210,7 +234,12 @@ const ProtectedRoute = ({ element }) => {
                 <Route path="/guide" element={<ProtectedRoute element={<Guide />} />} />
                 <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
                 <Route path="/notifications" element={<ProtectedRoute element={<Notifications />} />} />
+                <Route path="/invest" element={<ProtectedRoute element={<Invest />} />} />
+                <Route path="/market" element={<ProtectedRoute element={<Market />} />} />
               </Routes>
+              
+              {/* Bottom Navigation - Show on logged-in pages */}
+              <BottomNavWrapper />
             </RouteLoadingWrapper>
           </BrowserRouter>
         

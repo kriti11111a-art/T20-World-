@@ -96,17 +96,17 @@ const Login = () => {
                 border: '1px solid rgba(22, 224, 255, 0.3)',
                 animation: 'pulseRing 2s ease-out infinite 0.5s'
               }}></div>
-              {/* App Logo - Properly Rounded Container */}
+              {/* App Logo - Properly Rounded with 360° Spin */}
               <div style={{
-                width: '90px',
-                height: '90px',
+                width: '100px',
+                height: '100px',
                 borderRadius: '50%',
                 overflow: 'hidden',
                 position: 'relative',
                 zIndex: 1,
-                boxShadow: '0 0 25px rgba(22, 224, 255, 0.6), 0 0 50px rgba(8, 123, 255, 0.3)',
-                border: '2px solid rgba(22, 224, 255, 0.5)',
-                animation: 'floatCoin 3s ease-in-out infinite'
+                boxShadow: '0 0 30px rgba(22, 224, 255, 0.7), 0 0 60px rgba(8, 123, 255, 0.4)',
+                border: '3px solid rgba(22, 224, 255, 0.6)',
+                animation: 'spinLogo 4s linear infinite'
               }}>
                 <img 
                   src="/app-logo.png" 
@@ -124,17 +124,12 @@ const Login = () => {
           
           {/* CSS Animations */}
           <style>{`
-            @keyframes spinOnce {
+            @keyframes spinLogo {
               0% {
-                transform: rotateY(0deg) scale(0.5);
-                opacity: 0;
-              }
-              50% {
-                opacity: 1;
+                transform: rotate(0deg);
               }
               100% {
-                transform: rotateY(360deg) scale(1);
-                opacity: 1;
+                transform: rotate(360deg);
               }
             }
             @keyframes pulseRing {
@@ -145,14 +140,6 @@ const Login = () => {
               100% {
                 transform: translate(-50%, -50%) scale(1.5);
                 opacity: 0;
-              }
-            }
-            @keyframes floatCoin {
-              0%, 100% {
-                transform: translateY(0) rotateY(360deg);
-              }
-              50% {
-                transform: translateY(-8px) rotateY(360deg);
               }
             }
           `}</style>

@@ -5,7 +5,8 @@ import {
   LayoutDashboard, Users, DollarSign, Download, Upload, 
   TrendingUp, Gift, Key, Wallet, Settings, Menu, X,
   RefreshCw, Search, ChevronRight, LogIn, ArrowLeft,
-  Edit, Check, AlertCircle, Plus, Minus, History, Bell, Send, Trash2
+  Edit, Check, AlertCircle, Plus, Minus, History, Bell, Send, Trash2,
+  Calendar, Clock, Percent
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import tokenManager from '../utils/tokenManager';
@@ -86,9 +87,17 @@ const Admin = () => {
   // Admin's own wallet state
   const [adminWallet, setAdminWallet] = useState('');
   const [adminWalletLoading, setAdminWalletLoading] = useState(false);
+  
+  // Offers State
+  const [offers, setOffers] = useState({
+    sunday: { start_datetime: '', end_datetime: '', bonus_percent: 10, is_active: false },
+    wednesday: { start_datetime: '', end_datetime: '', bonus_percent: 10, is_active: false }
+  });
+  const [offersLoading, setOffersLoading] = useState(false);
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'offers', label: 'Offers', icon: Gift },
     { id: 'announcements', label: 'Announcements', icon: Bell },
     { id: 'dailyroi', label: 'Daily ROI', icon: RefreshCw },
     { id: 'users', label: 'Users', icon: Users },
@@ -196,6 +205,12 @@ const Admin = () => {
       const authToken = tokenManager.get();
       if (authToken) {
         fetchPlatformSettings();
+      }
+    }
+    if (activeTab === 'offers') {
+      const authToken = tokenManager.get();
+      if (authToken) {
+        fetchOffers();
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -637,6 +652,104 @@ const Admin = () => {
       toast.error('Error saving settings');
     } finally {
       setSettingsLoading(false);
+    }
+  };
+
+  // ===== OFFERS MANAGEMENT =====
+  
+  // Fetch Offers
+  const fetchOffers = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/offers`, {
+        headers: { 'Authorization': `Bearer ${tokenManager.get()}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const offersData = {};
+        data.offers.forEach(offer => {
+          // Convert ISO datetime to local datetime-local format for input
+          let startLocal = '';
+          let endLocal = '';
+          if (offer.start_datetime) {
+            const startDate = new Date(offer.start_datetime);
+            startLocal = startDate.toISOString().slice(0, 16);
+          }
+          if (offer.end_datetime) {
+            const endDate = new Date(offer.end_datetime);
+            endLocal = endDate.toISOString().slice(0, 16);
+          }
+          offersData[offer.offer_type] = {
+            start_datetime: startLocal,
+            end_datetime: endLocal,
+            bonus_percent: offer.bonus_percent || 10,
+            is_active: offer.is_active || false
+          };
+        });
+        setOffers(offersData);
+      }
+    } catch (error) {
+      console.error('Error fetching offers:', error);
+    }
+  };
+
+  // Save Offer
+  const saveOffer = async (offerType) => {
+    setOffersLoading(true);
+    try {
+      const offerData = offers[offerType];
+      if (!offerData.start_datetime) {
+        toast.error('Please select a start date and time');
+        setOffersLoading(false);
+        return;
+      }
+
+      const payload = {
+        start_datetime: new Date(offerData.start_datetime).toISOString(),
+        end_datetime: offerData.end_datetime ? new Date(offerData.end_datetime).toISOString() : null,
+        bonus_percent: offerData.bonus_percent,
+        is_active: true
+      };
+
+      const res = await fetch(`${API_URL}/api/admin/offers/${offerType}`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${tokenManager.get()}` 
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      if (res.ok) {
+        toast.success(`✅ ${offerType.charAt(0).toUpperCase() + offerType.slice(1)} offer saved!`, {
+          duration: 4000,
+          style: { background: '#0ECB81', color: '#fff', fontWeight: 'bold', padding: '16px 24px', borderRadius: '12px' }
+        });
+        fetchOffers(); // Refresh
+      } else {
+        const err = await res.json();
+        toast.error(err.detail || 'Failed to save offer');
+      }
+    } catch (error) {
+      toast.error('Error saving offer');
+    } finally {
+      setOffersLoading(false);
+    }
+  };
+
+  // Deactivate Offer
+  const deactivateOffer = async (offerType) => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/offers/${offerType}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${tokenManager.get()}` }
+      });
+      
+      if (res.ok) {
+        toast.success(`${offerType.charAt(0).toUpperCase() + offerType.slice(1)} offer deactivated`);
+        fetchOffers();
+      }
+    } catch (error) {
+      toast.error('Error deactivating offer');
     }
   };
 
@@ -1791,6 +1904,242 @@ const Admin = () => {
     </div>
   );
 
+  // ===== RENDER OFFERS =====
+  const renderOffers = () => (
+    <div style={styles.content}>
+      <h2 style={styles.title}>🎁 Special Offers - 10% Deposit Bonus</h2>
+      <p style={{color: '#888', marginBottom: '20px', fontSize: '13px'}}>
+        जब offer LIVE होता है, users को deposit पर 10% extra bonus automatically मिलता है।
+      </p>
+      
+      {/* Sunday Offer */}
+      <div style={{
+        ...styles.formCard,
+        border: offers.sunday?.is_active ? '2px solid #0ECB81' : '1px solid #333',
+        marginBottom: '20px'
+      }}>
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+          <h3 style={{color: '#FFD700', margin: 0, fontSize: '16px', display: 'flex', alignItems: 'center', gap: '8px'}}>
+            <Calendar size={18} /> Sunday Special
+          </h3>
+          {offers.sunday?.is_active && (
+            <span style={{
+              background: 'rgba(14, 203, 129, 0.2)',
+              color: '#0ECB81',
+              padding: '4px 12px',
+              borderRadius: '12px',
+              fontSize: '12px',
+              fontWeight: 'bold'
+            }}>
+              ✓ ACTIVE
+            </span>
+          )}
+        </div>
+        
+        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px'}}>
+          <div>
+            <label style={styles.label}>
+              <Clock size={14} style={{marginRight: '5px'}} />
+              Start Date & Time (IST)
+            </label>
+            <input 
+              type="datetime-local" 
+              value={offers.sunday?.start_datetime || ''}
+              onChange={(e) => setOffers({
+                ...offers, 
+                sunday: {...offers.sunday, start_datetime: e.target.value}
+              })}
+              style={styles.input}
+            />
+          </div>
+          <div>
+            <label style={styles.label}>
+              <Clock size={14} style={{marginRight: '5px'}} />
+              End Date & Time (Auto: 24h)
+            </label>
+            <input 
+              type="datetime-local" 
+              value={offers.sunday?.end_datetime || ''}
+              onChange={(e) => setOffers({
+                ...offers, 
+                sunday: {...offers.sunday, end_datetime: e.target.value}
+              })}
+              style={styles.input}
+              placeholder="Leave empty for 24h duration"
+            />
+          </div>
+        </div>
+        
+        <div style={{marginTop: '12px'}}>
+          <label style={styles.label}>
+            <Percent size={14} style={{marginRight: '5px'}} />
+            Bonus Percentage
+          </label>
+          <input 
+            type="number" 
+            value={offers.sunday?.bonus_percent || 10}
+            onChange={(e) => setOffers({
+              ...offers, 
+              sunday: {...offers.sunday, bonus_percent: parseFloat(e.target.value) || 10}
+            })}
+            style={{...styles.input, width: '100px'}}
+            min="1"
+            max="100"
+          />
+        </div>
+        
+        <div style={{display: 'flex', gap: '10px', marginTop: '15px'}}>
+          <button 
+            onClick={() => saveOffer('sunday')} 
+            disabled={offersLoading}
+            style={{
+              ...styles.button,
+              flex: 1,
+              opacity: offersLoading ? 0.6 : 1
+            }}
+          >
+            {offersLoading ? 'Saving...' : '💾 Save & Activate'}
+          </button>
+          {offers.sunday?.is_active && (
+            <button 
+              onClick={() => deactivateOffer('sunday')}
+              style={{
+                ...styles.button,
+                background: 'rgba(255, 68, 68, 0.2)',
+                border: '1px solid #FF4444',
+                color: '#FF4444',
+                flex: 0.5
+              }}
+            >
+              Deactivate
+            </button>
+          )}
+        </div>
+      </div>
+      
+      {/* Wednesday Offer */}
+      <div style={{
+        ...styles.formCard,
+        border: offers.wednesday?.is_active ? '2px solid #0ECB81' : '1px solid #333'
+      }}>
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px'}}>
+          <h3 style={{color: '#00BFFF', margin: 0, fontSize: '16px', display: 'flex', alignItems: 'center', gap: '8px'}}>
+            <Calendar size={18} /> Wednesday Special
+          </h3>
+          {offers.wednesday?.is_active && (
+            <span style={{
+              background: 'rgba(14, 203, 129, 0.2)',
+              color: '#0ECB81',
+              padding: '4px 12px',
+              borderRadius: '12px',
+              fontSize: '12px',
+              fontWeight: 'bold'
+            }}>
+              ✓ ACTIVE
+            </span>
+          )}
+        </div>
+        
+        <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px'}}>
+          <div>
+            <label style={styles.label}>
+              <Clock size={14} style={{marginRight: '5px'}} />
+              Start Date & Time (IST)
+            </label>
+            <input 
+              type="datetime-local" 
+              value={offers.wednesday?.start_datetime || ''}
+              onChange={(e) => setOffers({
+                ...offers, 
+                wednesday: {...offers.wednesday, start_datetime: e.target.value}
+              })}
+              style={styles.input}
+            />
+          </div>
+          <div>
+            <label style={styles.label}>
+              <Clock size={14} style={{marginRight: '5px'}} />
+              End Date & Time (Auto: 24h)
+            </label>
+            <input 
+              type="datetime-local" 
+              value={offers.wednesday?.end_datetime || ''}
+              onChange={(e) => setOffers({
+                ...offers, 
+                wednesday: {...offers.wednesday, end_datetime: e.target.value}
+              })}
+              style={styles.input}
+              placeholder="Leave empty for 24h duration"
+            />
+          </div>
+        </div>
+        
+        <div style={{marginTop: '12px'}}>
+          <label style={styles.label}>
+            <Percent size={14} style={{marginRight: '5px'}} />
+            Bonus Percentage
+          </label>
+          <input 
+            type="number" 
+            value={offers.wednesday?.bonus_percent || 10}
+            onChange={(e) => setOffers({
+              ...offers, 
+              wednesday: {...offers.wednesday, bonus_percent: parseFloat(e.target.value) || 10}
+            })}
+            style={{...styles.input, width: '100px'}}
+            min="1"
+            max="100"
+          />
+        </div>
+        
+        <div style={{display: 'flex', gap: '10px', marginTop: '15px'}}>
+          <button 
+            onClick={() => saveOffer('wednesday')} 
+            disabled={offersLoading}
+            style={{
+              ...styles.button,
+              flex: 1,
+              opacity: offersLoading ? 0.6 : 1
+            }}
+          >
+            {offersLoading ? 'Saving...' : '💾 Save & Activate'}
+          </button>
+          {offers.wednesday?.is_active && (
+            <button 
+              onClick={() => deactivateOffer('wednesday')}
+              style={{
+                ...styles.button,
+                background: 'rgba(255, 68, 68, 0.2)',
+                border: '1px solid #FF4444',
+                color: '#FF4444',
+                flex: 0.5
+              }}
+            >
+              Deactivate
+            </button>
+          )}
+        </div>
+      </div>
+      
+      {/* Info Box */}
+      <div style={{
+        background: 'rgba(8, 123, 255, 0.1)',
+        border: '1px solid rgba(8, 123, 255, 0.3)',
+        borderRadius: '12px',
+        padding: '15px',
+        marginTop: '20px'
+      }}>
+        <h4 style={{color: '#087BFF', margin: '0 0 10px 0', fontSize: '14px'}}>ℹ️ कैसे काम करता है:</h4>
+        <ul style={{color: '#B8C7DC', fontSize: '12px', margin: 0, paddingLeft: '20px', lineHeight: '1.8'}}>
+          <li>Start time set करें - User को "Starts In: DD:HH:MM:SS" countdown दिखेगा</li>
+          <li>जब offer LIVE होगा - "🟢 LIVE" blinking indicator + "Ends In: HH:MM:SS" दिखेगा</li>
+          <li>LIVE window में जो भी deposit होगा, उसपर 10% extra automatically add होगा</li>
+          <li>End time खाली छोड़ें तो auto 24 hours की window मिलेगी</li>
+        </ul>
+      </div>
+    </div>
+  );
+
   const renderSettings = () => (
     <div style={styles.content}>
       <h2 style={styles.title}>⚙️ Platform Settings</h2>
@@ -2014,6 +2363,7 @@ const Admin = () => {
   const renderContent = () => {
     switch(activeTab) {
       case 'dashboard': return renderDashboard();
+      case 'offers': return renderOffers();
       case 'announcements': return renderAnnouncements();
       case 'dailyroi': return renderDailyROI();
       case 'users': return renderUsers();

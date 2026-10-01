@@ -268,6 +268,38 @@ class PlatformSettings(BaseModel):
     min_withdrawal: Optional[float] = 10.0
     withdrawal_fee_percent: Optional[float] = 5.0
 
+# ==================== OFFER SYSTEM MODELS ====================
+
+class OfferConfig(BaseModel):
+    """Configuration for Sunday/Wednesday Special Offers"""
+    offer_type: str  # "sunday" or "wednesday"
+    start_datetime: str  # ISO format - when offer starts
+    end_datetime: str  # ISO format - when offer ends (24h after start)
+    bonus_percent: float = 10.0  # 10% bonus on deposits
+    is_active: bool = True
+    created_by: Optional[str] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+
+class OfferConfigUpdate(BaseModel):
+    """For Admin to update offer configuration"""
+    start_datetime: str  # ISO format
+    end_datetime: Optional[str] = None  # If not provided, auto-calculate 24h after start
+    bonus_percent: Optional[float] = 10.0
+    is_active: Optional[bool] = True
+
+class OfferStatusResponse(BaseModel):
+    """Response for offer status check"""
+    offer_type: str
+    status: str  # "upcoming", "live", "ended"
+    is_live: bool
+    starts_at: Optional[str] = None
+    ends_at: Optional[str] = None
+    starts_in_seconds: Optional[int] = None  # Countdown: seconds until start
+    ends_in_seconds: Optional[int] = None  # Countdown: seconds until end
+    bonus_percent: float = 10.0
+    banner_url: str
+
 # Announcement Model
 class AnnouncementCreate(BaseModel):
     title: str
@@ -1375,6 +1407,16 @@ async def create_deposit(deposit: DepositCreate, current_user: dict = Depends(ge
     
     logger.info(f"Creating deposit for user {current_user['id']}: ${deposit.amount}, first_investment: {first_investment_done}")
     
+    # ===== CHECK FOR ACTIVE OFFER BONUS =====
+    offer_bonus_amount = 0.0
+    offer_info = await check_any_offer_active()
+    
+    if offer_info["is_active"] and first_investment_done:
+        # Only apply 10% bonus for subsequent deposits during active offer
+        # (First deposit already has welcome bonus mechanism)
+        offer_bonus_amount = deposit.amount * (offer_info["bonus_percent"] / 100)
+        logger.info(f"OFFER BONUS: {offer_info['offer_type']} special active! Adding ${offer_bonus_amount} ({offer_info['bonus_percent']}% of ${deposit.amount}) to stake")
+    
     # Auto-approve deposit since Web3 transaction is already successful
     deposit_doc = {
         "id": deposit_id,
@@ -1383,18 +1425,24 @@ async def create_deposit(deposit: DepositCreate, current_user: dict = Depends(ge
         "tx_hash": deposit.tx_hash,
         "status": "approved",
         "created_at": datetime.now(timezone.utc).isoformat(),
-        "is_first_deposit": not first_investment_done
+        "is_first_deposit": not first_investment_done,
+        "offer_bonus": offer_bonus_amount,
+        "offer_type": offer_info["offer_type"] if offer_info["is_active"] else None
     }
     
     await db.deposits.insert_one(deposit_doc)
     
-    # Add amount to user's balance immediately
+    # Add amount + offer bonus to user's balance immediately
+    total_to_add = deposit.amount + offer_bonus_amount
     await db.users.update_one(
         {"id": current_user["id"]},
-        {"$inc": {"balance": deposit.amount}}
+        {"$inc": {"balance": total_to_add}}
     )
     
-    logger.info(f"Deposit ${deposit.amount} added to balance for user {current_user['id']}")
+    if offer_bonus_amount > 0:
+        logger.info(f"Deposit ${deposit.amount} + Offer Bonus ${offer_bonus_amount} = ${total_to_add} added to balance for user {current_user['id']}")
+    else:
+        logger.info(f"Deposit ${deposit.amount} added to balance for user {current_user['id']}")
     
     # ===== AUTO CREATE FIRST SLAB FOR FIRST DEPOSIT =====
     auto_investment = None
@@ -1489,6 +1537,15 @@ async def create_deposit(deposit: DepositCreate, current_user: dict = Depends(ge
         "message": "Deposit completed successfully", 
         "deposit": deposit_doc
     }
+    
+    # Add offer bonus info to response
+    if offer_bonus_amount > 0:
+        response["offer_bonus"] = {
+            "offer_type": offer_info["offer_type"],
+            "bonus_percent": offer_info["bonus_percent"],
+            "bonus_amount": offer_bonus_amount,
+            "message": f"🎉 {offer_info['offer_type'].capitalize()} Special! You got ${offer_bonus_amount:.2f} extra ({offer_info['bonus_percent']}% bonus)!"
+        }
     
     if auto_investment:
         response["auto_investment"] = auto_investment
@@ -3198,6 +3255,282 @@ async def get_deposit_wallet():
         "network": settings.get("deposit_wallet_network", "TRC20"),
         "min_deposit": settings.get("min_deposit", 1.0)
     }
+
+# ==================== OFFER SYSTEM APIs ====================
+
+@api_router.get("/offers/status")
+async def get_offers_status():
+    """Get status of all offers (Sunday & Wednesday) - PUBLIC API"""
+    ist = pytz.timezone('Asia/Kolkata')
+    now_ist = datetime.now(ist)
+    now_utc = datetime.now(timezone.utc)
+    
+    offers_status = []
+    
+    for offer_type in ["sunday", "wednesday"]:
+        # Get offer config from DB
+        offer_config = await db.offer_configs.find_one({"offer_type": offer_type}, {"_id": 0})
+        
+        banner_url = f"/sunday-special-banner.webp" if offer_type == "sunday" else f"/wednesday-special-banner.webp"
+        
+        if not offer_config or not offer_config.get("is_active", False):
+            # Offer not configured or inactive
+            offers_status.append({
+                "offer_type": offer_type,
+                "status": "not_configured",
+                "is_live": False,
+                "starts_at": None,
+                "ends_at": None,
+                "starts_in_seconds": None,
+                "ends_in_seconds": None,
+                "bonus_percent": 10.0,
+                "banner_url": banner_url
+            })
+            continue
+        
+        # Parse datetime strings
+        start_dt_str = offer_config.get("start_datetime")
+        end_dt_str = offer_config.get("end_datetime")
+        bonus_percent = offer_config.get("bonus_percent", 10.0)
+        
+        if not start_dt_str:
+            offers_status.append({
+                "offer_type": offer_type,
+                "status": "not_configured",
+                "is_live": False,
+                "starts_at": None,
+                "ends_at": None,
+                "starts_in_seconds": None,
+                "ends_in_seconds": None,
+                "bonus_percent": bonus_percent,
+                "banner_url": banner_url
+            })
+            continue
+        
+        # Parse start and end times (IST)
+        start_dt = datetime.fromisoformat(start_dt_str.replace('Z', '+00:00'))
+        if start_dt.tzinfo is None:
+            start_dt = ist.localize(start_dt)
+        
+        # Auto-calculate end time if not provided (24h after start)
+        if end_dt_str:
+            end_dt = datetime.fromisoformat(end_dt_str.replace('Z', '+00:00'))
+            if end_dt.tzinfo is None:
+                end_dt = ist.localize(end_dt)
+        else:
+            end_dt = start_dt + timedelta(hours=24)
+        
+        # Convert to UTC for comparison
+        start_dt_utc = start_dt.astimezone(timezone.utc)
+        end_dt_utc = end_dt.astimezone(timezone.utc)
+        
+        # Determine status
+        if now_utc < start_dt_utc:
+            # Upcoming - show "Starts In" countdown
+            status = "upcoming"
+            is_live = False
+            starts_in_seconds = int((start_dt_utc - now_utc).total_seconds())
+            ends_in_seconds = None
+        elif start_dt_utc <= now_utc <= end_dt_utc:
+            # LIVE - show "Ends In" countdown
+            status = "live"
+            is_live = True
+            starts_in_seconds = None
+            ends_in_seconds = int((end_dt_utc - now_utc).total_seconds())
+        else:
+            # Ended
+            status = "ended"
+            is_live = False
+            starts_in_seconds = None
+            ends_in_seconds = None
+        
+        offers_status.append({
+            "offer_type": offer_type,
+            "status": status,
+            "is_live": is_live,
+            "starts_at": start_dt.isoformat(),
+            "ends_at": end_dt.isoformat(),
+            "starts_in_seconds": starts_in_seconds,
+            "ends_in_seconds": ends_in_seconds,
+            "bonus_percent": bonus_percent,
+            "banner_url": banner_url
+        })
+    
+    return {"offers": offers_status}
+
+@api_router.get("/offers/{offer_type}/check-active")
+async def check_offer_active(offer_type: str):
+    """Check if a specific offer is currently LIVE - used by deposit endpoint"""
+    if offer_type not in ["sunday", "wednesday"]:
+        raise HTTPException(status_code=400, detail="Invalid offer type. Use 'sunday' or 'wednesday'")
+    
+    ist = pytz.timezone('Asia/Kolkata')
+    now_utc = datetime.now(timezone.utc)
+    
+    offer_config = await db.offer_configs.find_one({"offer_type": offer_type}, {"_id": 0})
+    
+    if not offer_config or not offer_config.get("is_active", False):
+        return {"is_active": False, "bonus_percent": 0}
+    
+    start_dt_str = offer_config.get("start_datetime")
+    end_dt_str = offer_config.get("end_datetime")
+    
+    if not start_dt_str:
+        return {"is_active": False, "bonus_percent": 0}
+    
+    # Parse dates
+    start_dt = datetime.fromisoformat(start_dt_str.replace('Z', '+00:00'))
+    if start_dt.tzinfo is None:
+        start_dt = ist.localize(start_dt)
+    
+    if end_dt_str:
+        end_dt = datetime.fromisoformat(end_dt_str.replace('Z', '+00:00'))
+        if end_dt.tzinfo is None:
+            end_dt = ist.localize(end_dt)
+    else:
+        end_dt = start_dt + timedelta(hours=24)
+    
+    start_dt_utc = start_dt.astimezone(timezone.utc)
+    end_dt_utc = end_dt.astimezone(timezone.utc)
+    
+    is_active = start_dt_utc <= now_utc <= end_dt_utc
+    bonus_percent = offer_config.get("bonus_percent", 10.0) if is_active else 0
+    
+    return {"is_active": is_active, "bonus_percent": bonus_percent}
+
+async def check_any_offer_active():
+    """Internal helper to check if ANY offer is currently active for deposit bonus"""
+    ist = pytz.timezone('Asia/Kolkata')
+    now_utc = datetime.now(timezone.utc)
+    
+    for offer_type in ["sunday", "wednesday"]:
+        offer_config = await db.offer_configs.find_one({"offer_type": offer_type}, {"_id": 0})
+        
+        if not offer_config or not offer_config.get("is_active", False):
+            continue
+        
+        start_dt_str = offer_config.get("start_datetime")
+        end_dt_str = offer_config.get("end_datetime")
+        
+        if not start_dt_str:
+            continue
+        
+        start_dt = datetime.fromisoformat(start_dt_str.replace('Z', '+00:00'))
+        if start_dt.tzinfo is None:
+            start_dt = ist.localize(start_dt)
+        
+        if end_dt_str:
+            end_dt = datetime.fromisoformat(end_dt_str.replace('Z', '+00:00'))
+            if end_dt.tzinfo is None:
+                end_dt = ist.localize(end_dt)
+        else:
+            end_dt = start_dt + timedelta(hours=24)
+        
+        start_dt_utc = start_dt.astimezone(timezone.utc)
+        end_dt_utc = end_dt.astimezone(timezone.utc)
+        
+        if start_dt_utc <= now_utc <= end_dt_utc:
+            return {
+                "is_active": True,
+                "offer_type": offer_type,
+                "bonus_percent": offer_config.get("bonus_percent", 10.0)
+            }
+    
+    return {"is_active": False, "offer_type": None, "bonus_percent": 0}
+
+# ===== ADMIN OFFER MANAGEMENT =====
+
+@api_router.get("/admin/offers")
+async def get_admin_offers(current_user: dict = Depends(get_current_user)):
+    """Admin gets all offer configurations"""
+    if not current_user.get("is_admin"):
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    offers = []
+    for offer_type in ["sunday", "wednesday"]:
+        offer_config = await db.offer_configs.find_one({"offer_type": offer_type}, {"_id": 0})
+        if offer_config:
+            offers.append(offer_config)
+        else:
+            # Return default empty config
+            offers.append({
+                "offer_type": offer_type,
+                "start_datetime": None,
+                "end_datetime": None,
+                "bonus_percent": 10.0,
+                "is_active": False,
+                "created_at": None,
+                "updated_at": None
+            })
+    
+    return {"offers": offers}
+
+@api_router.post("/admin/offers/{offer_type}")
+async def update_offer_config(offer_type: str, config: OfferConfigUpdate, current_user: dict = Depends(get_current_user)):
+    """Admin configures an offer (Sunday or Wednesday)"""
+    if not current_user.get("is_admin"):
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    if offer_type not in ["sunday", "wednesday"]:
+        raise HTTPException(status_code=400, detail="Invalid offer type. Use 'sunday' or 'wednesday'")
+    
+    ist = pytz.timezone('Asia/Kolkata')
+    
+    # Parse start datetime
+    start_dt = datetime.fromisoformat(config.start_datetime.replace('Z', '+00:00'))
+    if start_dt.tzinfo is None:
+        start_dt = ist.localize(start_dt)
+    
+    # Auto-calculate end datetime if not provided (24 hours after start)
+    if config.end_datetime:
+        end_dt = datetime.fromisoformat(config.end_datetime.replace('Z', '+00:00'))
+        if end_dt.tzinfo is None:
+            end_dt = ist.localize(end_dt)
+    else:
+        end_dt = start_dt + timedelta(hours=24)
+    
+    now = datetime.now(timezone.utc)
+    
+    # Upsert offer config
+    offer_doc = {
+        "offer_type": offer_type,
+        "start_datetime": start_dt.isoformat(),
+        "end_datetime": end_dt.isoformat(),
+        "bonus_percent": config.bonus_percent or 10.0,
+        "is_active": config.is_active if config.is_active is not None else True,
+        "created_by": current_user["id"],
+        "updated_at": now.isoformat()
+    }
+    
+    result = await db.offer_configs.update_one(
+        {"offer_type": offer_type},
+        {"$set": offer_doc, "$setOnInsert": {"created_at": now.isoformat()}},
+        upsert=True
+    )
+    
+    logger.info(f"Admin {current_user['email']} updated {offer_type} offer: Start={start_dt}, End={end_dt}, Bonus={config.bonus_percent}%")
+    
+    return {
+        "message": f"{offer_type.capitalize()} offer configured successfully",
+        "offer": offer_doc
+    }
+
+@api_router.delete("/admin/offers/{offer_type}")
+async def deactivate_offer(offer_type: str, current_user: dict = Depends(get_current_user)):
+    """Admin deactivates an offer"""
+    if not current_user.get("is_admin"):
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    if offer_type not in ["sunday", "wednesday"]:
+        raise HTTPException(status_code=400, detail="Invalid offer type")
+    
+    await db.offer_configs.update_one(
+        {"offer_type": offer_type},
+        {"$set": {"is_active": False, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    logger.info(f"Admin {current_user['email']} deactivated {offer_type} offer")
+    return {"message": f"{offer_type.capitalize()} offer deactivated"}
 
 # ==================== ANNOUNCEMENTS ====================
 

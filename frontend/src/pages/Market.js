@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, RefreshCw, Search, Star, Clock } from 'lucide-react';
 import Header from '../components/Header';
+import OfferSlider from '../components/OfferSlider';
 import { useTheme } from '../context/ThemeContext';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
@@ -55,6 +56,9 @@ const Market = () => {
       <Header />
       
       <div style={{ padding: '20px', maxWidth: '500px', margin: '0 auto' }}>
+        {/* Offer Slider Banner */}
+        <OfferSlider />
+        
         {/* Page Header */}
         <div style={{
           display: 'flex',

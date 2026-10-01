@@ -292,6 +292,10 @@ def generate_referral_code():
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
+def get_password_hash(password: str) -> str:
+    """Alias for hash_password - used by admin password reset"""
+    return pwd_context.hash(password)
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
@@ -2787,7 +2791,7 @@ async def get_fund_adjustments(current_user: dict = Depends(get_current_user)):
     return all_adjustments
 
 @api_router.get("/admin/bonus-history")
-async def get_bonus_history(current_user: dict = Depends(get_current_user)):
+async def get_admin_bonus_history(current_user: dict = Depends(get_current_user)):
     """Admin: Get ALL bonus history from ALL sources - NO LIMIT"""
     if not current_user.get("is_admin"):
         raise HTTPException(status_code=403, detail="Admin access required")
@@ -3367,7 +3371,7 @@ async def get_contract_liquidity():
                         )
                         if price_response.status_code == 200:
                             bnb_price = float(price_response.json().get("price", 600))
-                    except:
+                    except Exception:
                         pass
                     
                     # Calculate exact USD value - NO SCALING

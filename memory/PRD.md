@@ -329,7 +329,7 @@ Hindi (mixed with English)
 - **Status:** User's production site (tradegeniushub.in) showing "Network Error" for 1+ month
 - **Cause:** Deployment infrastructure issue on Emergent platform
 - **Action Required:** User needs to contact support@emergent.sh or Discord
-- **Preview Working:** https://crypto-invest-46.preview.emergentagent.com works fine
+- **Preview Working:** https://crypto-slab-preview.preview.emergentagent.com works fine
 
 ## Upcoming Tasks (P2)
 - [ ] Add "Unity" logo (waiting for user to provide)

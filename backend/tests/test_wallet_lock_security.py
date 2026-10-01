@@ -7,7 +7,7 @@ import requests
 import os
 import uuid
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://crypto-invest-46.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://crypto-slab-preview.preview.emergentagent.com')
 
 # Test credentials
 TEST_EMAIL_1 = "testinvest@bindas.com"

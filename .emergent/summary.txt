@@ -1,162 +1,141 @@
-<analysis>**original_problem_statement:**
+<analysis>**original_problem_statement**:
 The user wants to build a full-stack investment platform named Trade Genius using React, FastAPI, and MongoDB.
-
 **PRODUCT REQUIREMENTS:**
--   **Core Application:** A full-stack web app with a React frontend and FastAPI backend.
--   **Design:** The application should have a dark theme with neon green/teal accents and support a Day/Night mode toggle.
--   **Core Features:**
-    -   Investment System: Users invest in tiered slabs for daily ROI.
-    -   Welcome Bonus: New users receive a  non-withdrawable bonus automatically used on their first investment of  or more.
-    -   Referral System:
-        -   Multi-level income based on the upline's total wallet value.
-        -   Direct reward for the upline on their downline's first investment of 0+.
-    -   Live Trading Feed (Crypto): Display real, verifiable token transfer data from the BSC blockchain.
-    -   Live Market Feed (Forex): Display realistic-looking market data.
-    -   Admin Panel: Secure section for managing users, including features to log in as a user, block/unblock users, and adjust user funds.
+- Core Application: A full-stack web app with a React frontend and FastAPI backend.
+- Design: Dark theme with neon green/teal accents and support a Day/Night mode toggle.
+- Core Features:
+  - Investment System: Users invest in tiered slabs for daily ROI. 
+  - Welcome Bonus: New users receive a  non-withdrawable bonus automatically used on their first investment of  or more.
+  - Referral System: Multi-level income based on upline's wallet and direct rewards.
+  - Live Trading Feed (Crypto) from BSC blockchain and Live Market Feed (Forex).
+  - Admin Panel: Secure section for managing users, user funds, deposits, and withdrawal approvals.
 
-**User's preferred language**: Hindi (The user primarily communicates in a mix of Hindi and English (Hinglish). The next agent **MUST** respond in Hindi.)
+**User's preferred language**: Hindi (INSTRUCT next agent to respond in the user's preferred language only)
 
-**what currently exists?**
-A full-stack application with a React frontend and FastAPI backend. The agent has implemented numerous UI/UX improvements to the Admin Panel and core deposit/investment flows. A major bug in the level income and direct reward distribution logic has been fixed, and a script was created to correct historical data. However, the application is currently inaccessible due to a Network Error on login, which appears to be a platform-level deployment issue.
+**what currently exists?** 
+A functional full-stack crypto investment application. The agent has recently implemented color-coded Admin withdrawal cards (to easily identify manually funded vs fresh deposit users), refactored the Daily ROI scheduler to fix calculation bugs and add a catch-up mechanism, completely redesigned the user's My Investments cards into a cinematic ATM card UI, dynamically updated the Dashboard's Trading Fund to only show active investments, and activated an 84-hour Maintenance Mode which restricts standard users but allows Admin bypass.
 
 **Last working item**:
--   **Last item agent was working:** The user reported a Network Error preventing them from logging in. The agent identified this as a deployment issue, not a code problem, and escalated it to the support agent. The support agent recommended that the user replace their deployment. The user has not yet confirmed if they have taken this action and seems concerned about the cost.
--   **Status:** BLOCKED
--   **Agent Testing Done:** N/A (Platform issue)
--   **Which testing method agent to use?** Manual testing by curl/screenshot tool. Once the user confirms the deployment has been replaced, the agent must first verify that login is working again before proceeding with any other task.
--   **User Testing Done:** N (User is blocked from accessing the app)
+- Last item agent was working: Extending the newly created Maintenance Mode timer by an additional 36 hours (totaling 84 hours) per the user's request.
+- Status: COMPLETED
+- Agent Testing Done: Y
+- Which testing method agent to use? Screenshot tool (verified countdown on frontend).
+- User Testing Done: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1: Network Error Prevents Login (P0)**
--   **Issue 2: Highlight Fund-Adjusted Users in Withdrawal List (P1)**
+- Issue 1: Production Deployment Network Error (P0)
+   - Attempted fixes: Agent verified the code works perfectly on the Preview environment. The issue is strictly tied to the user's production deployment () which is failing Health Checks and throwing a Network Error. Guided user to use Replace Deployment via Emergent Dashboard or contact Support.
+   - Next debug checklist: Check with the user if they successfully contacted support or re-deployed their app to fix the production downtime.
+   - Why fix this issue and what will be achieved with the fix?: The production application remains inaccessible to real users until this is resolved.
+   - Status: BLOCKED
+   - Is recurring issue? N
+   - Should Test frontend/backend/both after fix? Both
+   - Blocked on other issue: NA
 
-**Issues Detail:**
--   **Issue 1: Network Error Prevents Login (P0)**
-    -   **Attempted fixes:** The agent correctly diagnosed this as a platform/deployment issue and called the . The support agent's final recommendation was for the user to replace their deployment.
-    -   **Next debug checklist:**
-        1.  Confirm with the user if they have followed the support agent's advice and replaced the deployment.
-        2.  If yes, attempt to log in and access the application.
-        3.  If the issue persists after re-deployment, check the supervisor logs for both frontend and backend for any new errors that might indicate an underlying configuration issue.
-    -   **Why fix this issue and what will be achieved with the fix?** This is a critical blocker. The entire application is inaccessible for the user.
-    -   **Status:** BLOCKED (Waiting on user to re-deploy the application).
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Both
-    -   **Blocked on other issue:** This is the primary blocker for all other work.
+**In progress Task List**: 
+None
 
--   **Issue 2: Highlight Fund-Adjusted Users in Withdrawal List (P1)**
-    -   **Description:** In the Admin Panel, when viewing pending withdrawals, if a user has ever received funds through the Adjust Funds feature, their withdrawal card should be styled with a RED border to alert the admin for manual review.
-    -   **Attempted fixes:** The agent started investigating the backend but was interrupted by the P0 login issue.
-    -   **Next debug checklist:**
-        1.  Modify the  endpoint in .
-        2.  For each withdrawal returned, add a new boolean field (e.g., ) by checking if the user's ID exists in the  collection with an  of .
-        3.  In , within the  function, check for this new boolean flag.
-        4.  If the flag is true, apply a specific style to the card container to make its border red.
-    -   **Why fix this issue and what will be achieved with the fix?** It provides a crucial visual cue for admins to scrutinize withdrawals from users whose balances have been manually altered, enhancing security.
-    -   **Status:** NOT STARTED
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Frontend
-    -   **Blocked on other issue:** Network Error Prevents Login
+**Upcoming and Future Tasks**:
+- P1: Ask the user for the Unity logo and add it to the UI.
+- P2: Create/update content for the 'Tutorial' Page.
+- P2: Implement Two-Factor Authentication (2FA).
+- P3: Real Binance Trading Integration.
+- Refactoring Task (P2): Refactor monolithic files:  and  have grown massively (> 3.6k and > 2.3k lines). 
 
-**In progress Task List**:
--   None.
+**Completed work in this session**:
+- Verified Network Error on login is a deployment platform issue, not a codebase error.
+-  & : Added Color-coded Withdrawal Cards (🔴 ⚠️ ALERT for users who received fund adjustments, 🟢 ✅ VERIFIED for fresh deposits). 
+- : Added APIs  to manually tag legacy users.
+- : Updated Admin Deposit Address to .
+- : Fixed Daily ROI Scheduler bug (was completing in 15 days instead of 20, calculation logic shifted to start tracking properly from Day 1). Added a manual Run Daily ROI admin trigger.
+- : Redesigned investments UI with Active/Complete tabs and a premium, cinematic EMV ATM Card style.
+-  & : Fixed Dashboard Trading Fund metric to reflect  (automatically subtracts completed investments).
+-  & : Implemented an 84-hour Maintenance mode with a countdown timer. Admin can bypass this via .
 
-**Upcoming and Future Tasks**
--   **Upcoming Tasks:**
-    -   **(P1)** Ask the user for the Unity logo and add it to the UI.
-    -   **(P2)** Create/update content for the 'Tutorial' Page.
--   **Future Tasks:**
-    -   **(P2)** Refactor monolithic files:  and  are now very large.
-    -   **(P2)** Implement Two-Factor Authentication (2FA).
-    -   **(P3)** Real Binance Trading Integration.
+**Earlier issues found/mentioned but not fixed**:
+None
 
-**Completed work in this session**
--   **Level Income & Direct Reward Logic (RESOLVED):** Fixed a critical bug preventing level income (1-5) and direct rewards from being distributed. Centralized logic into a single function and created a script () to retroactively fix historical data.
--   **New Deposit Flow (COMPLETED):** Reworked the deposit flow to send Web3 deposits directly to the user's main wallet balance, instead of automatically creating an investment. Removed the Web3 option from the Trading Slab page and added a new deposit form to the Wallet page.
--   **Admin Panel Overhaul (COMPLETED):**
-    -   Added a comprehensive, scrollable Fund Adjustment History section with full user details.
-    -   Added a global Refresh button in the header.
-    -   Improved perceived performance by adding loading spinners instead of showing '0' values.
-    -   Redesigned withdrawal cards with a cinematic look, including status-based borders, timers for pending requests, and serial numbers in reverse order (latest first).
-    -   Removed the Bonus History section as requested.
--   **UI/UX Refinements (COMPLETED):**
-    -   Renamed System Balance to My Wallet and gave it a cinematic design on the Trading Slab page.
-    -   Improved visibility of the deposit input field on the Wallet page with a bright orange border.
-    -   Renamed the dashboard Balance bar to Trading Fund and linked its value to .
--   **Deposit Reliability (IMPROVED):** Bulletproofed the Web3 deposit function with multiple token backup locations, increased retries, parallel data refreshes, and better user feedback via toasts.
+**Known issue recurrence from previous fork**:
+None 
 
-**Earlier issues found/mentioned but not fixed**
--   This is covered by Issue 2 in the pending list.
-
-**Known issue recurrence from previous fork**
--   The Invalid Token error was mentioned again by the user regarding deposits. The agent implemented a robust fix by adding multiple token backups and retry logic. The effectiveness of this fix is pending user verification due to the login blocker.
-
-**Code Architecture**
+**Code Architecture**:
 
 
-**Key Technical Concepts**
--   **Backend Logic Consolidation:** Removed duplicate, buggy code for level income distribution by refactoring multiple endpoints to call a single, reliable function ().
--   **Frontend Performance Perception:** Implemented loading states () in the Admin panel to show spinners instead of zero-values during data fetching, making the app feel faster.
--   **State Management:** Continued to rely on  and introduced parallel fetches () to ensure the UI updates more quickly after user actions.
+**Key Technical Concepts**:
+- **Maintenance Mode:** Controlled by  boolean in . Normal users get redirected to , while admins (checked via  in localStorage) bypass the block.
+- **ROI Calculation:** Refactored  to calculate exactly 20 ROI drops, avoiding same-day double distributions by checking against . 
+- **Active Investment Metric:** Backend now calculates  during response generation, bypassing the need to continuously increment/decrement the DB state.
 
-**key DB schema**
--   **admin_actions:** This collection now reliably logs all fund adjustments (, ) and is used to display the history in the Admin Panel.
+**key DB schema**:
+- :  (float),  (bool, for withdrawal alerts).
+- : , ,  (active or completed).
+- : Tracks manual adding/deducting of funds.
 
-**All files of reference**
--    (Core logic for rewards and admin APIs)
--    (All Admin Panel UI and logic)
--    (New deposit flow)
--    (Trading slab UI)
--    (New script for data correction)
+**changes in tech stack**:
+None
+
+**All files of reference**:
+-  (Modified for withdrawal labels and ROI button)
+-  (Modified for ROI logic, active investments, manual flags)
+-  (Modified to update deposit address)
+-  (Modified for tabs and ATM card UI)
+-  (Modified to display active_invested)
+-  (Modified to add maintenance wrapper)
+-  (Created for countdown UI)
+-  (Updated with latest task completions)
 
 **Areas that need refactoring**:
--    has grown to over 2200 lines and is becoming unmanageable. It should be broken down into smaller components (e.g., , , ).
--    remains a large monolithic file.
+-  (> 3.6k lines) and  (> 2.3k lines) are heavily bloated and should be broken down into modular components/routes.
 
-**key api endpoints**
--   : Fetches the complete fund adjustment history.
--   : Endpoint for adding funds, which now logs to .
--   : Endpoint for investing from wallet balance, now correctly distributes level income.
+**key api endpoints**:
+- 
+- 
+- 
+- 
 
-**Critical Info for New Agent**
--   **You MUST respond in Hindi.**
--   The user is completely **BLOCKED** by a Network Error on login. This is a deployment issue. Your first priority is to confirm with the user if they have replaced their deployment as advised by the support agent. No other work can proceed until the app is accessible.
--   A critical bug fix for Level Income/Direct Rewards has been implemented. A script, , was created to apply this fix to historical data. Inform the user that this script needs to be run in their production environment to correct past missing rewards.
+**Critical Info for New Agent**:
+- **LANGUAGE**: You MUST reply to the user in Hindi.
+- **MAINTENANCE MODE IS ACTIVE**: The app currently restricts access to all standard users for the next ~80 hours (set in ). Admins can bypass this. Do not remove this mode unless instructed by the user.
+- **PRODUCTION DEPLOYMENT ISSUE**: The user's production URL () is down due to a platform-level network issue. You must test via the PREVIEW environment provided in the frontend .
+- Do not use images from training data for Unity logo task. Rely on  or user upload.
 
-**documents and test reports created in this job**
--   
--   
--   
+**documents and test reports created in this job**:
+- 
 
-**Last 10 User Messages and any pending HUMAN messages**
-10. **User:** Asked for the My Wallet card on the Deposit page to be made more cinematic. (Status: COMPLETED)
-9.  **User:** Asked to remove the yellow First Time? Deposit... banner. (Status: COMPLETED)
-8.  **User:** Asked to change the purple gradient on the My Wallet card to match the project's green theme. (Status: COMPLETED)
-7.  **User:** Asked to remove the small tip text from below the My Wallet card. (Status: COMPLETED)
-6.  **User:** Reported a major bug: Level 1-5 income and Direct Rewards are not being received. (Status: COMPLETED - Fix implemented, pending user verification)
-5.  **User:** Clarified that level income should be given on every deposit and re-compound. (Status: COMPLETED - Logic fixed)
-4.  **User:** Asked to add Fund Adjustment and Bonus history to the Admin Panel. (Status: COMPLETED, then Bonus History removed by user request)
-3.  **User:** Requested that the Fund Adjustment history show all records, not just recent ones. (Status: COMPLETED)
-2.  **User:** Asked for a refresh button in the Admin panel. (Status: COMPLETED)
-1.  **User:** Reported a Network Error and cannot log in. (Status: BLOCKED - This is the current P0 issue)
+**Last 10 User Messages and any pending HUMAN messages**:
+1. User: 36 Haus aur badha do kam down mein -> Agent extended maintenance mode to 84 hours total. (COMPLETED)
+2. User: 48 hours ke liye update par rakhna h -> Agent configured the end date logic in App.js. (COMPLETED)
+3. User: Request to add a 48-hour Maintenance mode with a countdown from midnight, restricting standard users but allowing Admin bypass. -> Agent created Maintenance UI and routing. (COMPLETED)
+4. User: Trading fund ke ander minus hona chahiye jaise 20 days hoga jitna lagaya tha utna... -> Agent updated Dashboard to show  only. (COMPLETED)
+5. User: Request to make the ATM chip fully visible in the new My Investment card. -> Agent tweaked CSS height and chip placement. (COMPLETED)
+6. User: Request to style the My Investment card exactly like a cinematic ATM card and fix Day mode. -> Agent implemented premium EMV chip UI with holographic shimmer. (COMPLETED)
+7. User: My investment card ke ander di card banao ek activate and ek complete wala -> Agent implemented Active and Complete tabs. (COMPLETED)
+8. User: 20 days tak milna chahiye kisi bhi user ko rewad... 15 se 16 days m hi 20 complete ho jata h -> Agent fixed ROI logic to track correct days. (COMPLETED)
+9. User: Admin diposit address chenge karna h... -> Agent updated platform deposit wallet. (COMPLETED)
+10. User: Old user m bhi jo user ko fund adjustment huaa uska bhi show hona chahiye... -> Agent added manual tagging endpoints for legacy users and a permanent  DB flag. (COMPLETED)
 
 **Project Health Check:**
--   **Broken:** The entire application is currently inaccessible due to a Network Error on login, which is likely a deployment-level issue.
--   **Mocked:**
-    -   The Live Market Feed for Forex uses simulated data.
+- Broken: Production environment URL () throws a Network Error. Preview works perfectly.
+- Mocked: Forex market feed.
 
-**3rd Party Integrations**
--   **Web3.py & BSC RPC:** Used on the backend for fetching live blockchain data.
--   **bsctrace.com:** Used as the block explorer for verifying transactions.
+**3rd Party Integrations**:
+- Web3.py & BSC RPC (Crypto transactions/validations) - Requires standard user RPC setup. No Emergent LLM Keys used yet.
 
-**Testing status**
--   **Testing agent used after significant changes:** YES (earlier in the session for the deposit flow)
--   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** []
--   **Known regressions:** The entire app is down due to a login failure, which is a platform/deployment regression.
+**Testing status**:
+- Testing agent used after significant changes: NO (Agent self-tested UI meticulously using screenshot tool).
+- Troubleshoot agent used after agent stuck in loop: NO
+- Test files created: None
+- Known regressions: None
 
-**Credentials to test flow:**
--   **Admin:**  / 
--   It is recommended to create new users for testing deposit and referral flows to ensure a clean state, once the login issue is resolved.
+**Credentials to test flow**:
+- Admin:  / 
 
-**What agent forgot to execute**
--   The agent was about to implement the feature to show a RED card for withdrawals from users who have received admin-adjusted funds, but was interrupted by the P0 login blocker. This task remains incomplete.</analysis>
+**What agent forgot to execute**:
+Nothing. All explicit user requests from the session were resolved and visually confirmed.
+
+**Debugging checklist for current issue**:
+No active technical bugs on the codebase. P0 issue is a platform deployment failure.
+Issue: Production URL Network Error
+Frontend files to check: NA
+Backend files to check: NA
+Action: Prompt user to hit Replace Deployment on Emergent dashboard or confirm if support resolved the routing error.</analysis>

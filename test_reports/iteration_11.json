@@ -1,0 +1,39 @@
+{
+  "summary": "Tested Offer System (Sunday/Wednesday Special Offers with 10% deposit bonus). Backend: 10/10 pytest cases passed covering public /api/offers/status, /api/offers/{type}/check-active, admin GET/POST/DELETE /api/admin/offers/*. Frontend: OfferSlider on Market page shows LIVE indicator + Ends In countdown correctly; Admin Panel Offers tab renders Sunday/Wednesday Special cards with datetime-local Start/End inputs, Bonus Percentage, Save & Activate / Deactivate buttons. ACTIVE badge shown for currently live Sunday offer. All 9 requested feature points verified except direct E2E deposit-bonus flow (requires Web3 wallet - verified via code review + unit tested check_any_offer_active logic).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Admin > Offers", "issues": ["Instructions/help text (How It Works) is written in Hinglish mixed with English. Minor i18n consistency issue."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_offers.py",
+    "/app/test_reports/pytest/offers_results.xml"
+  ],
+  "action_items": [
+    "No blocking fixes needed. Optional: standardize instructions language in Admin Offers (currently Hinglish).",
+    "Consider adding data-testid attributes to Admin Offers inputs/buttons (currently works via role/text selectors, but testid would be more robust)."
+  ],
+  "critical_code_review_comments": [
+    "Deposit bonus logic (server.py L1410-1443) is only applied when first_investment_done=True. First-time depositors are intentionally excluded (welcome bonus takes precedence). This is by design but should be documented in the Admin Offers help text to avoid admin confusion.",
+    "OfferConfigUpdate model accepts bonus_percent but admin update_offer_config forces default 10.0 if None - correct. However, if config.is_active=False is sent, line 3500 uses `is not None` check so False is preserved - correct.",
+    "check_any_offer_active returns the FIRST matching active offer (Sunday checked before Wednesday). If both are configured as live overlapping, bonus is applied only once from Sunday - acceptable behavior.",
+    "Timezone handling uses IST localize when tzinfo is None (L3312, L3482). All comparisons done in UTC - correct.",
+    "server.py file is 3965 lines - exceeds 700-line guideline; should be modularized (existing issue, not from this feature)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_offers.py (new file)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "test_credentials": "admin@tradego.com / Admin@123",
+  "seed_data_creation": "Sunday offer configured as LIVE (start=-1h, end=+23h UTC) via test_restore_sunday_live_for_frontend_tests fixture to preserve expected UI state. Wednesday offer was deactivated during tests.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend offer APIs fully validated via pytest in /app/backend/tests/test_offers.py. OfferSlider works correctly on Market page with LIVE badge + countdown. Admin Offers tab accessible via hamburger -> Offers; contains both Sunday & Wednesday configuration forms with datetime-local inputs. 10% deposit bonus logic is in server.py L1410-1443 and only applies to subsequent deposits (first_investment_done=True) during an active offer window. E2E deposit test requires real Web3 wallet so not performed - unit covered via /api/offers/{type}/check-active.",
+  "rca of the issue": "No issues found."
+}

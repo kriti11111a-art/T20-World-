@@ -30,6 +30,17 @@ Hindi (mixed with English)
 - [x] Balance deduction logic (bonus first, then balance)
 - [x] Daily ROI distribution (scheduled at 12:00 AM IST)
 
+### Dashboard Offer Slider & 10% Deposit Bonus (NEW - Oct 2026)
+- [x] Sunday/Wednesday Special Offer Banners on Market page
+- [x] Countdown Timer: "Starts In: DD:HH:MM:SS" for upcoming offers
+- [x] Blinking "🟢 LIVE" indicator with "Ends In: HH:MM:SS" countdown for active offers
+- [x] Auto 10% bonus on deposits during active offer window (subsequent deposits only)
+- [x] Admin Panel > Offers tab to configure Start/End datetime for both offers
+- [x] Admin can activate/deactivate offers
+- [x] Banner images: /sunday-special-banner.webp, /wednesday-special-banner.webp
+- [x] Public API: GET /api/offers/status (shows all offer statuses)
+- [x] Admin APIs: GET/POST/DELETE /api/admin/offers/{sunday|wednesday}
+
 ### Dashboard
 - [x] Forex Trading section with simulated market data (Gold, Oil, EUR/USD, etc.)
 - [x] Crypto Trading section with live chart and order book
@@ -44,6 +55,7 @@ Hindi (mixed with English)
 - [x] Block/Unblock users
 - [x] Adjust funds (add/deduct balance)
 - [x] View deposits and withdrawals
+- [x] Offers tab - Configure Sunday/Wednesday Special offers
 
 ### UI/UX
 - [x] Dark theme with neon green accents (BitNest style)

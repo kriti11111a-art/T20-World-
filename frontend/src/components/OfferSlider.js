@@ -109,12 +109,12 @@ const OfferSlider = ({ onOfferClick }) => {
     return () => clearInterval(timer);
   }, [fetchOffers]);
 
-  // Auto-slide ONLY when NO offer is LIVE
+  // Auto-slide ONLY when NO offer is LIVE (10 seconds interval)
   useEffect(() => {
     if (offers.length > 1 && !liveOfferLocked) {
       const slideTimer = setInterval(() => {
         setCurrentSlide(prev => (prev + 1) % offers.length);
-      }, 5000);
+      }, 10000);
       return () => clearInterval(slideTimer);
     }
   }, [offers.length, liveOfferLocked]);

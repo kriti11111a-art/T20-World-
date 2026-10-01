@@ -13,11 +13,22 @@ const Footer = () => {
           {/* Brand Section */}
           <div style={{...styles.card, background: colors.cardBg, border: `2px solid ${colors.accent}`}}>
             <div style={styles.brandHeader}>
-              <div style={{...styles.brandIcon, background: `${colors.accent}15`}}>
-                <Zap size={20} color={colors.accent} />
+              <div style={{
+                width: '45px',
+                height: '45px',
+                borderRadius: '50%',
+                border: '2px solid rgba(22, 224, 255, 0.6)',
+                overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: '#0a1628',
+                boxShadow: '0 0 15px rgba(22, 224, 255, 0.4)',
+              }}>
+                <img src="/app-logo.png" alt="TradeGo" style={{width: '80%', height: '80%', objectFit: 'contain'}} />
               </div>
               <h2 style={{...styles.brandTitle, color: colors.text}}>
-                <span style={{color: colors.accent}}>TRADE</span> GENIUS
+                <span style={{color: colors.cyanHighlight || colors.accent}}>Trade</span>Go
               </h2>
             </div>
             <p style={{...styles.brandDesc, color: colors.textSecondary}}>

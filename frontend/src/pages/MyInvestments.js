@@ -296,9 +296,10 @@ const MyInvestments = () => {
           display: 'flex',
           gap: '0px',
           marginBottom: '20px',
-          background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+          background: 'rgba(6, 37, 68, 0.6)',
           borderRadius: '12px',
           padding: '4px',
+          border: '1px solid rgba(23, 77, 117, 0.5)',
         }}>
           <button
             onClick={() => setActiveTab('active')}
@@ -316,10 +317,10 @@ const MyInvestments = () => {
               gap: '8px',
               transition: 'all 0.3s ease',
               background: activeTab === 'active' 
-                ? 'linear-gradient(135deg, #00D09C 0%, #00E5A0 100%)' 
+                ? 'linear-gradient(90deg, #087BFF 0%, #16E0FF 100%)' 
                 : 'transparent',
-              color: activeTab === 'active' ? '#000' : colors.textSecondary,
-              boxShadow: activeTab === 'active' ? '0 4px 15px rgba(0, 208, 156, 0.4)' : 'none',
+              color: activeTab === 'active' ? '#FFFFFF' : '#B8C7DC',
+              boxShadow: activeTab === 'active' ? '0 4px 15px rgba(22, 224, 255, 0.4)' : 'none',
             }}
           >
             <Clock size={18} />
@@ -341,10 +342,10 @@ const MyInvestments = () => {
               gap: '8px',
               transition: 'all 0.3s ease',
               background: activeTab === 'completed' 
-                ? 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' 
+                ? 'linear-gradient(90deg, #087BFF 0%, #16E0FF 100%)' 
                 : 'transparent',
-              color: activeTab === 'completed' ? '#000' : colors.textSecondary,
-              boxShadow: activeTab === 'completed' ? '0 4px 15px rgba(255, 215, 0, 0.4)' : 'none',
+              color: activeTab === 'completed' ? '#FFFFFF' : '#B8C7DC',
+              boxShadow: activeTab === 'completed' ? '0 4px 15px rgba(22, 224, 255, 0.4)' : 'none',
             }}
           >
             <CheckCircle size={18} />
@@ -386,308 +387,257 @@ const MyInvestments = () => {
               const progressPercent = Math.min((inv.days_completed / inv.total_days) * 100, 100);
               const isCompleted = inv.status === 'completed' || inv.days_completed >= inv.total_days;
               
-              // Premium ATM Card gradients - works in both modes
-              const cardGradients = {
-                1: 'linear-gradient(135deg, #1a237e 0%, #283593 30%, #3949ab 60%, #1a237e 100%)',
-                2: 'linear-gradient(135deg, #1b1b1b 0%, #2d2d2d 30%, #3d3d3d 60%, #1b1b1b 100%)',
-                3: 'linear-gradient(135deg, #4a148c 0%, #6a1b9a 30%, #7b1fa2 60%, #4a148c 100%)',
-                4: 'linear-gradient(135deg, #b8860b 0%, #daa520 30%, #ffd700 60%, #b8860b 100%)',
-              };
-              const cardGradient = cardGradients[inv.plan_id] || cardGradients[2];
-              
               return (
                 <div
                   key={inv.id}
                   style={{
-                    background: cardGradient,
-                    borderRadius: '24px',
+                    background: 'linear-gradient(145deg, #0a1929 0%, #0d2847 50%, #0a1929 100%)',
+                    borderRadius: '20px',
                     padding: '0',
                     marginBottom: '24px',
                     position: 'relative',
                     overflow: 'hidden',
-                    boxShadow: isCompleted 
-                      ? '0 20px 60px rgba(0,0,0,0.4), 0 10px 30px rgba(0,0,0,0.3)'
-                      : '0 25px 80px rgba(0, 208, 156, 0.35), 0 15px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2)',
-                    border: 'none',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(22, 224, 255, 0.3)',
+                    border: '1px solid rgba(22, 224, 255, 0.4)',
                   }}
                 >
-                  {/* Premium metallic shine overlay */}
+                  {/* Background Chart Pattern */}
                   <div style={{
                     position: 'absolute',
                     top: 0,
-                    left: 0,
                     right: 0,
                     bottom: 0,
-                    background: `
-                      linear-gradient(125deg, 
-                        transparent 0%, 
-                        rgba(255,255,255,0.05) 25%, 
-                        rgba(255,255,255,0.15) 40%,
-                        rgba(255,255,255,0.05) 55%,
-                        transparent 100%
-                      )
-                    `,
+                    width: '60%',
+                    opacity: 0.15,
+                    background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 100'%3E%3Cpath d='M0,80 L20,70 L40,75 L60,50 L80,55 L100,30 L120,40 L140,20 L160,35 L180,15 L200,25' stroke='%2316E0FF' fill='none' stroke-width='2'/%3E%3Cpath d='M0,90 L20,85 L40,88 L60,70 L80,72 L100,55 L120,60 L140,45 L160,50 L180,35 L200,40' stroke='%23087BFF' fill='none' stroke-width='1.5' opacity='0.5'/%3E%3C/svg%3E") no-repeat right center`,
+                    backgroundSize: 'contain',
                     pointerEvents: 'none',
                   }} />
                   
-                  {/* Holographic rainbow effect */}
+                  {/* Candlestick Pattern Overlay */}
                   <div style={{
                     position: 'absolute',
-                    top: 0,
-                    left: '-100%',
-                    right: 0,
-                    bottom: 0,
-                    width: '200%',
-                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)',
-                    animation: 'shimmer 3s infinite',
+                    top: '20%',
+                    right: '5%',
+                    width: '50%',
+                    height: '60%',
+                    opacity: 0.08,
+                    background: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60'%3E%3Crect x='10' y='20' width='6' height='25' fill='%230ECB81'/%3E%3Cline x1='13' y1='10' x2='13' y2='20' stroke='%230ECB81' stroke-width='2'/%3E%3Cline x1='13' y1='45' x2='13' y2='55' stroke='%230ECB81' stroke-width='2'/%3E%3Crect x='25' y='15' width='6' height='30' fill='%23F6465D'/%3E%3Cline x1='28' y1='5' x2='28' y2='15' stroke='%23F6465D' stroke-width='2'/%3E%3Cline x1='28' y1='45' x2='28' y2='55' stroke='%23F6465D' stroke-width='2'/%3E%3Crect x='40' y='25' width='6' height='20' fill='%230ECB81'/%3E%3Cline x1='43' y1='15' x2='43' y2='25' stroke='%230ECB81' stroke-width='2'/%3E%3Cline x1='43' y1='45' x2='43' y2='50' stroke='%230ECB81' stroke-width='2'/%3E%3Crect x='55' y='10' width='6' height='35' fill='%230ECB81'/%3E%3Cline x1='58' y1='5' x2='58' y2='10' stroke='%230ECB81' stroke-width='2'/%3E%3Cline x1='58' y1='45' x2='58' y2='55' stroke='%230ECB81' stroke-width='2'/%3E%3Crect x='70' y='20' width='6' height='25' fill='%23F6465D'/%3E%3Cline x1='73' y1='10' x2='73' y2='20' stroke='%23F6465D' stroke-width='2'/%3E%3Cline x1='73' y1='45' x2='73' y2='50' stroke='%23F6465D' stroke-width='2'/%3E%3Crect x='85' y='15' width='6' height='28' fill='%230ECB81'/%3E%3Cline x1='88' y1='8' x2='88' y2='15' stroke='%230ECB81' stroke-width='2'/%3E%3Cline x1='88' y1='43' x2='88' y2='55' stroke='%230ECB81' stroke-width='2'/%3E%3C/svg%3E") no-repeat right center`,
+                    backgroundSize: 'contain',
                     pointerEvents: 'none',
                   }} />
                   
                   {/* Card content wrapper */}
                   <div style={{
-                    padding: '24px',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    minHeight: '320px',
+                    padding: '20px',
+                    position: 'relative',
+                    zIndex: 1,
                   }}>
-                    {/* Top row: Chip + Status */}
+                    {/* Top row: Logo + Status */}
                     <div style={{
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'flex-start',
-                      marginBottom: '12px',
+                      marginBottom: '16px',
                     }}>
-                      {/* EMV Chip - Fully visible realistic design */}
+                      {/* TradeGo Logo - Round */}
                       <div style={{
-                        width: '55px',
-                        height: '42px',
-                        background: 'linear-gradient(145deg, #f4e4a6 0%, #d4af37 30%, #f4d03f 50%, #c9a227 70%, #f4e4a6 100%)',
-                        borderRadius: '8px',
-                        display: 'grid',
-                        gridTemplateColumns: '1fr 2px 1fr',
-                        gridTemplateRows: '1fr 2px 1fr 2px 1fr',
-                        gap: '0px',
-                        padding: '5px 8px',
-                        boxShadow: '0 4px 15px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.4), inset 0 -2px 4px rgba(0,0,0,0.2)',
-                        border: '1px solid rgba(180, 140, 60, 0.5)',
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '50%',
+                        border: '2px solid rgba(22, 224, 255, 0.6)',
+                        boxShadow: '0 0 20px rgba(22, 224, 255, 0.4), 0 0 40px rgba(8, 123, 255, 0.2)',
+                        overflow: 'hidden',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: '#0a1628',
                       }}>
-                        {/* Chip grid pattern */}
-                        <div style={{background: 'linear-gradient(135deg, #b8860b 0%, #daa520 100%)', borderRadius: '2px'}} />
-                        <div style={{background: 'rgba(139, 115, 85, 0.6)'}} />
-                        <div style={{background: 'linear-gradient(135deg, #daa520 0%, #b8860b 100%)', borderRadius: '2px'}} />
-                        <div style={{background: 'rgba(139, 115, 85, 0.6)', gridColumn: 'span 3'}} />
-                        <div style={{background: 'linear-gradient(135deg, #c9a227 0%, #f4d03f 100%)', borderRadius: '2px'}} />
-                        <div style={{background: 'rgba(139, 115, 85, 0.6)'}} />
-                        <div style={{background: 'linear-gradient(135deg, #f4d03f 0%, #c9a227 100%)', borderRadius: '2px'}} />
-                        <div style={{background: 'rgba(139, 115, 85, 0.6)', gridColumn: 'span 3'}} />
-                        <div style={{background: 'linear-gradient(135deg, #daa520 0%, #b8860b 100%)', borderRadius: '2px'}} />
-                        <div style={{background: 'rgba(139, 115, 85, 0.6)'}} />
-                        <div style={{background: 'linear-gradient(135deg, #b8860b 0%, #daa520 100%)', borderRadius: '2px'}} />
+                        <img 
+                          src="/app-logo.png" 
+                          alt="TradeGo" 
+                          style={{
+                            width: '80%',
+                            height: '80%',
+                            objectFit: 'contain',
+                          }}
+                        />
                       </div>
                       
-                      {/* Status Badge */}
+                      {/* Status Badge - ACTIVE or COMPLETE */}
                       <div style={{
                         background: isCompleted 
-                          ? 'linear-gradient(135deg, #ff4757 0%, #ff3f34 100%)'
-                          : 'linear-gradient(135deg, #00D09C 0%, #00E5A0 100%)',
-                        color: '#fff',
-                        padding: '8px 16px',
+                          ? 'rgba(255, 215, 0, 0.2)'
+                          : 'rgba(14, 203, 129, 0.2)',
+                        color: isCompleted ? '#FFD700' : '#0ECB81',
+                        padding: '8px 20px',
                         borderRadius: '25px',
-                        fontSize: '11px',
+                        fontSize: '13px',
                         fontWeight: 800,
                         letterSpacing: '1px',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '6px',
-                        boxShadow: isCompleted
-                          ? '0 4px 20px rgba(255, 71, 87, 0.5)'
-                          : '0 4px 20px rgba(0, 208, 156, 0.5)',
+                        gap: '8px',
+                        border: isCompleted 
+                          ? '1px solid rgba(255, 215, 0, 0.5)'
+                          : '1px solid rgba(14, 203, 129, 0.5)',
                         textTransform: 'uppercase',
                       }}>
-                        {isCompleted ? '✓ COMPLETE' : (
-                          <>
-                            <span style={{
-                              width: '6px',
-                              height: '6px',
-                              borderRadius: '50%',
-                              background: '#fff',
-                              boxShadow: '0 0 10px #fff',
-                            }} />
-                            ACTIVE
-                          </>
-                        )}
+                        <span style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          background: isCompleted ? '#FFD700' : '#0ECB81',
+                          boxShadow: isCompleted 
+                            ? '0 0 10px #FFD700'
+                            : '0 0 10px #0ECB81',
+                        }} />
+                        {isCompleted ? 'COMPLETE' : 'ACTIVE'}
                       </div>
                     </div>
                     
-                    {/* Middle: Plan name + Amount (card number style) */}
-                    <div style={{marginTop: '8px'}}>
+                    {/* Plan Name + Amount */}
+                    <div style={{marginBottom: '20px'}}>
                       <div style={{
-                        fontSize: '10px',
-                        color: 'rgba(255,255,255,0.6)',
+                        fontSize: '12px',
+                        color: 'rgba(184, 199, 220, 0.8)',
                         letterSpacing: '3px',
                         textTransform: 'uppercase',
-                        marginBottom: '4px',
-                        fontWeight: 500,
+                        marginBottom: '6px',
+                        fontWeight: 600,
                       }}>
-                        {inv.plan_name}
+                        TRADING <span style={{color: '#16E0FF'}}>SLAB {inv.plan_id || 1}</span>
                       </div>
                       <div style={{
-                        fontSize: '28px',
+                        fontSize: '42px',
                         fontWeight: 800,
-                        color: '#00E5A0',
-                        letterSpacing: '4px',
-                        fontFamily: "'Courier New', 'Monaco', monospace",
-                        textShadow: '0 0 30px rgba(0, 229, 160, 0.6), 0 2px 10px rgba(0,0,0,0.3)',
+                        color: '#FFFFFF',
+                        letterSpacing: '2px',
+                        fontFamily: "'Inter', sans-serif",
+                        display: 'flex',
+                        alignItems: 'baseline',
                       }}>
-                        ${inv.amount.toFixed(2)}
+                        <span style={{color: '#16E0FF'}}>$</span>
+                        <span>{Math.floor(inv.amount)}</span>
+                        <span style={{color: '#16E0FF', fontSize: '28px'}}>.{(inv.amount % 1).toFixed(2).slice(2)}</span>
                       </div>
                     </div>
                     
                     {/* Progress Section */}
                     <div style={{
-                      background: 'rgba(0,0,0,0.25)',
+                      background: 'rgba(6, 37, 68, 0.6)',
                       borderRadius: '12px',
-                      padding: '10px 14px',
-                      backdropFilter: 'blur(10px)',
+                      padding: '14px 16px',
+                      marginBottom: '16px',
+                      border: '1px solid rgba(23, 77, 117, 0.5)',
                     }}>
                       <div style={{
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        marginBottom: '6px',
+                        marginBottom: '10px',
                       }}>
                         <span style={{
-                          color: 'rgba(255,255,255,0.8)',
-                          fontSize: '10px',
+                          color: '#FFFFFF',
+                          fontSize: '13px',
                           fontWeight: 700,
                           letterSpacing: '1px',
                         }}>
                           PROGRESS
                         </span>
                         <span style={{
-                          color: isCompleted ? '#FFD700' : '#FF69B4',
-                          fontSize: '14px',
+                          color: '#16E0FF',
+                          fontSize: '18px',
                           fontWeight: 800,
                         }}>
                           {progressPercent.toFixed(0)}%
                         </span>
                       </div>
                       <div style={{
-                        height: '6px',
-                        background: 'rgba(255,255,255,0.15)',
-                        borderRadius: '3px',
+                        height: '8px',
+                        background: 'rgba(255,255,255,0.1)',
+                        borderRadius: '4px',
                         overflow: 'hidden',
                       }}>
                         <div style={{
                           width: `${progressPercent}%`,
                           height: '100%',
-                          background: isCompleted 
-                            ? 'linear-gradient(90deg, #FFD700 0%, #FFA500 100%)'
-                            : 'linear-gradient(90deg, #FF69B4 0%, #FF1493 50%, #FF69B4 100%)',
-                          borderRadius: '3px',
+                          background: 'linear-gradient(90deg, #087BFF 0%, #16E0FF 100%)',
+                          borderRadius: '4px',
                           transition: 'width 0.5s ease',
-                          boxShadow: '0 0 15px rgba(255, 105, 180, 0.6)',
+                          boxShadow: '0 0 15px rgba(22, 224, 255, 0.5)',
                         }} />
                       </div>
                       <div style={{
                         display: 'flex',
                         justifyContent: 'space-between',
-                        marginTop: '4px',
+                        marginTop: '8px',
                       }}>
-                        <span style={{color: 'rgba(255,255,255,0.5)', fontSize: '9px', fontWeight: 600}}>
+                        <span style={{color: '#B8C7DC', fontSize: '12px', fontWeight: 600}}>
                           Day {inv.days_completed}/{inv.total_days}
                         </span>
-                        <span style={{color: isCompleted ? '#FFD700' : '#FF69B4', fontSize: '9px', fontWeight: 700}}>
-                          {isCompleted ? '✓ Done' : `${inv.total_days - inv.days_completed} days left`}
+                        <span style={{color: '#16E0FF', fontSize: '12px', fontWeight: 700}}>
+                          {isCompleted ? '✓ Completed' : `${inv.total_days - inv.days_completed} days left`}
                         </span>
                       </div>
                     </div>
                     
-                    {/* Bottom stats row */}
+                    {/* Bottom Stats - 3 Equal Cards */}
                     <div style={{
                       display: 'flex',
-                      justifyContent: 'space-between',
-                      gap: '8px',
-                      marginTop: '8px',
+                      gap: '10px',
                     }}>
-                      {/* Daily ROI */}
+                      {/* Daily ROI Card */}
                       <div style={{
                         flex: 1,
-                        background: 'rgba(0, 208, 156, 0.2)',
-                        borderRadius: '10px',
-                        padding: '8px 6px',
+                        background: 'rgba(22, 224, 255, 0.1)',
+                        borderRadius: '12px',
+                        padding: '14px 10px',
                         textAlign: 'center',
-                        border: '1px solid rgba(0, 208, 156, 0.4)',
+                        border: '1px solid rgba(22, 224, 255, 0.3)',
                       }}>
-                        <div style={{fontSize: '8px', color: 'rgba(255,255,255,0.6)', letterSpacing: '0.5px'}}>DAILY ROI</div>
-                        <div style={{fontSize: '16px', fontWeight: 800, color: '#00E5A0'}}>{inv.daily_roi}%</div>
-                        <div style={{fontSize: '8px', color: 'rgba(255,255,255,0.5)'}}>${dailyEarning.toFixed(2)}/day</div>
+                        <div style={{fontSize: '10px', color: '#B8C7DC', letterSpacing: '1px', marginBottom: '6px', fontWeight: 600}}>DAILY ROI</div>
+                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px'}}>
+                          <span style={{color: '#16E0FF', fontSize: '10px'}}>📊</span>
+                          <span style={{fontSize: '20px', fontWeight: 800, color: '#16E0FF'}}>{inv.daily_roi}%</span>
+                        </div>
+                        <div style={{fontSize: '10px', color: '#B8C7DC', marginTop: '4px'}}>${dailyEarning.toFixed(2)}/day</div>
                       </div>
                       
-                      {/* Earned */}
+                      {/* Earned Card */}
                       <div style={{
                         flex: 1,
-                        background: 'rgba(255, 215, 0, 0.2)',
-                        borderRadius: '10px',
-                        padding: '8px 6px',
+                        background: 'rgba(255, 215, 0, 0.1)',
+                        borderRadius: '12px',
+                        padding: '14px 10px',
                         textAlign: 'center',
-                        border: '1px solid rgba(255, 215, 0, 0.4)',
+                        border: '1px solid rgba(255, 215, 0, 0.3)',
                       }}>
-                        <div style={{fontSize: '8px', color: 'rgba(255,255,255,0.6)', letterSpacing: '0.5px'}}>EARNED</div>
-                        <div style={{fontSize: '16px', fontWeight: 800, color: '#FFD700'}}>${(inv.earned_so_far || 0).toFixed(2)}</div>
-                        <div style={{fontSize: '8px', color: 'rgba(255,255,255,0.5)'}}>Total</div>
+                        <div style={{fontSize: '10px', color: '#B8C7DC', letterSpacing: '1px', marginBottom: '6px', fontWeight: 600}}>EARNED</div>
+                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px'}}>
+                          <span style={{color: '#FFD700', fontSize: '10px'}}>🪙</span>
+                          <span style={{fontSize: '20px', fontWeight: 800, color: '#FFD700'}}>${(inv.earned_so_far || 0).toFixed(2)}</span>
+                        </div>
+                        <div style={{fontSize: '10px', color: '#B8C7DC', marginTop: '4px'}}>Total</div>
                       </div>
                       
-                      {/* Pending */}
+                      {/* Pending Card */}
                       <div style={{
                         flex: 1,
-                        background: 'rgba(255, 105, 180, 0.2)',
-                        borderRadius: '10px',
-                        padding: '8px 6px',
+                        background: 'rgba(186, 85, 211, 0.1)',
+                        borderRadius: '12px',
+                        padding: '14px 10px',
                         textAlign: 'center',
-                        border: '1px solid rgba(255, 105, 180, 0.4)',
+                        border: '1px solid rgba(186, 85, 211, 0.3)',
                       }}>
-                        <div style={{fontSize: '8px', color: 'rgba(255,255,255,0.6)', letterSpacing: '0.5px'}}>PENDING</div>
-                        <div style={{fontSize: '16px', fontWeight: 800, color: '#FF69B4'}}>${(inv.pending_roi || 0).toFixed(2)}</div>
-                        <div style={{fontSize: '8px', color: 'rgba(255,255,255,0.5)'}}>Claim</div>
+                        <div style={{fontSize: '10px', color: '#B8C7DC', letterSpacing: '1px', marginBottom: '6px', fontWeight: 600}}>PENDING</div>
+                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px'}}>
+                          <span style={{color: '#DA70D6', fontSize: '10px'}}>⏰</span>
+                          <span style={{fontSize: '20px', fontWeight: 800, color: '#DA70D6'}}>${(inv.pending_roi || 0).toFixed(2)}</span>
+                        </div>
+                        <div style={{fontSize: '10px', color: '#B8C7DC', marginTop: '4px'}}>Claim</div>
                       </div>
                     </div>
-                  </div>
-                  
-                  {/* COMPLETE watermark for completed cards */}
-                  {isCompleted && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%) rotate(-20deg)',
-                      fontSize: '36px',
-                      fontWeight: 900,
-                      color: 'rgba(255, 215, 0, 0.15)',
-                      letterSpacing: '10px',
-                      textShadow: '0 0 30px rgba(255, 215, 0, 0.2)',
-                      pointerEvents: 'none',
-                      whiteSpace: 'nowrap',
-                    }}>
-                      COMPLETE
-                    </div>
-                  )}
-                  
-                  {/* Contactless payment icon */}
-                  <div style={{
-                    position: 'absolute',
-                    top: '20px',
-                    right: '80px',
-                    opacity: 0.4,
-                  }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="rgba(255,255,255,0.5)"/>
-                      <path d="M7 12c0-2.76 2.24-5 5-5" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" fill="none"/>
-                      <path d="M9 12c0-1.66 1.34-3 3-3" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" fill="none"/>
-                      <path d="M11 12c0-.55.45-1 1-1" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" fill="none"/>
-                    </svg>
                   </div>
                 </div>
               );

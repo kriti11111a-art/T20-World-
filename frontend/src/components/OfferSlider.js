@@ -1,14 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { THEME, GRADIENTS, SHADOWS, rgba } from '../config/themeConfig';
+import { THEME, SHADOWS, rgba } from '../config/themeConfig';
 
 /**
  * OfferSlider Component
  * Displays Sunday/Wednesday Special Offers with countdown timers
- * 
- * States:
- * - "Starts In: DD:HH:MM:SS" - When offer is upcoming
- * - "🟢 LIVE" blinking + "Ends In: HH:MM:SS" - When offer is active
- * - Hidden when offer has ended
+ * Full banner image visible with proper aspect ratio
  */
 
 const OfferSlider = ({ onOfferClick }) => {
@@ -58,12 +54,11 @@ const OfferSlider = ({ onOfferClick }) => {
 
   useEffect(() => {
     fetchOffers();
-    // Refresh every 60 seconds to sync with server
     const refreshInterval = setInterval(fetchOffers, 60000);
     return () => clearInterval(refreshInterval);
   }, [fetchOffers]);
 
-  // Countdown timer - runs every second
+  // Countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdowns(prev => {
@@ -77,7 +72,6 @@ const OfferSlider = ({ onOfferClick }) => {
               seconds: updated[offerType].seconds - 1
             };
           } else {
-            // Countdown finished, need to refetch status
             shouldRefetch = true;
           }
         });
@@ -103,8 +97,8 @@ const OfferSlider = ({ onOfferClick }) => {
     }
   }, [offers.length]);
 
-  // Format seconds to DD:HH:MM:SS or HH:MM:SS
-  const formatCountdown = (seconds, inclueDays = true) => {
+  // Format seconds to countdown
+  const formatCountdown = (seconds, includeDays = true) => {
     if (!seconds || seconds <= 0) return '00:00:00';
     
     const days = Math.floor(seconds / 86400);
@@ -112,7 +106,7 @@ const OfferSlider = ({ onOfferClick }) => {
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
     
-    if (inclueDays && days > 0) {
+    if (includeDays && days > 0) {
       return `${String(days).padStart(2, '0')}:${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
     return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
@@ -127,68 +121,54 @@ const OfferSlider = ({ onOfferClick }) => {
   }
 
   if (offers.length === 0) {
-    return null; // No active offers
+    return null;
   }
+
+  const currentOffer = offers[currentSlide];
+  const countdown = countdowns[currentOffer?.offer_type];
+  const isLive = currentOffer?.status === 'live';
 
   return (
     <div style={styles.container} data-testid="offer-slider">
-      <div style={styles.sliderWrapper}>
-        {offers.map((offer, index) => {
-          const isVisible = index === currentSlide;
-          const countdown = countdowns[offer.offer_type];
-          const isLive = offer.status === 'live';
-          
-          return (
-            <div
-              key={offer.offer_type}
-              style={{
-                ...styles.slide,
-                opacity: isVisible ? 1 : 0,
-                transform: `translateX(${(index - currentSlide) * 100}%)`,
-                pointerEvents: isVisible ? 'auto' : 'none'
-              }}
-              onClick={() => onOfferClick && onOfferClick(offer)}
-              data-testid={`offer-slide-${offer.offer_type}`}
-            >
-              {/* Banner Image */}
-              <div style={styles.bannerContainer}>
-                <img
-                  src={offer.banner_url}
-                  alt={`${offer.offer_type} Special Offer`}
-                  style={styles.bannerImage}
-                />
-                
-                {/* Overlay with Live/Countdown Info */}
-                <div style={styles.overlayContainer}>
-                  {/* Live Indicator */}
-                  {isLive && (
-                    <div style={styles.liveIndicator} data-testid="live-indicator">
-                      <span style={styles.liveDot} />
-                      <span style={styles.liveText}>LIVE</span>
-                    </div>
-                  )}
-                  
-                  {/* Countdown Timer */}
-                  <div style={styles.countdownContainer}>
-                    {countdown && (
-                      <>
-                        <span style={styles.countdownLabel}>
-                          {countdown.type === 'starts_in' ? 'Starts In:' : 'Ends In:'}
-                        </span>
-                        <span style={{
-                          ...styles.countdownValue,
-                          color: isLive ? THEME.success : THEME.cyanHighlight
-                        }}>
-                          {formatCountdown(countdown.seconds, countdown.type === 'starts_in')}
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
+      {/* Banner with full image */}
+      <div 
+        style={styles.bannerWrapper}
+        onClick={() => onOfferClick && onOfferClick(currentOffer)}
+      >
+        <img
+          src={currentOffer.banner_url}
+          alt={`${currentOffer.offer_type} Special Offer`}
+          style={styles.bannerImage}
+          data-testid={`offer-slide-${currentOffer.offer_type}`}
+        />
+        
+        {/* Overlay with Live/Countdown */}
+        <div style={styles.overlayContainer}>
+          {/* Live Indicator */}
+          {isLive && (
+            <div style={styles.liveIndicator} data-testid="live-indicator">
+              <span style={styles.liveDot} />
+              <span style={styles.liveText}>LIVE</span>
             </div>
-          );
-        })}
+          )}
+          
+          {/* Countdown Timer */}
+          <div style={styles.countdownContainer}>
+            {countdown && (
+              <>
+                <span style={styles.countdownLabel}>
+                  {countdown.type === 'starts_in' ? 'Starts In:' : 'Ends In:'}
+                </span>
+                <span style={{
+                  ...styles.countdownValue,
+                  color: isLive ? THEME.success : THEME.cyanHighlight
+                }}>
+                  {formatCountdown(countdown.seconds, countdown.type === 'starts_in')}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
       </div>
       
       {/* Dots Navigation */}
@@ -217,15 +197,14 @@ const styles = {
   container: {
     width: '100%',
     marginBottom: '16px',
-    position: 'relative',
   },
   loadingContainer: {
-    height: '180px',
+    height: '100px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     background: THEME.bgCard,
-    borderRadius: '16px',
+    borderRadius: '12px',
     marginBottom: '16px',
   },
   loadingPulse: {
@@ -235,68 +214,53 @@ const styles = {
     background: `linear-gradient(135deg, ${THEME.primaryBlue}, ${THEME.cyanHighlight})`,
     animation: 'pulse 1.5s ease-in-out infinite',
   },
-  sliderWrapper: {
+  bannerWrapper: {
     position: 'relative',
     width: '100%',
-    height: '180px',
+    borderRadius: '12px',
     overflow: 'hidden',
-    borderRadius: '16px',
     boxShadow: SHADOWS.glowSubtle,
-  },
-  slide: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    transition: 'opacity 0.5s ease, transform 0.5s ease',
     cursor: 'pointer',
-  },
-  bannerContainer: {
-    position: 'relative',
-    width: '100%',
-    height: '100%',
   },
   bannerImage: {
     width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    borderRadius: '16px',
+    height: 'auto',
+    display: 'block',
   },
   overlayContainer: {
     position: 'absolute',
-    bottom: '12px',
-    left: '12px',
-    right: '12px',
+    bottom: '8px',
+    left: '8px',
+    right: '8px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '10px 16px',
-    background: 'rgba(3, 26, 51, 0.9)',
+    padding: '8px 12px',
+    background: 'rgba(3, 26, 51, 0.85)',
     backdropFilter: 'blur(8px)',
-    borderRadius: '12px',
+    borderRadius: '10px',
     border: `1px solid ${rgba.cyan(0.3)}`,
   },
   liveIndicator: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
-    padding: '6px 14px',
+    gap: '6px',
+    padding: '4px 10px',
     background: rgba.success(0.2),
-    borderRadius: '20px',
+    borderRadius: '16px',
     border: `1px solid ${rgba.success(0.5)}`,
     animation: 'pulse-glow 2s ease-in-out infinite',
   },
   liveDot: {
-    width: '10px',
-    height: '10px',
+    width: '8px',
+    height: '8px',
     borderRadius: '50%',
     background: THEME.success,
-    boxShadow: `0 0 10px ${THEME.success}`,
+    boxShadow: `0 0 8px ${THEME.success}`,
     animation: 'blink 1s ease-in-out infinite',
   },
   liveText: {
-    fontSize: '13px',
+    fontSize: '11px',
     fontWeight: '700',
     color: THEME.success,
     letterSpacing: '1px',
@@ -305,15 +269,15 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
-    gap: '2px',
+    gap: '1px',
   },
   countdownLabel: {
-    fontSize: '11px',
+    fontSize: '10px',
     color: THEME.textSecondary,
     fontWeight: '500',
   },
   countdownValue: {
-    fontSize: '18px',
+    fontSize: '16px',
     fontWeight: '700',
     fontFamily: 'monospace',
     letterSpacing: '2px',
@@ -322,11 +286,11 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     gap: '8px',
-    marginTop: '12px',
+    marginTop: '10px',
   },
   dot: {
-    width: '10px',
-    height: '10px',
+    width: '8px',
+    height: '8px',
     borderRadius: '50%',
     border: 'none',
     cursor: 'pointer',

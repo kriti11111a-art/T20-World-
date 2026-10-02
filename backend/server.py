@@ -261,6 +261,48 @@ async def lifespan(app: FastAPI):
     logger.info("Daily ROI scheduler started - runs at 12:00 AM IST")
     logger.info("Daily Salary scheduler started - runs at 12:05 AM IST")
     
+    # Ensure admin has correct referral code
+    try:
+        admin = await db.users.find_one({"email": "admin@tradego.com"})
+        if admin:
+            if admin.get("referral_code") != "TRADEGO100000":
+                await db.users.update_one(
+                    {"email": "admin@tradego.com"},
+                    {"$set": {"referral_code": "TRADEGO100000"}}
+                )
+                logger.info("✅ Admin referral code updated to TRADEGO100000")
+        else:
+            # Create admin if not exists
+            admin_doc = {
+                "id": str(uuid.uuid4()),
+                "email": "admin@tradego.com",
+                "username": "admin",
+                "password": hash_password("Admin@123"),
+                "wallet_address": None,
+                "balance": 0.0,
+                "welcome_bonus": 0.0,
+                "total_invested": 0.0,
+                "total_earned": 0.0,
+                "referral_code": "TRADEGO100000",
+                "referred_by": None,
+                "is_admin": True,
+                "referral_earnings": 0.0,
+                "total_team": 0,
+                "direct_referrals": 0,
+                "level_1_team": 0,
+                "level_2_team": 0,
+                "level_3_team": 0,
+                "level_4_team": 0,
+                "level_5_team": 0,
+                "salary_level": 0,
+                "daily_salary": 0.0,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.users.insert_one(admin_doc)
+            logger.info("✅ Admin user created with referral code TRADEGO100000")
+    except Exception as e:
+        logger.error(f"Error ensuring admin referral code: {e}")
+    
     yield
     
     # Shutdown: Stop the scheduler
@@ -420,8 +462,25 @@ class AnnouncementResponse(BaseModel):
 
 # ==================== HELPER FUNCTIONS ====================
 
-def generate_referral_code():
-    return f"TG{secrets.token_hex(4).upper()}"
+async def generate_referral_code():
+    """Generate sequential referral code like TRADEGO100000, TRADEGO100001, etc."""
+    # Get the last user with highest referral code number
+    last_user = await db.users.find_one(
+        {"referral_code": {"$regex": "^TRADEGO"}},
+        sort=[("referral_code", -1)]
+    )
+    
+    if last_user and last_user.get("referral_code"):
+        try:
+            # Extract number from last code (e.g., TRADEGO100005 -> 100005)
+            last_number = int(last_user["referral_code"].replace("TRADEGO", ""))
+            new_number = last_number + 1
+        except (ValueError, TypeError):
+            new_number = 100000
+    else:
+        new_number = 100000
+    
+    return f"TRADEGO{new_number}"
 
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
@@ -1017,7 +1076,7 @@ async def register(user_data: UserRegister):
     
     # Create user
     user_id = str(uuid.uuid4())
-    referral_code = generate_referral_code()
+    referral_code = await generate_referral_code()
     
     user_doc = {
         "id": user_id,

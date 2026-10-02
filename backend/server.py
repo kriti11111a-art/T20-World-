@@ -4117,12 +4117,12 @@ if static_dir.exists():
 @app.get("/api/download/guide")
 async def download_guide():
     """Download TradeGo Guide PDF (English)"""
-    pdf_path = ROOT_DIR / "static" / "Trade_Genius_Guide.pdf"
+    pdf_path = ROOT_DIR / "static" / "TradeGo_Guide.pdf"
     if not pdf_path.exists():
         raise HTTPException(status_code=404, detail="PDF not found")
     return FileResponse(
         path=str(pdf_path),
-        filename="Trade_Genius_Guide.pdf",
+        filename="TradeGo_Guide.pdf",
         media_type="application/pdf"
     )
 
@@ -4132,20 +4132,20 @@ async def download_guide_by_language(lang: str):
     """Download TradeGo Guide PDF in specified language"""
     # Map language codes to PDF files
     lang_files = {
-        "en": "Trade_Genius_Guide_EN.pdf",
-        "hi": "Trade_Genius_Guide_HI.pdf",
-        "ur": "Trade_Genius_Guide_UR.pdf",
-        "es": "Trade_Genius_Guide_ES.pdf",
-        "fr": "Trade_Genius_Guide_FR.pdf",
-        "ar": "Trade_Genius_Guide_AR.pdf",
+        "en": "TradeGo_Guide_EN.pdf",
+        "hi": "TradeGo_Guide_HI.pdf",
+        "ur": "TradeGo_Guide_UR.pdf",
+        "es": "TradeGo_Guide_ES.pdf",
+        "fr": "TradeGo_Guide_FR.pdf",
+        "ar": "TradeGo_Guide_AR.pdf",
     }
     
-    filename = lang_files.get(lang.lower(), "Trade_Genius_Guide_EN.pdf")
+    filename = lang_files.get(lang.lower(), "TradeGo_Guide_EN.pdf")
     pdf_path = ROOT_DIR / "static" / filename
     
     # Fallback to main PDF if language-specific not found
     if not pdf_path.exists():
-        pdf_path = ROOT_DIR / "static" / "Trade_Genius_Guide.pdf"
+        pdf_path = ROOT_DIR / "static" / "TradeGo_Guide.pdf"
     
     if not pdf_path.exists():
         raise HTTPException(status_code=404, detail="PDF not found")

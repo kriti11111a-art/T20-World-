@@ -108,7 +108,7 @@ def create_tradego_pdf(filename, lang='en'):
         "✓ 20 " + content['days'] + " | 5.5% - 7% Daily ROI",
         "✓ BSC Network | BEP-20 USDT",
         "✓ 12:00 AM IST " + content['daily_roi'],
-        "✓ 5-Level Referral System",
+        "✓ 10-Level Referral System",
         "✓ " + content['weekly_offer_title'],
         "✓ " + content['instant_withdraw']
     ]
@@ -242,6 +242,11 @@ def create_tradego_pdf(filename, lang='en'):
         ['Level 3', '1%', '$1.00'],
         ['Level 4', '1%', '$1.00'],
         ['Level 5', '1%', '$1.00'],
+        ['Level 6', '0.6%', '$0.60'],
+        ['Level 7', '0.5%', '$0.50'],
+        ['Level 8', '0.4%', '$0.40'],
+        ['Level 9', '0.3%', '$0.30'],
+        ['Level 10', '0.2%', '$0.20'],
     ]
     
     ref_table = Table(ref_data, colWidths=[1.5*inch, 1.5*inch, 1.5*inch])
@@ -253,6 +258,7 @@ def create_tradego_pdf(filename, lang='en'):
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
         ('BACKGROUND', (0, 1), (-1, -1), HexColor('#f5f5f5')),
         ('GRID', (0, 0), (-1, -1), 1, GRAY),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),
     ]))
     story.append(ref_table)
     story.append(Spacer(1, 15))
@@ -385,7 +391,7 @@ def get_content(lang):
             'daily_income_desc': 'Automatic ROI आपके account में आएगा',
             'four_slabs': '4 Investment Slabs',
             'four_slabs_desc': 'ज्यादा investment = ज्यादा ROI (5.5% से 7%)',
-            'referral_system': '5-Level Referral System',
+            'referral_system': '10-Level Referral System',
             'referral_desc': 'हर level पर 1% commission',
             'salary_system': 'Salary Rank System',
             'salary_desc': 'Team performance पर daily salary',
@@ -423,13 +429,13 @@ def get_content(lang):
             ],
             'offer_example_title': 'Example:',
             'offer_example': 'अगर आप Sunday 6:30 PM पर $100 deposit करते हैं, तो आपको $10 bonus मिलेगा। आपका total balance $110 होगा!',
-            'referral_title': '5-Level Referral System',
-            'referral_subtitle': 'हर level पर 1% commission पाएं!',
+            'referral_title': '10-Level Referral System',
+            'referral_subtitle': 'L1-L5: 1% | L6-L10: 0.6%-0.2%',
             'level': 'Level',
             'commission': 'Commission',
             'example': 'Example ($100)',
             'level_eligibility': 'Level Income Eligibility:',
-            'eligibility_points': ['$50+ wallet balance = 3 levels eligible', '$100+ wallet balance = 5 levels eligible', 'Direct Referral Bonus: $10 जब referral $50+ deposit करे'],
+            'eligibility_points': ['$50+ wallet balance = 3 levels eligible', '$100+ wallet balance = 5 levels eligible', '$200+ wallet balance = 10 levels eligible', 'Direct Referral Bonus: $10 जब referral $50+ deposit करे'],
             'salary_title': 'Salary Rank System',
             'salary_subtitle': 'Team Performance पर Daily Salary पाएं!',
             'rank': 'Rank',
@@ -452,7 +458,7 @@ def get_content(lang):
             'salary_terms_heading': 'Salary Terms:',
             'salary_terms_points': ['Active member = Team member जिसने $50+ investment किया', 'Salary daily 12:05 AM IST पर credit'],
             'key_points_title': 'Key Points याद रखें',
-            'key_points': ['Duration: 20 days per investment', 'Daily ROI: 12:00 AM IST automatic', 'Weekly Offer: Sunday & Wednesday 6-8 PM IST', 'Offer Bonus: 10% on $50+ deposits', 'Salary: 12:05 AM IST rank के हिसाब से', 'Unlimited: Multiple investments allowed', 'Options: Withdraw या Recompound', 'Minimum: $1 withdrawal, 5% fee', 'Referral: 5 levels, 1% each'],
+            'key_points': ['Duration: 20 days per investment', 'Daily ROI: 12:00 AM IST automatic', 'Weekly Offer: Sunday & Wednesday 6-8 PM IST', 'Offer Bonus: 10% on $50+ deposits', 'Salary: 12:05 AM IST rank के हिसाब से', 'Unlimited: Multiple investments allowed', 'Options: Withdraw या Recompound', 'Minimum: $1 withdrawal, 5% fee', 'Referral: 10 levels (L1-L5: 1%, L6-L10: 0.6%-0.2%)'],
             'start_now': 'आज ही Invest करें!',
             'thank_you': 'धन्यवाद!',
             'thank_you_msg': 'TradeGo join करने के लिए धन्यवाद! अपनी investment journey शुरू करें!'
@@ -473,7 +479,7 @@ def get_content(lang):
             'daily_income_desc': 'Automatic ROI credited to your account',
             'four_slabs': '4 Investment Slabs',
             'four_slabs_desc': 'Higher investment = Higher ROI (5.5% to 7%)',
-            'referral_system': '5-Level Referral System',
+            'referral_system': '10-Level Referral System',
             'referral_desc': '1% commission on each level',
             'salary_system': 'Salary Rank System',
             'salary_desc': 'Daily salary based on team performance',
@@ -505,13 +511,13 @@ def get_content(lang):
             'offer_conditions': ['Offer available only on Sunday and Wednesday', 'Time: 6:00 PM to 8:00 PM IST', 'Minimum deposit: $50 USDT', '10% bonus instantly added to your balance', 'Bonus is withdrawable'],
             'offer_example_title': 'Example:',
             'offer_example': 'If you deposit $100 on Sunday at 6:30 PM, you will get $10 bonus. Your total balance will be $110!',
-            'referral_title': '5-Level Referral System',
-            'referral_subtitle': 'Earn 1% commission on each level!',
+            'referral_title': '10-Level Referral System',
+            'referral_subtitle': 'L1-L5: 1% | L6-L10: 0.6%-0.2%',
             'level': 'Level',
             'commission': 'Commission',
             'example': 'Example ($100)',
             'level_eligibility': 'Level Income Eligibility:',
-            'eligibility_points': ['$50+ wallet balance = 3 levels eligible', '$100+ wallet balance = 5 levels eligible', 'Direct Referral Bonus: $10 when referral deposits $50+'],
+            'eligibility_points': ['$50+ wallet balance = 3 levels eligible', '$100+ wallet balance = 5 levels eligible', '$200+ wallet balance = 10 levels eligible', 'Direct Referral Bonus: $10 when referral deposits $50+'],
             'salary_title': 'Salary Rank System',
             'salary_subtitle': 'Earn Daily Salary based on Team Performance!',
             'rank': 'Rank',
@@ -534,7 +540,7 @@ def get_content(lang):
             'salary_terms_heading': 'Salary Terms:',
             'salary_terms_points': ['Active member = Team member with $50+ investment', 'Salary credited daily at 12:05 AM IST'],
             'key_points_title': 'Key Points to Remember',
-            'key_points': ['Duration: 20 days per investment', 'Daily ROI: 12:00 AM IST automatic', 'Weekly Offer: Sunday & Wednesday 6-8 PM IST', 'Offer Bonus: 10% on $50+ deposits', 'Salary: 12:05 AM IST based on rank', 'Unlimited: Multiple investments allowed', 'Options: Withdraw or Recompound', 'Minimum: $1 withdrawal, 5% fee', 'Referral: 5 levels, 1% each'],
+            'key_points': ['Duration: 20 days per investment', 'Daily ROI: 12:00 AM IST automatic', 'Weekly Offer: Sunday & Wednesday 6-8 PM IST', 'Offer Bonus: 10% on $50+ deposits', 'Salary: 12:05 AM IST based on rank', 'Unlimited: Multiple investments allowed', 'Options: Withdraw or Recompound', 'Minimum: $1 withdrawal, 5% fee', 'Referral: 10 levels (L1-L5: 1%, L6-L10: 0.6%-0.2%)'],
             'start_now': 'Start Investing Today!',
             'thank_you': 'Thank You!',
             'thank_you_msg': 'Thank you for joining TradeGo! Start your investment journey today!'

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Download, Globe, CheckCircle, DollarSign, Clock, Users, RefreshCw } from 'lucide-react';
+import { FileText, Download, Globe, CheckCircle, DollarSign, Clock, Users, RefreshCw, Gift, Zap } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useTheme } from '../context/ThemeContext';
@@ -120,6 +120,72 @@ const Guide = () => {
             ))}
           </div>
           <p style={{...styles.slabNote, color: colors.textSecondary}}>Duration: 20 Days • ROI at 12:00 AM IST</p>
+        </div>
+
+        {/* Weekly Offer Section */}
+        <div style={{
+          ...styles.offerSection,
+          background: isDark ? 'linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%)' : 'linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%)',
+          border: `2px solid ${isDark ? '#FFD700' : '#FFA000'}`,
+        }}>
+          <div style={styles.offerHeader}>
+            <div style={{
+              ...styles.offerIconBox,
+              background: isDark ? 'rgba(255, 215, 0, 0.2)' : 'rgba(255, 160, 0, 0.2)',
+            }}>
+              <Gift size={24} color={isDark ? '#FFD700' : '#FF8F00'} />
+            </div>
+            <h2 style={{...styles.offerTitle, color: isDark ? '#FFD700' : '#E65100'}}>
+              Weekly Special Offer
+            </h2>
+          </div>
+          
+          <div style={{
+            ...styles.offerBadge,
+            background: isDark ? 'rgba(255, 215, 0, 0.15)' : 'rgba(255, 160, 0, 0.15)',
+            border: `1px solid ${isDark ? '#FFD700' : '#FFA000'}40`,
+          }}>
+            <Zap size={16} color={isDark ? '#FFD700' : '#FF8F00'} />
+            <span style={{color: isDark ? '#FFD700' : '#E65100', fontWeight: 600}}>10% Deposit Bonus</span>
+          </div>
+
+          <div style={styles.offerDetails}>
+            <div style={{
+              ...styles.offerDetailItem,
+              background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+              border: `1px solid ${isDark ? '#FFD700' : '#FFA000'}30`,
+            }}>
+              <span style={{color: colors.textSecondary, fontSize: '12px'}}>Schedule</span>
+              <span style={{color: colors.text, fontWeight: 600, fontSize: '13px'}}>Sunday & Wednesday</span>
+            </div>
+            <div style={{
+              ...styles.offerDetailItem,
+              background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+              border: `1px solid ${isDark ? '#FFD700' : '#FFA000'}30`,
+            }}>
+              <span style={{color: colors.textSecondary, fontSize: '12px'}}>Time</span>
+              <span style={{color: colors.text, fontWeight: 600, fontSize: '13px'}}>6:00 PM - 8:00 PM IST</span>
+            </div>
+            <div style={{
+              ...styles.offerDetailItem,
+              background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+              border: `1px solid ${isDark ? '#FFD700' : '#FFA000'}30`,
+            }}>
+              <span style={{color: colors.textSecondary, fontSize: '12px'}}>Minimum Deposit</span>
+              <span style={{color: isDark ? '#00FF88' : '#2E7D32', fontWeight: 700, fontSize: '15px'}}>$50</span>
+            </div>
+          </div>
+
+          <div style={{
+            ...styles.offerNote,
+            background: isDark ? 'rgba(0, 255, 136, 0.1)' : 'rgba(46, 125, 50, 0.1)',
+            border: `1px dashed ${isDark ? '#00FF88' : '#2E7D32'}50`,
+          }}>
+            <CheckCircle size={16} color={isDark ? '#00FF88' : '#2E7D32'} />
+            <span style={{color: isDark ? '#00FF88' : '#2E7D32', fontSize: '12px', fontWeight: 500}}>
+              Deposit $50+ during offer window and get 10% bonus instantly!
+            </span>
+          </div>
         </div>
 
         {/* Key Points Section */}
@@ -322,6 +388,60 @@ const styles = {
     color: 'rgba(255, 255, 255, 0.5)',
     textAlign: 'center',
     margin: 0,
+  },
+  offerSection: {
+    borderRadius: '16px',
+    padding: '24px',
+    marginBottom: '20px',
+  },
+  offerHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    marginBottom: '16px',
+  },
+  offerIconBox: {
+    width: '48px',
+    height: '48px',
+    borderRadius: '12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  offerTitle: {
+    fontSize: '20px',
+    fontWeight: 700,
+    margin: 0,
+  },
+  offerBadge: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    padding: '10px 16px',
+    borderRadius: '25px',
+    marginBottom: '16px',
+  },
+  offerDetails: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '10px',
+    marginBottom: '16px',
+  },
+  offerDetailItem: {
+    borderRadius: '10px',
+    padding: '12px 8px',
+    textAlign: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+  },
+  offerNote: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '12px',
+    borderRadius: '10px',
   },
   keyPointsSection: {
     background: 'linear-gradient(180deg, #0a0a0a 0%, #0d0d0d 100%)',

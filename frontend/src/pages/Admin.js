@@ -8,6 +8,7 @@ import {
   Edit, Check, AlertCircle, Plus, Minus, History, Bell, Send, Trash2,
   Calendar, Clock, Percent
 } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import toast from 'react-hot-toast';
 import tokenManager from '../utils/tokenManager';
 
@@ -16,6 +17,14 @@ const API_URL = process.env.REACT_APP_BACKEND_URL;
 const Admin = () => {
   const { user, token, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  
+  // Admin separate login state - हर बार login करना पड़ेगा
+  const [adminLoggedIn, setAdminLoggedIn] = useState(false);
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminLoginLoading, setAdminLoginLoading] = useState(false);
+  const [adminToken, setAdminToken] = useState('');
+  
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -31,15 +40,52 @@ const Admin = () => {
   const [bonusHistory, setBonusHistory] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Helper to get valid token - uses tokenManager
+  // Helper to get valid token - uses admin session token
   const getAuthToken = () => {
-    const currentToken = tokenManager.get();
-    if (!currentToken) {
+    if (!adminToken) {
       toast.error('Session expired. Please login again.');
-      navigate('/login');
+      setAdminLoggedIn(false);
       return null;
     }
-    return currentToken;
+    return adminToken;
+  };
+  
+  // Admin Login Handler
+  const handleAdminLogin = async (e) => {
+    e.preventDefault();
+    setAdminLoginLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: adminEmail, password: adminPassword })
+      });
+      const data = await response.json();
+      if (response.ok && data.access_token) {
+        // Check if user is admin
+        if (data.user?.is_admin) {
+          setAdminToken(data.access_token);
+          setAdminLoggedIn(true);
+          toast.success('Admin login successful!');
+        } else {
+          toast.error('Access denied. Admin only.');
+        }
+      } else {
+        toast.error(data.detail || 'Login failed');
+      }
+    } catch (error) {
+      toast.error('Login failed. Please try again.');
+    }
+    setAdminLoginLoading(false);
+  };
+  
+  // Admin Logout Handler
+  const handleAdminLogout = () => {
+    setAdminLoggedIn(false);
+    setAdminToken('');
+    setAdminEmail('');
+    setAdminPassword('');
+    toast.success('Logged out successfully');
   };
   
   // Cache ref to prevent unnecessary re-fetches
@@ -2549,6 +2595,107 @@ const Admin = () => {
     );
   }
 
+  // If not admin logged in, show login form
+  if (!adminLoggedIn) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px'
+      }}>
+        <div style={{
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,215,0,0.3)',
+          borderRadius: '20px',
+          padding: '40px 30px',
+          width: '100%',
+          maxWidth: '400px'
+        }}>
+          <h2 style={{
+            color: '#FFD700',
+            textAlign: 'center',
+            marginBottom: '30px',
+            fontSize: '24px',
+            fontWeight: 700
+          }}>
+            Admin Login
+          </h2>
+          
+          <form onSubmit={handleAdminLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div>
+              <label style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', display: 'block', marginBottom: '8px' }}>
+                Email
+              </label>
+              <input
+                type="email"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                placeholder="admin@tradegosmart.com"
+                required
+                style={{
+                  width: '100%',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  borderRadius: '10px',
+                  padding: '14px',
+                  color: '#FFF',
+                  fontSize: '14px',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+            
+            <div>
+              <label style={{ color: 'rgba(255,255,255,0.6)', fontSize: '13px', display: 'block', marginBottom: '8px' }}>
+                Password
+              </label>
+              <input
+                type="password"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                placeholder="Enter password"
+                required
+                style={{
+                  width: '100%',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  borderRadius: '10px',
+                  padding: '14px',
+                  color: '#FFF',
+                  fontSize: '14px',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+            
+            <button
+              type="submit"
+              disabled={adminLoginLoading}
+              style={{
+                background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '16px',
+                color: '#000',
+                fontSize: '16px',
+                fontWeight: 700,
+                cursor: adminLoginLoading ? 'not-allowed' : 'pointer',
+                opacity: adminLoginLoading ? 0.7 : 1
+              }}
+            >
+              {adminLoginLoading ? 'Logging in...' : 'Login to Admin Panel'}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={styles.page}>
       {/* CSS Animation */}
@@ -2608,11 +2755,54 @@ const Admin = () => {
               </button>
             );
           })}
+          
+          {/* Logout Button at Bottom */}
+          <button
+            style={{
+              ...styles.menuItem,
+              marginTop: 'auto',
+              background: 'rgba(255, 59, 59, 0.1)',
+              borderTop: '1px solid rgba(255,255,255,0.1)',
+              color: '#FF4444'
+            }}
+            onClick={handleAdminLogout}
+          >
+            <LogOut size={20} /><span>Logout</span>
+          </button>
         </div>
       </div>
 
       <div style={styles.mainContent}>
         {loading ? <div style={styles.loading}>Loading...</div> : renderContent()}
+      </div>
+      
+      {/* Logout Button at Bottom of Page */}
+      <div style={{
+        padding: '20px',
+        display: 'flex',
+        justifyContent: 'center',
+        background: '#0a0a0a',
+        borderTop: '1px solid rgba(255,255,255,0.1)'
+      }}>
+        <button
+          onClick={handleAdminLogout}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            background: 'rgba(255, 59, 59, 0.15)',
+            border: '1px solid rgba(255, 59, 59, 0.3)',
+            borderRadius: '12px',
+            padding: '14px 30px',
+            color: '#FF4444',
+            fontSize: '15px',
+            fontWeight: 600,
+            cursor: 'pointer'
+          }}
+        >
+          <LogOut size={20} />
+          Logout from Admin Panel
+        </button>
       </div>
     </div>
   );

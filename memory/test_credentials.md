@@ -1,14 +1,12 @@
-# TradeGo Test Credentials
+# Test Credentials
 
 ## Admin Account
-- **Email:** admin@tradego.com
-- **Password:** Admin@123
-- **Role:** Admin
-- **Referral Code:** ADMIN123
+- **Email:** admin@tradegosmart.com
+- **Password:** 2050Umakant@#143!
+- **Referral Code:** TRADEGO100000
 
-## Notes
-- Admin can bypass maintenance mode
-- Admin has access to Admin Panel for user management, withdrawals, ROI distribution
-- Created: October 1, 2026
-- Brand renamed from "Trade Genius" to "TradeGo"
-- New candlestick logo added to Header, Login page, Profile page
+## Admin Panel URL
+- https://tradegosmart.online/admin
+
+## Admin Referral Link
+- https://tradegosmart.online/register?ref=TRADEGO100000

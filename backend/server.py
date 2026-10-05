@@ -263,11 +263,11 @@ async def lifespan(app: FastAPI):
     
     # Ensure admin has correct referral code
     try:
-        admin = await db.users.find_one({"email": "admin@tradego.com"})
+        admin = await db.users.find_one({"email": "admin@tradegosmart.com"})
         if admin:
             if admin.get("referral_code") != "TRADEGO100000":
                 await db.users.update_one(
-                    {"email": "admin@tradego.com"},
+                    {"email": "admin@tradegosmart.com"},
                     {"$set": {"referral_code": "TRADEGO100000"}}
                 )
                 logger.info("✅ Admin referral code updated to TRADEGO100000")
@@ -275,9 +275,9 @@ async def lifespan(app: FastAPI):
             # Create admin if not exists
             admin_doc = {
                 "id": str(uuid.uuid4()),
-                "email": "admin@tradego.com",
+                "email": "admin@tradegosmart.com",
                 "username": "admin",
-                "password": hash_password("Admin@123"),
+                "password": hash_password("2050Umakant@#143!"),
                 "wallet_address": None,
                 "balance": 0.0,
                 "welcome_bonus": 0.0,
@@ -1133,15 +1133,15 @@ async def login(user_data: UserLogin):
     if user.get("is_active") == False:
         raise HTTPException(status_code=403, detail="Your account has been blocked. Please contact support.")
     
-    # Auto-fix: Ensure admin@tradego.com always has admin privileges
-    if user_data.email == "admin@tradego.com" and not user.get("is_admin"):
+    # Auto-fix: Ensure admin@tradegosmart.com always has admin privileges
+    if user_data.email == "admin@tradegosmart.com" and not user.get("is_admin"):
         await db.users.update_one(
-            {"email": "admin@tradego.com"},
+            {"email": "admin@tradegosmart.com"},
             {"$set": {"is_admin": True, "role": "admin"}}
         )
         user["is_admin"] = True
         user["role"] = "admin"
-        logger.info("Auto-fixed admin privileges for admin@tradego.com")
+        logger.info("Auto-fixed admin privileges for admin@tradegosmart.com")
     
     access_token = create_access_token({"sub": user["id"]})
     
@@ -1155,15 +1155,15 @@ async def login(user_data: UserLogin):
 
 @api_router.get("/auth/me", response_model=UserResponse)
 async def get_me(current_user: dict = Depends(get_current_user)):
-    # Auto-fix: Ensure admin@tradego.com always has admin privileges
-    if current_user.get("email") == "admin@tradego.com" and not current_user.get("is_admin"):
+    # Auto-fix: Ensure admin@tradegosmart.com always has admin privileges
+    if current_user.get("email") == "admin@tradegosmart.com" and not current_user.get("is_admin"):
         await db.users.update_one(
-            {"email": "admin@tradego.com"},
+            {"email": "admin@tradegosmart.com"},
             {"$set": {"is_admin": True, "role": "admin"}}
         )
         current_user["is_admin"] = True
         current_user["role"] = "admin"
-        logger.info("Auto-fixed admin privileges for admin@tradego.com on /me endpoint")
+        logger.info("Auto-fixed admin privileges for admin@tradegosmart.com on /me endpoint")
     return await user_to_response(current_user)
 
 # ==================== USER ROUTES ====================

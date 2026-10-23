@@ -1758,11 +1758,15 @@ async def create_withdrawal(withdrawal: WithdrawalCreate, current_user: dict = D
             detail="Withdrawal only allowed to your locked wallet address"
         )
     
-    # 0% fee - Full amount goes to user
-    fee = 0
-    net_amount = withdrawal.amount
+    # Get withdrawal fee from settings (default 6%)
+    settings = await db.settings.find_one({"id": "main"})
+    fee_percent = settings.get("withdrawal_fee_percent", 6.0) if settings else 6.0
     
-    # Deduct from balance first
+    # Calculate 6% fee
+    fee = withdrawal.amount * (fee_percent / 100)
+    net_amount = withdrawal.amount - fee
+    
+    # Deduct from balance first (full amount including fee)
     await db.users.update_one(
         {"id": current_user["id"]},
         {"$inc": {"balance": -withdrawal.amount}}

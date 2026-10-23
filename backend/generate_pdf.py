@@ -447,7 +447,7 @@ def get_content(lang):
             'salary_terms': ['Active Team Member = User जिसने $50+ total investment किया हो', 'Team Investment = आपकी downline investments का sum', 'Salary daily 12:05 AM IST पर credit होगी'],
             'withdraw_title': 'Withdraw और Recompound',
             'option_withdraw': 'Option 1: Withdraw',
-            'withdraw_points': ['Minimum Withdrawal: $1 USDT', 'Withdrawal Fee: 5%', 'Processing Time: 1-6 hours', 'अपने locked wallet में withdrawal', 'Security के लिए wallet lock करें'],
+            'withdraw_points': ['Minimum Withdrawal: $1 USDT', 'Withdrawal Fee: 6%', 'Processing Time: 1-6 hours', 'अपने locked wallet में withdrawal', 'Security के लिए wallet lock करें'],
             'option_recompound': 'Option 2: Recompound',
             'recompound_points': ['अपनी ROI earnings को re-invest करें', 'NEW investment create होगा 20-day cycle के साथ', 'Slab compound amount पर decide होगा', 'Exponential growth का फायदा!', 'Recompounding पर कोई fee नहीं'],
             'terms_title': 'Terms & Conditions',
@@ -458,7 +458,7 @@ def get_content(lang):
             'salary_terms_heading': 'Salary Terms:',
             'salary_terms_points': ['Active member = Team member जिसने $50+ investment किया', 'Salary daily 12:05 AM IST पर credit'],
             'key_points_title': 'Key Points याद रखें',
-            'key_points': ['Duration: 20 days per investment', 'Daily ROI: 12:00 AM IST automatic', 'Weekly Offer: Sunday & Wednesday 6-8 PM IST', 'Offer Bonus: 10% on $50+ deposits', 'Salary: 12:05 AM IST rank के हिसाब से', 'Unlimited: Multiple investments allowed', 'Options: Withdraw या Recompound', 'Minimum: $1 withdrawal, 5% fee', 'Referral: 10 levels (L1-L5: 1%, L6-L10: 0.6%-0.2%)'],
+            'key_points': ['Duration: 20 days per investment', 'Daily ROI: 12:00 AM IST automatic', 'Weekly Offer: Sunday & Wednesday 6-8 PM IST', 'Offer Bonus: 10% on $50+ deposits', 'Salary: 12:05 AM IST rank के हिसाब से', 'Unlimited: Multiple investments allowed', 'Options: Withdraw या Recompound', 'Minimum: $1 withdrawal, 6% fee', 'Referral: 10 levels (L1-L5: 1%, L6-L10: 0.6%-0.2%)'],
             'start_now': 'आज ही Invest करें!',
             'thank_you': 'धन्यवाद!',
             'thank_you_msg': 'TradeGo join करने के लिए धन्यवाद! अपनी investment journey शुरू करें!'

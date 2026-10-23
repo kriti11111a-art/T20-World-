@@ -410,7 +410,7 @@ class PlatformSettings(BaseModel):
     withdrawal_wallet_network: Optional[str] = "TRC20"
     min_deposit: Optional[float] = 1.0
     min_withdrawal: Optional[float] = 10.0
-    withdrawal_fee_percent: Optional[float] = 5.0
+    withdrawal_fee_percent: Optional[float] = 6.0
 
 # ==================== OFFER SYSTEM MODELS ====================
 
@@ -3391,7 +3391,7 @@ async def get_platform_settings():
             "withdrawal_wallet_network": "TRC20",
             "min_deposit": 1.0,
             "min_withdrawal": 10.0,
-            "withdrawal_fee_percent": 5.0,
+            "withdrawal_fee_percent": 6.0,
             "updated_at": None
         }
     return settings

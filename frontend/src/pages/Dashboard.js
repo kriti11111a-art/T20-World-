@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
 import { 
-  TrendingUp, TrendingDown, RefreshCw, ChevronDown, X, Gift, Sparkles
+  TrendingUp, TrendingDown, RefreshCw, ChevronDown, X, Gift, Sparkles, ArrowDownCircle, ArrowUpCircle
 } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -1779,6 +1779,94 @@ const Dashboard = () => {
           <span style={{...styles.balanceValue, color: '#FFD700', textShadow: '0 0 10px rgba(255, 215, 0, 0.5)'}}>
             ${formatPrice(user?.active_invested || 0)} USDT
           </span>
+        </div>
+
+        {/* Quick Action Cards - Deposit & Withdraw */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '12px',
+          marginBottom: '16px'
+        }}>
+          {/* Deposit Card */}
+          <a 
+            href="/deposit" 
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              background: 'linear-gradient(135deg, rgba(14, 203, 129, 0.15) 0%, rgba(14, 203, 129, 0.05) 100%)',
+              border: '1px solid rgba(14, 203, 129, 0.4)',
+              borderRadius: '16px',
+              padding: '20px 16px',
+              textDecoration: 'none',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            <div style={{
+              width: '50px',
+              height: '50px',
+              background: 'linear-gradient(135deg, #0ECB81 0%, #00E5A0 100%)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 4px 15px rgba(14, 203, 129, 0.4)',
+            }}>
+              <ArrowDownCircle size={26} color="#000" />
+            </div>
+            <span style={{
+              color: '#0ECB81',
+              fontSize: '16px',
+              fontWeight: 700,
+            }}>Deposit</span>
+            <span style={{
+              color: 'rgba(255,255,255,0.5)',
+              fontSize: '11px',
+            }}>Add Funds</span>
+          </a>
+
+          {/* Withdraw Card */}
+          <a 
+            href="/withdraw" 
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              background: 'linear-gradient(135deg, rgba(255, 99, 99, 0.15) 0%, rgba(255, 99, 99, 0.05) 100%)',
+              border: '1px solid rgba(255, 99, 99, 0.4)',
+              borderRadius: '16px',
+              padding: '20px 16px',
+              textDecoration: 'none',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            <div style={{
+              width: '50px',
+              height: '50px',
+              background: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 4px 15px rgba(255, 99, 99, 0.4)',
+            }}>
+              <ArrowUpCircle size={26} color="#000" />
+            </div>
+            <span style={{
+              color: '#FF6B6B',
+              fontSize: '16px',
+              fontWeight: 700,
+            }}>Withdraw</span>
+            <span style={{
+              color: 'rgba(255,255,255,0.5)',
+              fontSize: '11px',
+            }}>Get Funds</span>
+          </a>
         </div>
 
         {/* Admin Panel Button - For Admin Users (by flag or email) */}

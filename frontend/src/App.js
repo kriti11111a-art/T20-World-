@@ -212,6 +212,20 @@ const ProtectedRoute = ({ element }) => {
   return element;
 };
 
+// Smart Home Route - redirects logged-in users to dashboard, others to login
+const SmartHomeRoute = () => {
+  const token = localStorage.getItem('token');
+  const cachedUser = localStorage.getItem('cachedUser');
+  
+  // If user is logged in, go to dashboard
+  if (token && cachedUser) {
+    return <Dashboard />;
+  }
+  
+  // Otherwise show login
+  return <Login />;
+};
+
   return (
     <ThemeProvider>
       <AuthProvider>
@@ -219,8 +233,8 @@ const ProtectedRoute = ({ element }) => {
           <BrowserRouter>
             <RouteLoadingWrapper>
               <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/home" element={<Home />} />
+                <Route path="/" element={<SmartHomeRoute />} />
+                <Route path="/home" element={<ProtectedRoute element={<Dashboard />} />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/maintenance" element={<Maintenance />} />

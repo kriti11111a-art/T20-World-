@@ -410,7 +410,7 @@ class PlatformSettings(BaseModel):
     withdrawal_wallet_network: Optional[str] = "TRC20"
     min_deposit: Optional[float] = 1.0
     min_withdrawal: Optional[float] = 10.0
-    withdrawal_fee_percent: Optional[float] = 6.0
+    withdrawal_fee_percent: Optional[float] = 5.0
 
 # ==================== OFFER SYSTEM MODELS ====================
 
@@ -1760,7 +1760,7 @@ async def create_withdrawal(withdrawal: WithdrawalCreate, current_user: dict = D
     
     # Get withdrawal fee from settings (default 6%)
     settings = await db.settings.find_one({"id": "main"})
-    fee_percent = settings.get("withdrawal_fee_percent", 6.0) if settings else 6.0
+    fee_percent = settings.get("withdrawal_fee_percent", 5.0) if settings else 5.0
     
     # Calculate 6% fee
     fee = withdrawal.amount * (fee_percent / 100)
@@ -3395,7 +3395,7 @@ async def get_platform_settings():
             "withdrawal_wallet_network": "TRC20",
             "min_deposit": 1.0,
             "min_withdrawal": 10.0,
-            "withdrawal_fee_percent": 6.0,
+            "withdrawal_fee_percent": 5.0,
             "updated_at": None
         }
     return settings

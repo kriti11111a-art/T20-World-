@@ -159,7 +159,7 @@ async def distribute_daily_roi():
         today_str = now_ist.strftime("%Y-%m-%d")
         
         # Get all active investments
-        active_investments = await db.investments.find({"status": "active"}).to_list(1000)
+        active_investments = await db.investments.find({"status": "active"}).to_list(length=None)
         
         if not active_investments:
             logger.info("No active investments found")

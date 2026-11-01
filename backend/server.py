@@ -3457,181 +3457,116 @@ async def get_deposit_wallet():
 
 @api_router.get("/offers/status")
 async def get_offers_status():
-    """Get status of all offers (Sunday & Wednesday) - PUBLIC API"""
+    """Get status of all offers (Sunday & Wednesday) - PERMANENT BANNERS, Auto LIVE on schedule"""
     ist = pytz.timezone('Asia/Kolkata')
     now_ist = datetime.now(ist)
-    now_utc = datetime.now(timezone.utc)
     
     offers_status = []
     
-    for offer_type in ["sunday", "wednesday"]:
-        # Get offer config from DB
-        offer_config = await db.offer_configs.find_one({"offer_type": offer_type}, {"_id": 0})
-        
+    # Fixed schedule: Sunday & Wednesday 6PM-8PM IST
+    offer_schedules = {
+        "sunday": {"day": 6, "start_hour": 18, "end_hour": 20},  # Sunday = 6
+        "wednesday": {"day": 2, "start_hour": 18, "end_hour": 20}  # Wednesday = 2
+    }
+    
+    for offer_type, schedule in offer_schedules.items():
         banner_url = f"/sunday-special-banner.webp" if offer_type == "sunday" else f"/wednesday-special-banner.webp"
         
-        if not offer_config or not offer_config.get("is_active", False):
-            # Offer not configured or inactive
-            offers_status.append({
-                "offer_type": offer_type,
-                "status": "not_configured",
-                "is_live": False,
-                "starts_at": None,
-                "ends_at": None,
-                "starts_in_seconds": None,
-                "ends_in_seconds": None,
-                "bonus_percent": 10.0,
-                "banner_url": banner_url
-            })
-            continue
+        current_day = now_ist.weekday()
+        current_hour = now_ist.hour
         
-        # Parse datetime strings
-        start_dt_str = offer_config.get("start_datetime")
-        end_dt_str = offer_config.get("end_datetime")
-        bonus_percent = offer_config.get("bonus_percent", 10.0)
+        # Check if currently LIVE (correct day and between 6PM-8PM)
+        is_live = (current_day == schedule["day"] and 
+                   schedule["start_hour"] <= current_hour < schedule["end_hour"])
         
-        if not start_dt_str:
-            offers_status.append({
-                "offer_type": offer_type,
-                "status": "not_configured",
-                "is_live": False,
-                "starts_at": None,
-                "ends_at": None,
-                "starts_in_seconds": None,
-                "ends_in_seconds": None,
-                "bonus_percent": bonus_percent,
-                "banner_url": banner_url
-            })
-            continue
+        # Calculate next occurrence
+        days_until = (schedule["day"] - current_day) % 7
+        if days_until == 0:
+            # Same day - check if offer time passed
+            if current_hour >= schedule["end_hour"]:
+                days_until = 7  # Next week
         
-        # Parse start and end times (IST)
-        start_dt = datetime.fromisoformat(start_dt_str.replace('Z', '+00:00'))
-        if start_dt.tzinfo is None:
-            start_dt = ist.localize(start_dt)
+        # Next start time
+        next_start = now_ist.replace(hour=schedule["start_hour"], minute=0, second=0, microsecond=0)
+        next_start = next_start + timedelta(days=days_until)
         
-        # Auto-calculate end time if not provided (24h after start)
-        if end_dt_str:
-            end_dt = datetime.fromisoformat(end_dt_str.replace('Z', '+00:00'))
-            if end_dt.tzinfo is None:
-                end_dt = ist.localize(end_dt)
-        else:
-            end_dt = start_dt + timedelta(hours=24)
+        # Next end time
+        next_end = next_start.replace(hour=schedule["end_hour"])
         
-        # Convert to UTC for comparison
-        start_dt_utc = start_dt.astimezone(timezone.utc)
-        end_dt_utc = end_dt.astimezone(timezone.utc)
-        
-        # Determine status
-        if now_utc < start_dt_utc:
-            # Upcoming - show "Starts In" countdown
-            status = "upcoming"
-            is_live = False
-            starts_in_seconds = int((start_dt_utc - now_utc).total_seconds())
-            ends_in_seconds = None
-        elif start_dt_utc <= now_utc <= end_dt_utc:
-            # LIVE - show "Ends In" countdown
+        if is_live:
             status = "live"
-            is_live = True
+            # Calculate ends_in_seconds
+            end_today = now_ist.replace(hour=schedule["end_hour"], minute=0, second=0, microsecond=0)
+            ends_in_seconds = int((end_today - now_ist).total_seconds())
             starts_in_seconds = None
-            ends_in_seconds = int((end_dt_utc - now_utc).total_seconds())
         else:
-            # Ended
-            status = "ended"
-            is_live = False
-            starts_in_seconds = None
+            status = "upcoming"
+            starts_in_seconds = int((next_start - now_ist).total_seconds())
             ends_in_seconds = None
         
         offers_status.append({
             "offer_type": offer_type,
             "status": status,
             "is_live": is_live,
-            "starts_at": start_dt.isoformat(),
-            "ends_at": end_dt.isoformat(),
+            "starts_at": next_start.isoformat(),
+            "ends_at": next_end.isoformat(),
             "starts_in_seconds": starts_in_seconds,
             "ends_in_seconds": ends_in_seconds,
-            "bonus_percent": bonus_percent,
-            "banner_url": banner_url
+            "bonus_percent": 10.0,
+            "banner_url": banner_url,
+            "schedule": f"Every {offer_type.capitalize()} 6PM-8PM IST"
         })
     
     return {"offers": offers_status}
 
 @api_router.get("/offers/{offer_type}/check-active")
 async def check_offer_active(offer_type: str):
-    """Check if a specific offer is currently LIVE - used by deposit endpoint"""
+    """Check if a specific offer is currently LIVE - Auto schedule Sunday/Wednesday 6-8PM IST"""
     if offer_type not in ["sunday", "wednesday"]:
         raise HTTPException(status_code=400, detail="Invalid offer type. Use 'sunday' or 'wednesday'")
     
     ist = pytz.timezone('Asia/Kolkata')
-    now_utc = datetime.now(timezone.utc)
+    now_ist = datetime.now(ist)
     
-    offer_config = await db.offer_configs.find_one({"offer_type": offer_type}, {"_id": 0})
+    offer_schedules = {
+        "sunday": {"day": 6, "start_hour": 18, "end_hour": 20},
+        "wednesday": {"day": 2, "start_hour": 18, "end_hour": 20}
+    }
     
-    if not offer_config or not offer_config.get("is_active", False):
-        return {"is_active": False, "bonus_percent": 0}
+    schedule = offer_schedules[offer_type]
+    current_day = now_ist.weekday()
+    current_hour = now_ist.hour
     
-    start_dt_str = offer_config.get("start_datetime")
-    end_dt_str = offer_config.get("end_datetime")
+    is_active = (current_day == schedule["day"] and 
+                 schedule["start_hour"] <= current_hour < schedule["end_hour"])
     
-    if not start_dt_str:
-        return {"is_active": False, "bonus_percent": 0}
-    
-    # Parse dates
-    start_dt = datetime.fromisoformat(start_dt_str.replace('Z', '+00:00'))
-    if start_dt.tzinfo is None:
-        start_dt = ist.localize(start_dt)
-    
-    if end_dt_str:
-        end_dt = datetime.fromisoformat(end_dt_str.replace('Z', '+00:00'))
-        if end_dt.tzinfo is None:
-            end_dt = ist.localize(end_dt)
-    else:
-        end_dt = start_dt + timedelta(hours=24)
-    
-    start_dt_utc = start_dt.astimezone(timezone.utc)
-    end_dt_utc = end_dt.astimezone(timezone.utc)
-    
-    is_active = start_dt_utc <= now_utc <= end_dt_utc
-    bonus_percent = offer_config.get("bonus_percent", 10.0) if is_active else 0
+    bonus_percent = 10.0 if is_active else 0
     
     return {"is_active": is_active, "bonus_percent": bonus_percent}
 
 async def check_any_offer_active():
-    """Internal helper to check if ANY offer is currently active for deposit bonus"""
+    """Internal helper to check if ANY offer is currently active for deposit bonus - Auto schedule"""
     ist = pytz.timezone('Asia/Kolkata')
-    now_utc = datetime.now(timezone.utc)
+    now_ist = datetime.now(ist)
     
-    for offer_type in ["sunday", "wednesday"]:
-        offer_config = await db.offer_configs.find_one({"offer_type": offer_type}, {"_id": 0})
-        
-        if not offer_config or not offer_config.get("is_active", False):
-            continue
-        
-        start_dt_str = offer_config.get("start_datetime")
-        end_dt_str = offer_config.get("end_datetime")
-        
-        if not start_dt_str:
-            continue
-        
-        start_dt = datetime.fromisoformat(start_dt_str.replace('Z', '+00:00'))
-        if start_dt.tzinfo is None:
-            start_dt = ist.localize(start_dt)
-        
-        if end_dt_str:
-            end_dt = datetime.fromisoformat(end_dt_str.replace('Z', '+00:00'))
-            if end_dt.tzinfo is None:
-                end_dt = ist.localize(end_dt)
-        else:
-            end_dt = start_dt + timedelta(hours=24)
-        
-        start_dt_utc = start_dt.astimezone(timezone.utc)
-        end_dt_utc = end_dt.astimezone(timezone.utc)
-        
-        if start_dt_utc <= now_utc <= end_dt_utc:
-            return {
-                "is_active": True,
-                "offer_type": offer_type,
-                "bonus_percent": offer_config.get("bonus_percent", 10.0)
-            }
+    current_day = now_ist.weekday()
+    current_hour = now_ist.hour
+    
+    # Sunday = 6, Wednesday = 2
+    # Offer time: 6PM-8PM IST (18:00 - 20:00)
+    
+    if current_day == 6 and 18 <= current_hour < 20:
+        return {
+            "is_active": True,
+            "offer_type": "sunday",
+            "bonus_percent": 10.0
+        }
+    elif current_day == 2 and 18 <= current_hour < 20:
+        return {
+            "is_active": True,
+            "offer_type": "wednesday",
+            "bonus_percent": 10.0
+        }
     
     return {"is_active": False, "offer_type": None, "bonus_percent": 0}
 

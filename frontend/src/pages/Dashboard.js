@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import OfferSlider from '../components/OfferSlider';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
@@ -1756,6 +1757,11 @@ const Dashboard = () => {
       )}
       
       <div style={styles.container}>
+        {/* Offer Slider - Sunday & Wednesday Offers */}
+        <div style={{ marginBottom: '16px' }}>
+          <OfferSlider />
+        </div>
+        
         {/* Trading Fund Display - Shows Active Investment Total */}
         <div style={{
           ...styles.balanceBar, 

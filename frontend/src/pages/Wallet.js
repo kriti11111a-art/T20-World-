@@ -8,6 +8,7 @@ import { useTheme } from '../context/ThemeContext';
 import useWeb3 from '../hooks/useWeb3';
 import toast from 'react-hot-toast';
 import tokenManager from '../utils/tokenManager';
+import { normalizeAmount } from '../utils/normalizeAmount';
 import { PLATFORM_DEPOSIT_WALLET } from '../config/web3Config';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
@@ -751,9 +752,13 @@ const Wallet = () => {
                     fontWeight: 700,
                   }}>💵 Amount (USDT)</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
+                    lang="en"
+                    dir="ltr"
+                    data-testid="wallet-deposit-amount-input"
                     value={depositAmount}
-                    onChange={(e) => setDepositAmount(e.target.value)}
+                    onChange={(e) => setDepositAmount(normalizeAmount(e.target.value))}
                     placeholder={!user?.first_investment_done ? "Min $3 (First Deposit)" : "Enter amount"}
                     style={{
                       width: '100%',
@@ -1041,9 +1046,13 @@ const Wallet = () => {
                     textShadow: isDark ? 'none' : '0 1px 2px rgba(0, 0, 0, 0.2)',
                   }}>💵 Amount (USDT)</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="decimal"
+                    lang="en"
+                    dir="ltr"
+                    data-testid="wallet-withdraw-amount-input"
                     value={withdrawAmount}
-                    onChange={(e) => setWithdrawAmount(e.target.value)}
+                    onChange={(e) => setWithdrawAmount(normalizeAmount(e.target.value))}
                     placeholder={`Min $${minWithdraw}`}
                     style={{
                       width: '100%',
@@ -1584,7 +1593,7 @@ const Wallet = () => {
         }
         
         /* Deposit Amount Input Placeholder - BRIGHT ORANGE */
-        input[type="number"]::placeholder {
+        input[inputmode="decimal"]::placeholder {
           color: #FF4500;
           opacity: 0.8;
           font-weight: 700;

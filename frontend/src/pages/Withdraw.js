@@ -7,6 +7,7 @@ import { PLATFORM_WITHDRAWAL_WALLET } from '../config/web3Config';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import toast from 'react-hot-toast';
+import { normalizeAmount } from '../utils/normalizeAmount';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -335,9 +336,13 @@ const Withdraw = () => {
                 Amount (USDT)
               </label>
               <input
-                type="number"
+                type="text"
+                inputMode="decimal"
+                lang="en"
+                dir="ltr"
+                data-testid="withdraw-amount-input"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e) => setAmount(normalizeAmount(e.target.value))}
                 placeholder="Enter amount to withdraw"
                 style={{
                   ...styles.input,

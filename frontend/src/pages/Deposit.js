@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import toast from 'react-hot-toast';
 import tokenManager from '../utils/tokenManager';
+import { normalizeAmount } from '../utils/normalizeAmount';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -941,16 +942,11 @@ const Deposit = () => {
                     <input
                       type="text"
                       inputMode="decimal"
-                      pattern="[0-9]*\.?[0-9]*"
+                      lang="en"
+                      dir="ltr"
+                      data-testid="deposit-amount-input"
                       value={amount}
-                      onChange={(e) => {
-                        // Allow only numbers and decimal point
-                        const val = e.target.value.replace(/[^0-9.]/g, '');
-                        // Prevent multiple decimal points
-                        const parts = val.split('.');
-                        if (parts.length > 2) return;
-                        setAmount(val);
-                      }}
+                      onChange={(e) => setAmount(normalizeAmount(e.target.value))}
                       placeholder={`$${!user?.first_investment_done ? '3' : plan.minInvestment} - $${plan.maxInvestment.toLocaleString()}`}
                       style={{
                         ...styles.input,

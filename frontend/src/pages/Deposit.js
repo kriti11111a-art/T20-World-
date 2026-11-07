@@ -939,9 +939,18 @@ const Deposit = () => {
                       Amount (USDT) - Min: ${!user?.first_investment_done ? '3 (First Deposit)' : plan.minInvestment}, Max: ${plan.maxInvestment.toLocaleString()}
                     </label>
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
+                      pattern="[0-9]*\.?[0-9]*"
                       value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
+                      onChange={(e) => {
+                        // Allow only numbers and decimal point
+                        const val = e.target.value.replace(/[^0-9.]/g, '');
+                        // Prevent multiple decimal points
+                        const parts = val.split('.');
+                        if (parts.length > 2) return;
+                        setAmount(val);
+                      }}
                       placeholder={`$${!user?.first_investment_done ? '3' : plan.minInvestment} - $${plan.maxInvestment.toLocaleString()}`}
                       style={{
                         ...styles.input,
@@ -949,8 +958,6 @@ const Deposit = () => {
                         color: colors.text,
                         borderColor: colors.cardBorder,
                       }}
-                      min={!user?.first_investment_done ? 3 : plan.minInvestment}
-                      max={plan.maxInvestment}
                     />
                     {/* First Deposit Validation Message */}
                     {!user?.first_investment_done && amount && parseFloat(amount) < 3 && (

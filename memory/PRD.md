@@ -394,3 +394,8 @@ Hindi (mixed with English)
 
 ## Last Updated
 October 1, 2026
+
+## 2026-06 — Arabic numeral amount fix
+- Added `frontend/src/utils/normalizeAmount.js` (Arabic/Persian/fullwidth digits → Western, ٫ → '.', commas stripped).
+- Applied to amount inputs on Deposit.js, Withdraw.js, Wallet.js (deposit + withdraw). Tested (iteration_13) — pass.
+- Backlog: P2 refactor server.py into routers; P3 real Binance trading.

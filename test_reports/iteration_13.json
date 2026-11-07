@@ -1,0 +1,27 @@
+{
+  "summary": "Frontend-only test of the Arabic/Persian digit auto-conversion fix (normalizeAmount) on the Deposit, Withdraw and Wallet pages. Logged in as admin@tradegosmart.com on a 390px mobile viewport. /deposit (Trading Slab One, $1-$19, first deposit): typing '١٠٠' gives '100', '۵۰' gives '50', '٥٠٫٥' gives '50.5', '12abc3' gives '123', and Western '100' works as before. '١٠' gives '10': no range error, and the Daily Earning preview appears. The button shows 'Insufficient Balance' (disabled) because the admin balance is $0.00, not 'Invalid Amount', so parsing now works. '١٠٠' shows the same 'Amount must be between $1 and $19' message as Western 100. /withdraw: '١٥' gives '15' and the calculation box shows $15.00, a 5% fee of -$0.75 and $14.25 to receive. '۱۰۰٫۵' gives '100.5' with a $5.03 fee. /wallet deposit form (opened with a mocked window.ethereum provider): '١٠٠' gives '100' and '۵٫۲۵x' gives '5.25'. The wallet withdraw input was NOT tested in the UI because it only appears after the wallet address is locked, which would change the admin account. Its code uses the same normalizeAmount onChange. No page errors on any page. Node unit check of normalizeAmount: fullwidth digits and the Arabic thousands separator work; null and empty input are handled.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "normalizeAmount util", "issue": "A comma is turned into a decimal point, so a typed or pasted '1,000' becomes '1.000' (= $1), not 1000. This silently changes the amount. Consider treating ',' as a thousands separator (strip it) when it is followed by exactly 3 digits, or just strip ','. The Arabic decimal separator ٫ already handles Saudi users.", "selector": "[data-testid=deposit-amount-input], [data-testid=withdraw-amount-input]", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Optional: change comma handling in /app/frontend/src/utils/normalizeAmount.js so '1,000' is not read as 1.000"
+  ],
+  "critical_code_review_comments": [
+    "The inputs correctly use type=text, inputMode=decimal and dir=ltr. With type=number the browser would reject Arabic characters, so this choice is right.",
+    "'1.2.3' becomes '1.23' because extra dots are merged silently. Acceptable, but consider ignoring the extra dots instead.",
+    "The Deposit MAX button calls setAmount(maxAllowed.toString()), which can produce long floats such as 0.30000000000000004. Consider toFixed(2)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100% of executed checks (wallet withdraw input verified by code review only)"},
+  "test_credentials": "admin@tradegosmart.com / 2050Umakant@#143!",
+  "seed_data_creation": "None. No deposits, withdrawals or wallet locks were performed.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "The Web3 wallet can be mocked with page.add_init_script that sets window.ethereum with a request() handling eth_requestAccounts, eth_chainId ('0x38') and eth_call. After 'Connect Wallet' this shows wallet-deposit-amount-input. wallet-withdraw-amount-input also needs user.locked_wallet_address, which the admin does not have. Admin balance is $0, so the enabled green Invest button could not be checked. Use a funded test user for that."
+}

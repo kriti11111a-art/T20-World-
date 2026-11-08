@@ -970,7 +970,7 @@ async def distribute_level_income(user_id: str, amount: float, transaction_type:
         
         logger.info(f"Level {level} commission ({commission_percent}%) ${commission_amount:.2f} paid to {upline_user['id']} from {user_id}")
 
-async def process_direct_reward(new_user_id: str, deposit_amount: float):
+async def process_direct_reward(new_user_id: str, deposit_amount: float, skip_if_offer: bool = False):
     """
     Process direct reward for referrer when new user deposits:
     - $50 to $1000 deposit = $10 instant reward
@@ -979,8 +979,15 @@ async def process_direct_reward(new_user_id: str, deposit_amount: float):
     - New user's first deposit must be $50+
     - Referrer must have $50+ wallet balance
     - One-time reward only
+    - If skip_if_offer=True and an offer is active, no reward is given (admin loss prevention)
     """
-    logger.info(f"Processing direct reward for user {new_user_id}, deposit: ${deposit_amount}")
+    logger.info(f"Processing direct reward for user {new_user_id}, deposit: ${deposit_amount}, skip_if_offer: {skip_if_offer}")
+    
+    if skip_if_offer:
+        offer_info = await check_any_offer_active()
+        if offer_info["is_active"]:
+            logger.info(f"Direct reward SKIPPED - deposit made during {offer_info['offer_type']} special offer (admin loss prevention)")
+            return
     
     if deposit_amount < 50:
         logger.info(f"Direct reward skipped - deposit ${deposit_amount} < $50 minimum")
@@ -1688,7 +1695,8 @@ async def create_deposit(deposit: DepositCreate, current_user: dict = Depends(ge
     # ===== MULTI-LEVEL REFERRAL SYSTEM =====
     
     # 1. Process Direct Reward ($10 + 1% one-time for first $50+ deposit)
-    await process_direct_reward(current_user["id"], deposit.amount)
+    # If deposit is during active offer, skip direct reward to prevent admin loss
+    await process_direct_reward(current_user["id"], deposit.amount, skip_if_offer=offer_info["is_active"])
     
     # 2. Distribute Level Income for subsequent deposits
     if first_investment_done:

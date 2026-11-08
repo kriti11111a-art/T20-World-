@@ -399,3 +399,8 @@ October 1, 2026
 - Added `frontend/src/utils/normalizeAmount.js` (Arabic/Persian/fullwidth digits → Western, ٫ → '.', commas stripped).
 - Applied to amount inputs on Deposit.js, Withdraw.js, Wallet.js (deposit + withdraw). Tested (iteration_13) — pass.
 - Backlog: P2 refactor server.py into routers; P3 real Binance trading.
+
+## 2026-06 — Sunday/Wednesday Offer: Direct Reward Blocked
+- When user deposits during active offer (Sunday/Wednesday), Direct Referral Reward ($10 + 1%) is SKIPPED.
+- Level income, team bonus etc. continue as normal.
+- This prevents admin loss from giving both offer bonus (10%) and direct reward.

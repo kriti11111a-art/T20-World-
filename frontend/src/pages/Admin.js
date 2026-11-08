@@ -18,12 +18,25 @@ const Admin = () => {
   const { user, token, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   
-  // Admin separate login state - हर बार login करना पड़ेगा
-  const [adminLoggedIn, setAdminLoggedIn] = useState(false);
+  // Admin separate login state - localStorage में persist होगा
+  const [adminLoggedIn, setAdminLoggedIn] = useState(() => {
+    const saved = localStorage.getItem('admin_session');
+    return saved ? JSON.parse(saved).loggedIn : false;
+  });
   const [adminEmail, setAdminEmail] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
   const [adminLoginLoading, setAdminLoginLoading] = useState(false);
-  const [adminToken, setAdminToken] = useState('');
+  const [adminToken, setAdminToken] = useState(() => {
+    const saved = localStorage.getItem('admin_session');
+    return saved ? JSON.parse(saved).token : '';
+  });
+  
+  // Persist admin session to localStorage
+  useEffect(() => {
+    if (adminLoggedIn && adminToken) {
+      localStorage.setItem('admin_session', JSON.stringify({ loggedIn: true, token: adminToken }));
+    }
+  }, [adminLoggedIn, adminToken]);
   
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -45,6 +58,7 @@ const Admin = () => {
     if (!adminToken) {
       toast.error('Session expired. Please login again.');
       setAdminLoggedIn(false);
+      localStorage.removeItem('admin_session');
       return null;
     }
     return adminToken;
@@ -85,6 +99,7 @@ const Admin = () => {
     setAdminToken('');
     setAdminEmail('');
     setAdminPassword('');
+    localStorage.removeItem('admin_session');
     toast.success('Logged out successfully');
   };
   

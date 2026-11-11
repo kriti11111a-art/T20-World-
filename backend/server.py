@@ -3465,45 +3465,90 @@ async def get_deposit_wallet():
 
 @api_router.get("/offers/status")
 async def get_offers_status():
-    """Get status of all offers (Sunday & Wednesday) - PERMANENT BANNERS, Auto LIVE on schedule"""
+    """Get status of all offers (Sunday & Wednesday) - Uses Admin config from DB or defaults"""
     ist = pytz.timezone('Asia/Kolkata')
     now_ist = datetime.now(ist)
     
     offers_status = []
     
-    # Fixed schedule: Sunday & Wednesday 6PM-8PM IST
-    offer_schedules = {
-        "sunday": {"day": 6, "start_hour": 18, "end_hour": 20},  # Sunday = 6
-        "wednesday": {"day": 2, "start_hour": 18, "end_hour": 20}  # Wednesday = 2
+    # Default schedule: Sunday & Wednesday 6PM-8PM IST
+    default_schedules = {
+        "sunday": {"day": 6, "start_hour": 18, "end_hour": 20},
+        "wednesday": {"day": 2, "start_hour": 18, "end_hour": 20}
     }
     
-    for offer_type, schedule in offer_schedules.items():
-        banner_url = f"/sunday-special-banner.webp" if offer_type == "sunday" else f"/wednesday-special-banner.webp"
+    for offer_type, default_schedule in default_schedules.items():
+        banner_url = f"/{offer_type}-special-banner.webp"
         
+        # Check DB for admin-configured offer
+        offer_config = await db.offer_configs.find_one({"offer_type": offer_type, "is_active": True})
+        
+        if offer_config and offer_config.get("start_datetime") and offer_config.get("end_datetime"):
+            # Use Admin configured times
+            try:
+                start_dt = datetime.fromisoformat(offer_config["start_datetime"].replace('Z', '+00:00'))
+                end_dt = datetime.fromisoformat(offer_config["end_datetime"].replace('Z', '+00:00'))
+                
+                if start_dt.tzinfo is None:
+                    start_dt = ist.localize(start_dt)
+                else:
+                    start_dt = start_dt.astimezone(ist)
+                    
+                if end_dt.tzinfo is None:
+                    end_dt = ist.localize(end_dt)
+                else:
+                    end_dt = end_dt.astimezone(ist)
+                
+                is_live = start_dt <= now_ist <= end_dt
+                bonus_percent = offer_config.get("bonus_percent", 10.0)
+                
+                if is_live:
+                    status = "live"
+                    ends_in_seconds = int((end_dt - now_ist).total_seconds())
+                    starts_in_seconds = None
+                elif now_ist < start_dt:
+                    status = "upcoming"
+                    starts_in_seconds = int((start_dt - now_ist).total_seconds())
+                    ends_in_seconds = None
+                else:
+                    status = "ended"
+                    starts_in_seconds = None
+                    ends_in_seconds = None
+                
+                offers_status.append({
+                    "offer_type": offer_type,
+                    "status": status,
+                    "is_live": is_live,
+                    "starts_at": start_dt.isoformat(),
+                    "ends_at": end_dt.isoformat(),
+                    "starts_in_seconds": starts_in_seconds,
+                    "ends_in_seconds": ends_in_seconds,
+                    "bonus_percent": bonus_percent,
+                    "banner_url": banner_url,
+                    "schedule": f"Admin configured: {start_dt.strftime('%d %b %I:%M %p')} - {end_dt.strftime('%d %b %I:%M %p')} IST"
+                })
+                continue
+            except Exception as e:
+                logger.error(f"Error parsing offer config: {e}")
+        
+        # Fallback to default schedule
         current_day = now_ist.weekday()
         current_hour = now_ist.hour
+        schedule = default_schedule
         
-        # Check if currently LIVE (correct day and between 6PM-8PM)
         is_live = (current_day == schedule["day"] and 
                    schedule["start_hour"] <= current_hour < schedule["end_hour"])
         
-        # Calculate next occurrence
         days_until = (schedule["day"] - current_day) % 7
-        if days_until == 0:
-            # Same day - check if offer time passed
-            if current_hour >= schedule["end_hour"]:
-                days_until = 7  # Next week
+        if days_until == 0 and current_hour >= schedule["end_hour"]:
+            days_until = 7
         
-        # Next start time
         next_start = now_ist.replace(hour=schedule["start_hour"], minute=0, second=0, microsecond=0)
         next_start = next_start + timedelta(days=days_until)
-        
-        # Next end time
         next_end = next_start.replace(hour=schedule["end_hour"])
         
         if is_live:
             status = "live"
-            # Calculate ends_in_seconds
             end_today = now_ist.replace(hour=schedule["end_hour"], minute=0, second=0, microsecond=0)
             ends_in_seconds = int((end_today - now_ist).total_seconds())
             starts_in_seconds = None
@@ -3553,16 +3598,45 @@ async def check_offer_active(offer_type: str):
     return {"is_active": is_active, "bonus_percent": bonus_percent}
 
 async def check_any_offer_active():
-    """Internal helper to check if ANY offer is currently active for deposit bonus - Auto schedule"""
+    """Internal helper to check if ANY offer is currently active for deposit bonus - Uses Admin config from DB"""
     ist = pytz.timezone('Asia/Kolkata')
     now_ist = datetime.now(ist)
     
+    # First check DB for admin-configured offers
+    for offer_type in ["sunday", "wednesday"]:
+        offer_config = await db.offer_configs.find_one({"offer_type": offer_type, "is_active": True})
+        if offer_config and offer_config.get("start_datetime") and offer_config.get("end_datetime"):
+            try:
+                start_dt = datetime.fromisoformat(offer_config["start_datetime"].replace('Z', '+00:00'))
+                end_dt = datetime.fromisoformat(offer_config["end_datetime"].replace('Z', '+00:00'))
+                
+                # Convert to IST for comparison
+                if start_dt.tzinfo is None:
+                    start_dt = ist.localize(start_dt)
+                else:
+                    start_dt = start_dt.astimezone(ist)
+                    
+                if end_dt.tzinfo is None:
+                    end_dt = ist.localize(end_dt)
+                else:
+                    end_dt = end_dt.astimezone(ist)
+                
+                # Check if current time is within offer window
+                if start_dt <= now_ist <= end_dt:
+                    logger.info(f"OFFER ACTIVE: {offer_type} from DB config ({start_dt} to {end_dt})")
+                    return {
+                        "is_active": True,
+                        "offer_type": offer_type,
+                        "bonus_percent": offer_config.get("bonus_percent", 10.0)
+                    }
+            except Exception as e:
+                logger.error(f"Error parsing offer config dates: {e}")
+    
+    # Fallback: Auto schedule Sunday/Wednesday 6PM-8PM IST if no DB config
     current_day = now_ist.weekday()
     current_hour = now_ist.hour
     
     # Sunday = 6, Wednesday = 2
-    # Offer time: 6PM-8PM IST (18:00 - 20:00)
-    
     if current_day == 6 and 18 <= current_hour < 20:
         return {
             "is_active": True,

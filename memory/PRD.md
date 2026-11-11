@@ -404,3 +404,9 @@ October 1, 2026
 - When user deposits during active offer (Sunday/Wednesday), Direct Referral Reward ($10 + 1%) is SKIPPED.
 - Level income, team bonus etc. continue as normal.
 - This prevents admin loss from giving both offer bonus (10%) and direct reward.
+
+## 2026-06 — Offer Custom Time from Admin Panel
+- Admin Panel से set किया हुआ offer time अब DB से read होता है
+- `check_any_offer_active()` और `/api/offers/status` दोनों DB config use करते हैं
+- अगर DB में config नहीं है तो default 6PM-8PM fallback
+- Admin किसी भी date/time पर offer set कर सकता है (जैसे पूरा दिन 12AM-11:59PM)

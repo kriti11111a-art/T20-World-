@@ -420,3 +420,8 @@ October 1, 2026
   - Create investment
 - Hindi + English error message shown
 - Admin can block/unblock from Admin Panel
+
+## 2026-06 — Blocked User Pending Withdrawal Protection
+- Admin CANNOT approve pending withdrawal of blocked user
+- Error: "Cannot approve! User X is BLOCKED. Withdrawal को reject करें।"
+- This prevents money going to blocked users who had pending withdrawals before block

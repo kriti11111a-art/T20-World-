@@ -2559,6 +2559,14 @@ async def approve_withdrawal(withdrawal_id: str, current_user: dict = Depends(ge
     if withdrawal.get("status") != "pending":
         raise HTTPException(status_code=400, detail="Withdrawal is not pending")
     
+    # CHECK IF USER IS BLOCKED - DO NOT APPROVE
+    user = await db.users.find_one({"id": withdrawal.get("user_id")})
+    if user and not user.get("is_active", True):
+        raise HTTPException(
+            status_code=403, 
+            detail=f"Cannot approve! User {user.get('email')} is BLOCKED. Withdrawal को reject करें।"
+        )
+    
     # Update withdrawal status to completed
     await db.withdrawals.update_one(
         {"id": withdrawal_id},

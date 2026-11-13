@@ -410,3 +410,13 @@ October 1, 2026
 - `check_any_offer_active()` और `/api/offers/status` दोनों DB config use करते हैं
 - अगर DB में config नहीं है तो default 6PM-8PM fallback
 - Admin किसी भी date/time पर offer set कर सकता है (जैसे पूरा दिन 12AM-11:59PM)
+
+## 2026-06 — Blocked User Complete Lockout
+- Blocked user (is_active=False) CANNOT:
+  - Login
+  - Access any API (get_current_user check)
+  - Create withdrawal
+  - Create deposit
+  - Create investment
+- Hindi + English error message shown
+- Admin can block/unblock from Admin Panel

@@ -511,6 +511,14 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     user = await db.users.find_one({"id": user_id}, {"_id": 0, "password": 0})
     if user is None:
         raise HTTPException(status_code=401, detail="User not found")
+    
+    # BLOCKED USER CHECK - No activity allowed
+    if not user.get("is_active", True):
+        raise HTTPException(
+            status_code=403, 
+            detail="आपका account block कर दिया गया है। कृपया support से संपर्क करें। Your account has been blocked."
+        )
+    
     return user
 
 async def user_to_response(user: dict) -> UserResponse:
@@ -1136,9 +1144,12 @@ async def login(user_data: UserLogin):
     if not verify_password(user_data.password, user["password"]):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     
-    # Check if user is blocked
+    # Check if user is blocked - NO LOGIN ALLOWED
     if user.get("is_active") == False:
-        raise HTTPException(status_code=403, detail="Your account has been blocked. Please contact support.")
+        raise HTTPException(
+            status_code=403, 
+            detail="आपका account block कर दिया गया है। Login नहीं हो सकता। Your account has been blocked. Contact support."
+        )
     
     # Auto-fix: Ensure admin@tradegosmart.com always has admin privileges
     if user_data.email == "admin@tradegosmart.com" and not user.get("is_admin"):
@@ -1266,6 +1277,13 @@ class InvestmentFromBalanceCreate(BaseModel):
 @api_router.post("/investments/from-balance", response_model=InvestmentResponse)
 async def create_investment_from_balance(investment: InvestmentFromBalanceCreate, current_user: dict = Depends(get_current_user)):
     """Create investment using available balance (from earnings/ROI) + welcome bonus"""
+    # BLOCKED USER - NO INVESTMENT
+    if not current_user.get("is_active", True):
+        raise HTTPException(
+            status_code=403, 
+            detail="आपका account block है। Investment नहीं हो सकता। Your account is blocked."
+        )
+    
     plan = INVESTMENT_PLANS.get(investment.plan_id)
     if not plan:
         raise HTTPException(status_code=400, detail="Invalid plan")
@@ -1350,6 +1368,13 @@ async def create_investment_from_balance(investment: InvestmentFromBalanceCreate
 @api_router.post("/investments", response_model=InvestmentResponse)
 async def create_investment(investment: InvestmentCreate, current_user: dict = Depends(get_current_user)):
     """Create investment from Web3 deposit - balance already added via /api/deposits"""
+    # BLOCKED USER - NO INVESTMENT
+    if not current_user.get("is_active", True):
+        raise HTTPException(
+            status_code=403, 
+            detail="आपका account block है। Investment नहीं हो सकता। Your account is blocked."
+        )
+    
     logger.info(f"Creating investment for user {current_user['id']}: plan={investment.plan_id}, amount=${investment.amount}")
     
     plan = INVESTMENT_PLANS.get(investment.plan_id)
@@ -1554,6 +1579,13 @@ async def withdraw_roi_to_balance(investment_id: str, current_user: dict = Depen
 
 @api_router.post("/deposits")
 async def create_deposit(deposit: DepositCreate, current_user: dict = Depends(get_current_user)):
+    # BLOCKED USER - NO DEPOSIT
+    if not current_user.get("is_active", True):
+        raise HTTPException(
+            status_code=403, 
+            detail="आपका account block है। Deposit नहीं हो सकता। Your account is blocked."
+        )
+    
     deposit_id = str(uuid.uuid4())
     
     # Get fresh user data
@@ -1736,6 +1768,13 @@ async def get_deposits(current_user: dict = Depends(get_current_user)):
 
 @api_router.post("/withdrawals", response_model=WithdrawalResponse)
 async def create_withdrawal(withdrawal: WithdrawalCreate, current_user: dict = Depends(get_current_user)):
+    # BLOCKED USER - NO WITHDRAWAL
+    if not current_user.get("is_active", True):
+        raise HTTPException(
+            status_code=403, 
+            detail="आपका account block है। Withdrawal नहीं हो सकता। Your account is blocked."
+        )
+    
     if withdrawal.amount < 1:
         raise HTTPException(status_code=400, detail="Minimum withdrawal is $1")
     

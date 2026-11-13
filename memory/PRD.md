@@ -425,3 +425,11 @@ October 1, 2026
 - Admin CANNOT approve pending withdrawal of blocked user
 - Error: "Cannot approve! User X is BLOCKED. Withdrawal को reject करें।"
 - This prevents money going to blocked users who had pending withdrawals before block
+
+## 2026-06 — Auto-Reject Pending Withdrawals on Block
+- जब Admin user को block करता है:
+  - सारी pending withdrawals automatic REJECTED हो जाती हैं
+  - Amount user के balance में refund हो जाता है
+  - Rejection reason: "User blocked by admin - auto rejected"
+- Response में rejected count और refunded amount दिखता है
+- Unblock के बाद user नई withdrawal कर सकता है

@@ -1243,6 +1243,50 @@ const Admin = () => {
                   </button>
                 </div>
                 
+                {/* Auto Withdrawal Toggle Button */}
+                <button 
+                  onClick={async () => {
+                    const newStatus = !u.auto_withdrawal_enabled;
+                    if (window.confirm(`${newStatus ? 'Enable' : 'Disable'} Auto Withdrawal for ${u.email}?`)) {
+                      try {
+                        const response = await fetch(`${API_URL}/api/admin/users/${u.id}/auto-withdrawal/set`, {
+                          method: 'POST',
+                          headers: {
+                            'Authorization': `Bearer ${tokenManager.get()}`,
+                            'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({ enabled: newStatus })
+                        });
+                        const data = await response.json();
+                        if (response.ok) {
+                          toast.success(data.message);
+                          fetchAdminData();
+                        } else {
+                          toast.error(data.detail || 'Failed to update');
+                        }
+                      } catch (error) {
+                        toast.error('Error: ' + error.message);
+                      }
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    marginTop: '8px',
+                    background: u.auto_withdrawal_enabled 
+                      ? 'linear-gradient(135deg, #0ECB81 0%, #0A8F5C 100%)' 
+                      : 'linear-gradient(135deg, #F39C12 0%, #D68910 100%)',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '10px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontSize: '11px'
+                  }}
+                >
+                  {u.auto_withdrawal_enabled ? '✅ Auto Withdrawal ON' : '⏸️ Auto Withdrawal OFF'}
+                </button>
+                
                 {/* User Status Badge */}
                 {u.is_active === false && (
                   <div style={{

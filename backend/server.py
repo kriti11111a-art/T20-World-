@@ -1821,24 +1821,40 @@ async def create_withdrawal(withdrawal: WithdrawalCreate, current_user: dict = D
     
     withdrawal_id = str(uuid.uuid4())
     
-    # ===== AUTO WITHDRAWAL - Send USDT on BSC =====
-    tx_result = await send_usdt_bep20(withdrawal.wallet_address, net_amount)
+    # ===== CHECK AUTO WITHDRAWAL ENABLED FOR USER =====
+    # Get fresh user data to check auto_withdrawal_enabled flag
+    user_data = await db.users.find_one({"id": current_user["id"]})
+    auto_withdrawal_enabled = user_data.get("auto_withdrawal_enabled", False)  # Default OFF for safety
     
-    if tx_result["success"]:
-        # Auto-approved and sent
-        withdrawal_status = "completed"
-        tx_hash = tx_result["tx_hash"]
-        logger.info(f"AUTO WITHDRAWAL SUCCESS: {net_amount} USDT sent to {withdrawal.wallet_address}, TX: {tx_hash}")
+    if auto_withdrawal_enabled:
+        # ===== AUTO WITHDRAWAL - Send USDT on BSC =====
+        tx_result = await send_usdt_bep20(withdrawal.wallet_address, net_amount)
+        
+        if tx_result["success"]:
+            # Auto-approved and sent
+            withdrawal_status = "completed"
+            tx_hash = tx_result["tx_hash"]
+            logger.info(f"AUTO WITHDRAWAL SUCCESS: {net_amount} USDT sent to {withdrawal.wallet_address}, TX: {tx_hash}")
+        else:
+            # Failed - mark as pending for manual review, refund balance
+            withdrawal_status = "pending"
+            tx_hash = None
+            # Refund the balance since auto-send failed
+            await db.users.update_one(
+                {"id": current_user["id"]},
+                {"$inc": {"balance": withdrawal.amount}}
+            )
+            logger.error(f"AUTO WITHDRAWAL FAILED: {tx_result['error']} - Amount: {net_amount} USDT to {withdrawal.wallet_address}")
     else:
-        # Failed - mark as pending for manual review, refund balance
+        # Auto withdrawal OFF - go to pending for admin approval
         withdrawal_status = "pending"
         tx_hash = None
-        # Refund the balance since auto-send failed
+        # Refund balance since it will be deducted on approval
         await db.users.update_one(
             {"id": current_user["id"]},
             {"$inc": {"balance": withdrawal.amount}}
         )
-        logger.error(f"AUTO WITHDRAWAL FAILED: {tx_result['error']} - Amount: {net_amount} USDT to {withdrawal.wallet_address}")
+        logger.info(f"AUTO WITHDRAWAL OFF: User {current_user['id']} withdrawal ${net_amount} marked as pending for admin approval")
     
     withdrawal_doc = {
         "id": withdrawal_id,
@@ -1849,19 +1865,23 @@ async def create_withdrawal(withdrawal: WithdrawalCreate, current_user: dict = D
         "wallet_address": withdrawal.wallet_address,
         "status": withdrawal_status,
         "tx_hash": tx_hash,
-        "auto_withdrawal": True,
-        "error": tx_result.get("error") if not tx_result["success"] else None,
+        "auto_withdrawal": auto_withdrawal_enabled,
+        "error": tx_result.get("error") if auto_withdrawal_enabled and not tx_result["success"] else None,
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     
     await db.withdrawals.insert_one(withdrawal_doc)
     withdrawal_doc.pop("_id", None)
     
-    if not tx_result["success"]:
+    if auto_withdrawal_enabled and not tx_result["success"]:
         raise HTTPException(
             status_code=500, 
             detail=f"Auto withdrawal failed: {tx_result['error']}. Your balance has been refunded. Please try again or contact support."
         )
+    
+    if not auto_withdrawal_enabled:
+        # Return success but inform user it's pending
+        withdrawal_doc["message"] = "Withdrawal request submitted. Pending admin approval."
     
     return WithdrawalResponse(**withdrawal_doc)
 
@@ -2928,6 +2948,58 @@ async def admin_unblock_user(user_id: str, current_user: dict = Depends(get_curr
     
     logger.info(f"Admin {current_user['email']} unblocked user {user['email']}")
     return {"message": f"User {user['email']} has been unblocked"}
+
+
+@api_router.post("/admin/users/{user_id}/auto-withdrawal/toggle")
+async def toggle_auto_withdrawal(user_id: str, current_user: dict = Depends(get_current_user)):
+    """Toggle auto withdrawal ON/OFF for a user (Admin only)"""
+    if not current_user.get("is_admin"):
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Toggle the current value
+    current_status = user.get("auto_withdrawal_enabled", False)
+    new_status = not current_status
+    
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {"auto_withdrawal_enabled": new_status}}
+    )
+    
+    status_text = "ON" if new_status else "OFF"
+    logger.info(f"Admin {current_user['email']} set auto_withdrawal {status_text} for user {user['email']}")
+    return {
+        "message": f"Auto withdrawal {status_text} for {user['email']}",
+        "auto_withdrawal_enabled": new_status
+    }
+
+@api_router.post("/admin/users/{user_id}/auto-withdrawal/set")
+async def set_auto_withdrawal(user_id: str, data: dict, current_user: dict = Depends(get_current_user)):
+    """Set auto withdrawal ON/OFF explicitly for a user (Admin only)"""
+    if not current_user.get("is_admin"):
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    new_status = data.get("enabled", False)
+    
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {"auto_withdrawal_enabled": new_status}}
+    )
+    
+    status_text = "ON" if new_status else "OFF"
+    logger.info(f"Admin {current_user['email']} set auto_withdrawal {status_text} for user {user['email']}")
+    return {
+        "message": f"Auto withdrawal {status_text} for {user['email']}",
+        "auto_withdrawal_enabled": new_status
+    }
+
 
 # ==================== ADMIN USER MANAGEMENT APIs ====================
 

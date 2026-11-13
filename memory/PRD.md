@@ -443,3 +443,13 @@ October 1, 2026
   - अब pending withdrawals approve की जा सकती हैं
   - User नई withdrawal भी कर सकता है
 - यह ensure करता है कि blocked user को कोई पैसा नहीं जाएगा
+
+## 2026-06 — Auto Withdrawal ON/OFF per User
+- Admin Panel में हर user के लिए "Auto Withdrawal ON/OFF" toggle button
+- **OFF** (default): Withdrawal pending में जाती है, Admin approval चाहिए
+- **ON**: Withdrawal automatic blockchain पर जाती है
+- **नए users का default OFF** रहता है
+- API endpoints:
+  - POST /api/admin/users/{user_id}/auto-withdrawal/toggle
+  - POST /api/admin/users/{user_id}/auto-withdrawal/set
+- Script: `/app/backend/disable_auto_withdrawal_all.py` - सभी existing users का OFF करने के लिए

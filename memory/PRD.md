@@ -433,3 +433,13 @@ October 1, 2026
   - Rejection reason: "User blocked by admin - auto rejected"
 - Response में rejected count और refunded amount दिखता है
 - Unblock के बाद user नई withdrawal कर सकता है
+
+## 2026-06 — Block User Withdrawal Logic (UPDATED)
+- जब Admin user को block करता है:
+  - Pending withdrawals **PENDING ही रहती हैं** (reject नहीं होतीं)
+  - लेकिन Admin **approve नहीं कर सकता** जब तक user blocked है
+  - Error: "Cannot approve! User is BLOCKED"
+- जब Admin user को **unblock** करता है:
+  - अब pending withdrawals approve की जा सकती हैं
+  - User नई withdrawal भी कर सकता है
+- यह ensure करता है कि blocked user को कोई पैसा नहीं जाएगा

@@ -2877,7 +2877,7 @@ async def admin_login_as_user(user_id: str, current_user: dict = Depends(get_cur
 
 @api_router.post("/admin/users/{user_id}/block")
 async def admin_block_user(user_id: str, current_user: dict = Depends(get_current_user)):
-    """Block a user (Admin only) - Also auto-rejects all pending withdrawals"""
+    """Block a user (Admin only) - Pending withdrawals remain pending but cannot be approved"""
     if not current_user.get("is_admin"):
         raise HTTPException(status_code=403, detail="Admin access required")
     
@@ -2888,37 +2888,11 @@ async def admin_block_user(user_id: str, current_user: dict = Depends(get_curren
     if user.get("is_admin"):
         raise HTTPException(status_code=400, detail="Cannot block admin user")
     
-    # AUTO-REJECT ALL PENDING WITHDRAWALS
-    pending_withdrawals = await db.withdrawals.find({
+    # Count pending withdrawals (they stay pending, just can't be approved)
+    pending_count = await db.withdrawals.count_documents({
         "user_id": user_id,
         "status": "pending"
-    }).to_list(100)
-    
-    total_refunded = 0
-    rejected_count = 0
-    
-    for withdrawal in pending_withdrawals:
-        amount = withdrawal.get("amount", 0)
-        
-        # Refund to user's balance
-        await db.users.update_one(
-            {"id": user_id},
-            {"$inc": {"balance": amount}}
-        )
-        
-        # Mark withdrawal as rejected
-        await db.withdrawals.update_one(
-            {"id": withdrawal["id"]},
-            {"$set": {
-                "status": "rejected",
-                "rejected_at": datetime.now(timezone.utc).isoformat(),
-                "rejection_reason": "User blocked by admin - auto rejected"
-            }}
-        )
-        
-        total_refunded += amount
-        rejected_count += 1
-        logger.info(f"Auto-rejected withdrawal {withdrawal['id']} (${amount}) for blocked user {user['email']}")
+    })
     
     # Block the user
     await db.users.update_one(
@@ -2926,16 +2900,15 @@ async def admin_block_user(user_id: str, current_user: dict = Depends(get_curren
         {"$set": {"is_active": False, "blocked_at": datetime.now(timezone.utc).isoformat()}}
     )
     
-    logger.info(f"Admin {current_user['email']} blocked user {user['email']}. Auto-rejected {rejected_count} pending withdrawals, refunded ${total_refunded}")
+    logger.info(f"Admin {current_user['email']} blocked user {user['email']}. {pending_count} pending withdrawals frozen.")
     
     response_msg = f"User {user['email']} has been blocked."
-    if rejected_count > 0:
-        response_msg += f" {rejected_count} pending withdrawal(s) auto-rejected. ${total_refunded:.2f} refunded to balance."
+    if pending_count > 0:
+        response_msg += f" {pending_count} pending withdrawal(s) are now frozen and cannot be approved until unblock."
     
     return {
         "message": response_msg,
-        "rejected_withdrawals": rejected_count,
-        "refunded_amount": total_refunded
+        "frozen_withdrawals": pending_count
     }
 
 @api_router.post("/admin/users/{user_id}/unblock")
